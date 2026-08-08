@@ -1,0 +1,2697 @@
+[
+  {
+    "date": "2025-12-20",
+    "days_since_last": 4.0,
+    "source": "January block@row21 col=O",
+    "snapshots": [
+      {
+        "position": 1,
+        "quarters": 0,
+        "qty": 1,
+        "price": 6.0
+      },
+      {
+        "position": 2,
+        "quarters": 520,
+        "qty": 4,
+        "price": 6.5
+      },
+      {
+        "position": 3,
+        "quarters": 797,
+        "qty": 2,
+        "price": 9.5
+      },
+      {
+        "position": 4,
+        "quarters": 389,
+        "qty": 4,
+        "price": 3.5
+      },
+      {
+        "position": 5,
+        "quarters": 401,
+        "qty": 3,
+        "price": 3.5
+      },
+      {
+        "position": 6,
+        "quarters": 1170,
+        "qty": 7,
+        "price": 4.5
+      },
+      {
+        "position": 7,
+        "quarters": 1421,
+        "qty": 5,
+        "price": 5.5
+      },
+      {
+        "position": 8,
+        "quarters": 1540,
+        "qty": 20,
+        "price": 0.25
+      }
+    ]
+  },
+  {
+    "date": "2026-01-02",
+    "days_since_last": 2.0,
+    "source": "January block@row3 col=F",
+    "snapshots": [
+      {
+        "position": 1,
+        "quarters": 0,
+        "qty": 1,
+        "price": 6.0
+      },
+      {
+        "position": 2,
+        "quarters": 455,
+        "qty": 4,
+        "price": 6.0
+      },
+      {
+        "position": 3,
+        "quarters": 675,
+        "qty": 2,
+        "price": 9.5
+      },
+      {
+        "position": 4,
+        "quarters": 201,
+        "qty": 4,
+        "price": 3.0
+      },
+      {
+        "position": 5,
+        "quarters": 294,
+        "qty": 3,
+        "price": 3.0
+      },
+      {
+        "position": 6,
+        "quarters": 594,
+        "qty": 7,
+        "price": 4.5
+      },
+      {
+        "position": 7,
+        "quarters": 603,
+        "qty": 5,
+        "price": 5.0
+      },
+      {
+        "position": 8,
+        "quarters": 1082,
+        "qty": 20,
+        "price": 0.25
+      }
+    ]
+  },
+  {
+    "date": "2026-01-07",
+    "days_since_last": 5.0,
+    "source": "January block@row3 col=I",
+    "snapshots": [
+      {
+        "position": 1,
+        "quarters": 0,
+        "qty": 1,
+        "price": 6.0
+      },
+      {
+        "position": 2,
+        "quarters": 1202,
+        "qty": 4,
+        "price": 6.0
+      },
+      {
+        "position": 3,
+        "quarters": 934,
+        "qty": 2,
+        "price": 9.5
+      },
+      {
+        "position": 4,
+        "quarters": 619,
+        "qty": 4,
+        "price": 3.0
+      },
+      {
+        "position": 5,
+        "quarters": 574,
+        "qty": 3,
+        "price": 3.0
+      },
+      {
+        "position": 6,
+        "quarters": 2872,
+        "qty": 7,
+        "price": 4.5
+      },
+      {
+        "position": 7,
+        "quarters": 2049,
+        "qty": 5,
+        "price": 5.0
+      },
+      {
+        "position": 8,
+        "quarters": 3004,
+        "qty": 20,
+        "price": 0.25
+      }
+    ]
+  },
+  {
+    "date": "2026-01-12",
+    "days_since_last": 5.0,
+    "source": "January block@row3 col=L",
+    "snapshots": [
+      {
+        "position": 1,
+        "quarters": 0,
+        "qty": 1,
+        "price": 6.0
+      },
+      {
+        "position": 2,
+        "quarters": 1014,
+        "qty": 4,
+        "price": 6.0
+      },
+      {
+        "position": 3,
+        "quarters": 1163,
+        "qty": 2,
+        "price": 9.5
+      },
+      {
+        "position": 4,
+        "quarters": 697,
+        "qty": 4,
+        "price": 3.0
+      },
+      {
+        "position": 5,
+        "quarters": 791,
+        "qty": 3,
+        "price": 3.0
+      },
+      {
+        "position": 6,
+        "quarters": 1782,
+        "qty": 7,
+        "price": 4.5
+      },
+      {
+        "position": 7,
+        "quarters": 2022,
+        "qty": 5,
+        "price": 5.0
+      },
+      {
+        "position": 8,
+        "quarters": 2607,
+        "qty": 20,
+        "price": 0.25
+      }
+    ]
+  },
+  {
+    "date": "2026-01-16",
+    "days_since_last": 5.0,
+    "source": "January block@row21 col=F",
+    "snapshots": [
+      {
+        "position": 1,
+        "quarters": 0,
+        "qty": 1,
+        "price": 6.0
+      },
+      {
+        "position": 2,
+        "quarters": 479,
+        "qty": 4,
+        "price": 6.5
+      },
+      {
+        "position": 3,
+        "quarters": 548,
+        "qty": 2,
+        "price": 9.5
+      },
+      {
+        "position": 4,
+        "quarters": 282,
+        "qty": 4,
+        "price": 3.5
+      },
+      {
+        "position": 5,
+        "quarters": 324,
+        "qty": 3,
+        "price": 3.5
+      },
+      {
+        "position": 6,
+        "quarters": 866,
+        "qty": 7,
+        "price": 4.5
+      },
+      {
+        "position": 7,
+        "quarters": 1059,
+        "qty": 5,
+        "price": 5.5
+      },
+      {
+        "position": 8,
+        "quarters": 1258,
+        "qty": 20,
+        "price": 0.25
+      }
+    ]
+  },
+  {
+    "date": "2026-01-20",
+    "days_since_last": 4.0,
+    "source": "January block@row21 col=I",
+    "snapshots": [
+      {
+        "position": 1,
+        "quarters": 0,
+        "qty": 1,
+        "price": 6.0
+      },
+      {
+        "position": 2,
+        "quarters": 832,
+        "qty": 4,
+        "price": 6.5
+      },
+      {
+        "position": 3,
+        "quarters": 1019,
+        "qty": 2,
+        "price": 9.5
+      },
+      {
+        "position": 4,
+        "quarters": 419,
+        "qty": 4,
+        "price": 3.5
+      },
+      {
+        "position": 5,
+        "quarters": 566,
+        "qty": 3,
+        "price": 3.5
+      },
+      {
+        "position": 6,
+        "quarters": 1692,
+        "qty": 7,
+        "price": 4.5
+      },
+      {
+        "position": 7,
+        "quarters": 1679,
+        "qty": 5,
+        "price": 5.5
+      },
+      {
+        "position": 8,
+        "quarters": 2368,
+        "qty": 20,
+        "price": 0.25
+      }
+    ]
+  },
+  {
+    "date": "2026-01-26",
+    "days_since_last": 6.0,
+    "source": "January block@row21 col=L",
+    "snapshots": [
+      {
+        "position": 1,
+        "quarters": 0,
+        "qty": 1,
+        "price": 6.0
+      },
+      {
+        "position": 2,
+        "quarters": 1055,
+        "qty": 4,
+        "price": 6.5
+      },
+      {
+        "position": 3,
+        "quarters": 936,
+        "qty": 2,
+        "price": 9.5
+      },
+      {
+        "position": 4,
+        "quarters": 775,
+        "qty": 4,
+        "price": 3.5
+      },
+      {
+        "position": 5,
+        "quarters": 973,
+        "qty": 3,
+        "price": 3.5
+      },
+      {
+        "position": 6,
+        "quarters": 1704,
+        "qty": 7,
+        "price": 4.5
+      },
+      {
+        "position": 7,
+        "quarters": 1917,
+        "qty": 5,
+        "price": 5.5
+      },
+      {
+        "position": 8,
+        "quarters": 2628,
+        "qty": 20,
+        "price": 0.25
+      }
+    ]
+  },
+  {
+    "date": "2026-02-04",
+    "days_since_last": 4.0,
+    "source": "Feb block@row3 col=F",
+    "snapshots": [
+      {
+        "position": 1,
+        "quarters": 0,
+        "qty": 1,
+        "price": 6.0
+      },
+      {
+        "position": 2,
+        "quarters": 1066,
+        "qty": 4,
+        "price": 6.5
+      },
+      {
+        "position": 3,
+        "quarters": 1199,
+        "qty": 2,
+        "price": 9.5
+      },
+      {
+        "position": 4,
+        "quarters": 703,
+        "qty": 4,
+        "price": 3.5
+      },
+      {
+        "position": 5,
+        "quarters": 864,
+        "qty": 3,
+        "price": 3.5
+      },
+      {
+        "position": 6,
+        "quarters": 2054,
+        "qty": 7,
+        "price": 4.5
+      },
+      {
+        "position": 7,
+        "quarters": 2242,
+        "qty": 5,
+        "price": 5.5
+      },
+      {
+        "position": 8,
+        "quarters": 3839,
+        "qty": 20,
+        "price": 0.25
+      }
+    ]
+  },
+  {
+    "date": "2026-02-07",
+    "days_since_last": 3.0,
+    "source": "Feb block@row3 col=I",
+    "snapshots": [
+      {
+        "position": 1,
+        "quarters": 0,
+        "qty": 1,
+        "price": 6.0
+      },
+      {
+        "position": 2,
+        "quarters": 944,
+        "qty": 4,
+        "price": 6.5
+      },
+      {
+        "position": 3,
+        "quarters": 830,
+        "qty": 2,
+        "price": 9.5
+      },
+      {
+        "position": 4,
+        "quarters": 337,
+        "qty": 4,
+        "price": 3.5
+      },
+      {
+        "position": 5,
+        "quarters": 565,
+        "qty": 3,
+        "price": 3.5
+      },
+      {
+        "position": 6,
+        "quarters": 1357,
+        "qty": 7,
+        "price": 4.5
+      },
+      {
+        "position": 7,
+        "quarters": 1104,
+        "qty": 5,
+        "price": 5.5
+      },
+      {
+        "position": 8,
+        "quarters": 1564,
+        "qty": 20,
+        "price": 0.25
+      }
+    ]
+  },
+  {
+    "date": "2026-02-09",
+    "days_since_last": 2.0,
+    "source": "Feb block@row3 col=L",
+    "snapshots": [
+      {
+        "position": 1,
+        "quarters": 0,
+        "qty": 1,
+        "price": 6.0
+      },
+      {
+        "position": 2,
+        "quarters": 751,
+        "qty": 4,
+        "price": 6.5
+      },
+      {
+        "position": 3,
+        "quarters": 576,
+        "qty": 2,
+        "price": 9.5
+      },
+      {
+        "position": 4,
+        "quarters": 311,
+        "qty": 4,
+        "price": 3.5
+      },
+      {
+        "position": 5,
+        "quarters": 437,
+        "qty": 3,
+        "price": 3.5
+      },
+      {
+        "position": 6,
+        "quarters": 1325,
+        "qty": 7,
+        "price": 4.5
+      },
+      {
+        "position": 7,
+        "quarters": 1057,
+        "qty": 5,
+        "price": 5.5
+      },
+      {
+        "position": 8,
+        "quarters": 1448,
+        "qty": 20,
+        "price": 0.25
+      }
+    ]
+  },
+  {
+    "date": "2026-02-14",
+    "days_since_last": 5.0,
+    "source": "Feb block@row3 col=O",
+    "snapshots": [
+      {
+        "position": 1,
+        "quarters": 0,
+        "qty": 1,
+        "price": 6.0
+      },
+      {
+        "position": 2,
+        "quarters": 858,
+        "qty": 4,
+        "price": 6.5
+      },
+      {
+        "position": 3,
+        "quarters": 1241,
+        "qty": 2,
+        "price": 9.5
+      },
+      {
+        "position": 4,
+        "quarters": 426,
+        "qty": 4,
+        "price": 3.5
+      },
+      {
+        "position": 5,
+        "quarters": 481,
+        "qty": 3,
+        "price": 3.5
+      },
+      {
+        "position": 6,
+        "quarters": 1796,
+        "qty": 7,
+        "price": 4.5
+      },
+      {
+        "position": 7,
+        "quarters": 1891,
+        "qty": 5,
+        "price": 5.5
+      },
+      {
+        "position": 8,
+        "quarters": 2100,
+        "qty": 20,
+        "price": 0.25
+      }
+    ]
+  },
+  {
+    "date": "2026-02-18",
+    "days_since_last": 4.0,
+    "source": "Feb block@row3 col=R",
+    "snapshots": [
+      {
+        "position": 1,
+        "quarters": 0,
+        "qty": 1,
+        "price": 6.0
+      },
+      {
+        "position": 2,
+        "quarters": 1198,
+        "qty": 4,
+        "price": 6.5
+      },
+      {
+        "position": 3,
+        "quarters": 978,
+        "qty": 2,
+        "price": 9.5
+      },
+      {
+        "position": 4,
+        "quarters": 677,
+        "qty": 4,
+        "price": 3.5
+      },
+      {
+        "position": 5,
+        "quarters": 716,
+        "qty": 3,
+        "price": 3.5
+      },
+      {
+        "position": 6,
+        "quarters": 1425,
+        "qty": 7,
+        "price": 4.5
+      },
+      {
+        "position": 7,
+        "quarters": 1631,
+        "qty": 5,
+        "price": 5.5
+      },
+      {
+        "position": 8,
+        "quarters": 2351,
+        "qty": 20,
+        "price": 0.25
+      }
+    ]
+  },
+  {
+    "date": "2026-02-24",
+    "days_since_last": 6.0,
+    "source": "Feb block@row3 col=U",
+    "snapshots": [
+      {
+        "position": 1,
+        "quarters": 0,
+        "qty": 1,
+        "price": 6.0
+      },
+      {
+        "position": 2,
+        "quarters": 1620,
+        "qty": 4,
+        "price": 6.5
+      },
+      {
+        "position": 3,
+        "quarters": 1669,
+        "qty": 2,
+        "price": 9.5
+      },
+      {
+        "position": 4,
+        "quarters": 775,
+        "qty": 4,
+        "price": 3.5
+      },
+      {
+        "position": 5,
+        "quarters": 970,
+        "qty": 3,
+        "price": 3.5
+      },
+      {
+        "position": 6,
+        "quarters": 2523,
+        "qty": 7,
+        "price": 4.5
+      },
+      {
+        "position": 7,
+        "quarters": 2427,
+        "qty": 5,
+        "price": 5.5
+      },
+      {
+        "position": 8,
+        "quarters": 3128,
+        "qty": 20,
+        "price": 0.25
+      }
+    ]
+  },
+  {
+    "date": "2026-02-28",
+    "days_since_last": 4.0,
+    "source": "Feb block@row3 col=X",
+    "snapshots": [
+      {
+        "position": 1,
+        "quarters": 0,
+        "qty": 1,
+        "price": 6.0
+      },
+      {
+        "position": 2,
+        "quarters": 1097,
+        "qty": 4,
+        "price": 6.5
+      },
+      {
+        "position": 3,
+        "quarters": 1014,
+        "qty": 2,
+        "price": 9.5
+      },
+      {
+        "position": 4,
+        "quarters": 417,
+        "qty": 4,
+        "price": 3.5
+      },
+      {
+        "position": 5,
+        "quarters": 644,
+        "qty": 3,
+        "price": 3.5
+      },
+      {
+        "position": 6,
+        "quarters": 1300,
+        "qty": 7,
+        "price": 4.5
+      },
+      {
+        "position": 7,
+        "quarters": 1190,
+        "qty": 5,
+        "price": 5.5
+      },
+      {
+        "position": 8,
+        "quarters": 1950,
+        "qty": 20,
+        "price": 0.25
+      }
+    ]
+  },
+  {
+    "date": "2026-03-03",
+    "days_since_last": 3.0,
+    "source": "March block@row3 col=F",
+    "snapshots": [
+      {
+        "position": 1,
+        "quarters": 0,
+        "qty": 1,
+        "price": 6.0
+      },
+      {
+        "position": 2,
+        "quarters": 1066,
+        "qty": 4,
+        "price": 6.5
+      },
+      {
+        "position": 3,
+        "quarters": 799,
+        "qty": 2,
+        "price": 9.5
+      },
+      {
+        "position": 4,
+        "quarters": 522,
+        "qty": 4,
+        "price": 3.5
+      },
+      {
+        "position": 5,
+        "quarters": 614,
+        "qty": 3,
+        "price": 3.5
+      },
+      {
+        "position": 6,
+        "quarters": 2051,
+        "qty": 7,
+        "price": 4.5
+      },
+      {
+        "position": 7,
+        "quarters": 1408,
+        "qty": 5,
+        "price": 5.5
+      },
+      {
+        "position": 8,
+        "quarters": 2072,
+        "qty": 20,
+        "price": 0.25
+      }
+    ]
+  },
+  {
+    "date": "2026-03-07",
+    "days_since_last": 4.0,
+    "source": "March block@row3 col=I",
+    "snapshots": [
+      {
+        "position": 1,
+        "quarters": 0,
+        "qty": 1,
+        "price": 6.0
+      },
+      {
+        "position": 2,
+        "quarters": 781,
+        "qty": 4,
+        "price": 6.5
+      },
+      {
+        "position": 3,
+        "quarters": 360,
+        "qty": 2,
+        "price": 9.5
+      },
+      {
+        "position": 4,
+        "quarters": 842,
+        "qty": 4,
+        "price": 3.5
+      },
+      {
+        "position": 5,
+        "quarters": 576,
+        "qty": 3,
+        "price": 3.5
+      },
+      {
+        "position": 6,
+        "quarters": 1697,
+        "qty": 7,
+        "price": 4.5
+      },
+      {
+        "position": 7,
+        "quarters": 1874,
+        "qty": 5,
+        "price": 5.5
+      },
+      {
+        "position": 8,
+        "quarters": 2156,
+        "qty": 20,
+        "price": 0.25
+      }
+    ]
+  },
+  {
+    "date": "2026-03-10",
+    "days_since_last": 3.0,
+    "source": "March block@row3 col=L",
+    "snapshots": [
+      {
+        "position": 1,
+        "quarters": 0,
+        "qty": 1,
+        "price": 6.0
+      },
+      {
+        "position": 2,
+        "quarters": 1384,
+        "qty": 4,
+        "price": 6.5
+      },
+      {
+        "position": 3,
+        "quarters": 1484,
+        "qty": 2,
+        "price": 9.5
+      },
+      {
+        "position": 4,
+        "quarters": 546,
+        "qty": 4,
+        "price": 3.5
+      },
+      {
+        "position": 5,
+        "quarters": 653,
+        "qty": 3,
+        "price": 3.5
+      },
+      {
+        "position": 6,
+        "quarters": 2107,
+        "qty": 7,
+        "price": 4.5
+      },
+      {
+        "position": 7,
+        "quarters": 1354,
+        "qty": 5,
+        "price": 5.5
+      },
+      {
+        "position": 8,
+        "quarters": 2249,
+        "qty": 20,
+        "price": 0.25
+      }
+    ]
+  },
+  {
+    "date": "2026-03-14",
+    "days_since_last": 4.0,
+    "source": "March block@row3 col=O",
+    "snapshots": [
+      {
+        "position": 1,
+        "quarters": 0,
+        "qty": 1,
+        "price": 6.0
+      },
+      {
+        "position": 2,
+        "quarters": 654,
+        "qty": 4,
+        "price": 6.5
+      },
+      {
+        "position": 3,
+        "quarters": 1069,
+        "qty": 2,
+        "price": 9.5
+      },
+      {
+        "position": 4,
+        "quarters": 314,
+        "qty": 4,
+        "price": 3.5
+      },
+      {
+        "position": 5,
+        "quarters": 650,
+        "qty": 3,
+        "price": 3.5
+      },
+      {
+        "position": 6,
+        "quarters": 1278,
+        "qty": 7,
+        "price": 4.5
+      },
+      {
+        "position": 7,
+        "quarters": 1405,
+        "qty": 5,
+        "price": 5.5
+      },
+      {
+        "position": 8,
+        "quarters": 1871,
+        "qty": 20,
+        "price": 0.25
+      }
+    ]
+  },
+  {
+    "date": "2026-03-17",
+    "days_since_last": 3.0,
+    "source": "March block@row3 col=R",
+    "snapshots": [
+      {
+        "position": 1,
+        "quarters": 0,
+        "qty": 1,
+        "price": 6.0
+      },
+      {
+        "position": 2,
+        "quarters": 1204,
+        "qty": 4,
+        "price": 6.5
+      },
+      {
+        "position": 3,
+        "quarters": 1131,
+        "qty": 2,
+        "price": 9.5
+      },
+      {
+        "position": 4,
+        "quarters": 360,
+        "qty": 4,
+        "price": 3.5
+      },
+      {
+        "position": 5,
+        "quarters": 504,
+        "qty": 3,
+        "price": 3.5
+      },
+      {
+        "position": 6,
+        "quarters": 1620,
+        "qty": 7,
+        "price": 4.5
+      },
+      {
+        "position": 7,
+        "quarters": 2026,
+        "qty": 5,
+        "price": 5.5
+      },
+      {
+        "position": 8,
+        "quarters": 2373,
+        "qty": 20,
+        "price": 0.25
+      }
+    ]
+  },
+  {
+    "date": "2026-03-21",
+    "days_since_last": 4.0,
+    "source": "March block@row3 col=U",
+    "snapshots": [
+      {
+        "position": 1,
+        "quarters": 0,
+        "qty": 1,
+        "price": 6.0
+      },
+      {
+        "position": 2,
+        "quarters": 885,
+        "qty": 4,
+        "price": 6.5
+      },
+      {
+        "position": 3,
+        "quarters": 846,
+        "qty": 2,
+        "price": 9.5
+      },
+      {
+        "position": 4,
+        "quarters": 406,
+        "qty": 4,
+        "price": 3.5
+      },
+      {
+        "position": 5,
+        "quarters": 473,
+        "qty": 3,
+        "price": 3.5
+      },
+      {
+        "position": 6,
+        "quarters": 1244,
+        "qty": 7,
+        "price": 4.5
+      },
+      {
+        "position": 7,
+        "quarters": 1255,
+        "qty": 5,
+        "price": 5.5
+      },
+      {
+        "position": 8,
+        "quarters": 1889,
+        "qty": 20,
+        "price": 0.25
+      }
+    ]
+  },
+  {
+    "date": "2026-03-24",
+    "days_since_last": 3.0,
+    "source": "March block@row3 col=X",
+    "snapshots": [
+      {
+        "position": 1,
+        "quarters": 0,
+        "qty": 1,
+        "price": 6.0
+      },
+      {
+        "position": 2,
+        "quarters": 921,
+        "qty": 4,
+        "price": 6.5
+      },
+      {
+        "position": 3,
+        "quarters": 974,
+        "qty": 2,
+        "price": 9.5
+      },
+      {
+        "position": 4,
+        "quarters": 414,
+        "qty": 4,
+        "price": 3.5
+      },
+      {
+        "position": 5,
+        "quarters": 687,
+        "qty": 3,
+        "price": 3.5
+      },
+      {
+        "position": 6,
+        "quarters": 1711,
+        "qty": 7,
+        "price": 4.5
+      },
+      {
+        "position": 7,
+        "quarters": 1675,
+        "qty": 5,
+        "price": 5.5
+      },
+      {
+        "position": 8,
+        "quarters": 1938,
+        "qty": 20,
+        "price": 0.25
+      }
+    ]
+  },
+  {
+    "date": "2026-04-04",
+    "days_since_last": 4.0,
+    "source": "April block@row3 col=F",
+    "snapshots": [
+      {
+        "position": 1,
+        "quarters": 0,
+        "qty": 1,
+        "price": 6.0
+      },
+      {
+        "position": 2,
+        "quarters": 832,
+        "qty": 4,
+        "price": 6.5
+      },
+      {
+        "position": 3,
+        "quarters": 1226,
+        "qty": 2,
+        "price": 9.5
+      },
+      {
+        "position": 4,
+        "quarters": 259,
+        "qty": 4,
+        "price": 3.5
+      },
+      {
+        "position": 5,
+        "quarters": 661,
+        "qty": 3,
+        "price": 3.5
+      },
+      {
+        "position": 6,
+        "quarters": 1391,
+        "qty": 7,
+        "price": 4.5
+      },
+      {
+        "position": 7,
+        "quarters": 1501,
+        "qty": 5,
+        "price": 5.5
+      },
+      {
+        "position": 8,
+        "quarters": 1979,
+        "qty": 20,
+        "price": 0.25
+      }
+    ]
+  },
+  {
+    "date": "2026-04-07",
+    "days_since_last": 3.0,
+    "source": "April block@row3 col=I",
+    "snapshots": [
+      {
+        "position": 1,
+        "quarters": 0,
+        "qty": 1,
+        "price": 6.0
+      },
+      {
+        "position": 2,
+        "quarters": 1428,
+        "qty": 4,
+        "price": 6.5
+      },
+      {
+        "position": 3,
+        "quarters": 1470,
+        "qty": 2,
+        "price": 9.5
+      },
+      {
+        "position": 4,
+        "quarters": 814,
+        "qty": 4,
+        "price": 3.5
+      },
+      {
+        "position": 5,
+        "quarters": 768,
+        "qty": 3,
+        "price": 3.5
+      },
+      {
+        "position": 6,
+        "quarters": 2293,
+        "qty": 7,
+        "price": 4.5
+      },
+      {
+        "position": 7,
+        "quarters": 1831,
+        "qty": 5,
+        "price": 5.5
+      },
+      {
+        "position": 8,
+        "quarters": 2690,
+        "qty": 20,
+        "price": 0.25
+      }
+    ]
+  },
+  {
+    "date": "2026-04-11",
+    "days_since_last": 4.0,
+    "source": "April block@row3 col=L",
+    "snapshots": [
+      {
+        "position": 1,
+        "quarters": 0,
+        "qty": 1,
+        "price": 6.0
+      },
+      {
+        "position": 2,
+        "quarters": 856,
+        "qty": 4,
+        "price": 6.5
+      },
+      {
+        "position": 3,
+        "quarters": 864,
+        "qty": 2,
+        "price": 9.5
+      },
+      {
+        "position": 4,
+        "quarters": 349,
+        "qty": 4,
+        "price": 3.5
+      },
+      {
+        "position": 5,
+        "quarters": 827,
+        "qty": 3,
+        "price": 3.5
+      },
+      {
+        "position": 6,
+        "quarters": 1486,
+        "qty": 7,
+        "price": 4.5
+      },
+      {
+        "position": 7,
+        "quarters": 1777,
+        "qty": 5,
+        "price": 5.5
+      },
+      {
+        "position": 8,
+        "quarters": 1871,
+        "qty": 20,
+        "price": 0.25
+      }
+    ]
+  },
+  {
+    "date": "2026-04-12",
+    "days_since_last": 3.0,
+    "source": "May block@row3 col=L",
+    "snapshots": [
+      {
+        "position": 1,
+        "quarters": 0,
+        "qty": 1,
+        "price": 6.0
+      },
+      {
+        "position": 2,
+        "quarters": 1094,
+        "qty": 4,
+        "price": 6.5
+      },
+      {
+        "position": 3,
+        "quarters": 1049,
+        "qty": 2,
+        "price": 9.5
+      },
+      {
+        "position": 4,
+        "quarters": 512,
+        "qty": 4,
+        "price": 3.5
+      },
+      {
+        "position": 5,
+        "quarters": 592,
+        "qty": 3,
+        "price": 3.5
+      },
+      {
+        "position": 6,
+        "quarters": 1911,
+        "qty": 7,
+        "price": 4.5
+      },
+      {
+        "position": 7,
+        "quarters": 1605,
+        "qty": 5,
+        "price": 5.5
+      },
+      {
+        "position": 8,
+        "quarters": 2074,
+        "qty": 20,
+        "price": 0.25
+      }
+    ]
+  },
+  {
+    "date": "2026-04-14",
+    "days_since_last": 3.0,
+    "source": "April block@row3 col=O",
+    "snapshots": [
+      {
+        "position": 1,
+        "quarters": 0,
+        "qty": 1,
+        "price": 6.0
+      },
+      {
+        "position": 2,
+        "quarters": 650,
+        "qty": 4,
+        "price": 6.5
+      },
+      {
+        "position": 3,
+        "quarters": 1116,
+        "qty": 2,
+        "price": 9.5
+      },
+      {
+        "position": 4,
+        "quarters": 516,
+        "qty": 4,
+        "price": 3.5
+      },
+      {
+        "position": 5,
+        "quarters": 618,
+        "qty": 3,
+        "price": 3.5
+      },
+      {
+        "position": 6,
+        "quarters": 1999,
+        "qty": 7,
+        "price": 4.5
+      },
+      {
+        "position": 7,
+        "quarters": 1595,
+        "qty": 5,
+        "price": 5.5
+      },
+      {
+        "position": 8,
+        "quarters": 1931,
+        "qty": 20,
+        "price": 0.25
+      }
+    ]
+  },
+  {
+    "date": "2026-04-18",
+    "days_since_last": 4.0,
+    "source": "April block@row3 col=R",
+    "snapshots": [
+      {
+        "position": 1,
+        "quarters": 0,
+        "qty": 1,
+        "price": 6.0
+      },
+      {
+        "position": 2,
+        "quarters": 936,
+        "qty": 4,
+        "price": 6.5
+      },
+      {
+        "position": 3,
+        "quarters": 1059,
+        "qty": 2,
+        "price": 9.5
+      },
+      {
+        "position": 4,
+        "quarters": 440,
+        "qty": 4,
+        "price": 3.5
+      },
+      {
+        "position": 5,
+        "quarters": 502,
+        "qty": 3,
+        "price": 3.5
+      },
+      {
+        "position": 6,
+        "quarters": 1677,
+        "qty": 7,
+        "price": 4.5
+      },
+      {
+        "position": 7,
+        "quarters": 1453,
+        "qty": 5,
+        "price": 5.5
+      },
+      {
+        "position": 8,
+        "quarters": 1944,
+        "qty": 20,
+        "price": 0.25
+      }
+    ]
+  },
+  {
+    "date": "2026-04-22",
+    "days_since_last": 4.0,
+    "source": "April block@row3 col=U",
+    "snapshots": [
+      {
+        "position": 1,
+        "quarters": 0,
+        "qty": 1,
+        "price": 6.0
+      },
+      {
+        "position": 2,
+        "quarters": 1352,
+        "qty": 4,
+        "price": 6.5
+      },
+      {
+        "position": 3,
+        "quarters": 1525,
+        "qty": 2,
+        "price": 9.5
+      },
+      {
+        "position": 4,
+        "quarters": 626,
+        "qty": 4,
+        "price": 3.5
+      },
+      {
+        "position": 5,
+        "quarters": 814,
+        "qty": 3,
+        "price": 3.5
+      },
+      {
+        "position": 6,
+        "quarters": 1874,
+        "qty": 7,
+        "price": 4.5
+      },
+      {
+        "position": 7,
+        "quarters": 2072,
+        "qty": 5,
+        "price": 5.5
+      },
+      {
+        "position": 8,
+        "quarters": 2429,
+        "qty": 20,
+        "price": 0.25
+      }
+    ]
+  },
+  {
+    "date": "2026-04-25",
+    "days_since_last": 3.0,
+    "source": "April block@row3 col=X",
+    "snapshots": [
+      {
+        "position": 1,
+        "quarters": 0,
+        "qty": 1,
+        "price": 6.0
+      },
+      {
+        "position": 2,
+        "quarters": 702,
+        "qty": 4,
+        "price": 6.5
+      },
+      {
+        "position": 3,
+        "quarters": 1065,
+        "qty": 2,
+        "price": 9.5
+      },
+      {
+        "position": 4,
+        "quarters": 171,
+        "qty": 4,
+        "price": 3.5
+      },
+      {
+        "position": 5,
+        "quarters": 400,
+        "qty": 3,
+        "price": 3.5
+      },
+      {
+        "position": 6,
+        "quarters": 937,
+        "qty": 7,
+        "price": 4.5
+      },
+      {
+        "position": 7,
+        "quarters": 1212,
+        "qty": 5,
+        "price": 5.5
+      },
+      {
+        "position": 8,
+        "quarters": 1423,
+        "qty": 20,
+        "price": 0.25
+      }
+    ]
+  },
+  {
+    "date": "2026-05-05",
+    "days_since_last": 3.0,
+    "source": "May block@row3 col=F",
+    "snapshots": [
+      {
+        "position": 1,
+        "quarters": 0,
+        "qty": 1,
+        "price": 6.0
+      },
+      {
+        "position": 2,
+        "quarters": 1197,
+        "qty": 4,
+        "price": 6.5
+      },
+      {
+        "position": 3,
+        "quarters": 1237,
+        "qty": 2,
+        "price": 9.5
+      },
+      {
+        "position": 4,
+        "quarters": 482,
+        "qty": 4,
+        "price": 3.5
+      },
+      {
+        "position": 5,
+        "quarters": 606,
+        "qty": 3,
+        "price": 3.5
+      },
+      {
+        "position": 6,
+        "quarters": 1857,
+        "qty": 7,
+        "price": 4.5
+      },
+      {
+        "position": 7,
+        "quarters": 1694,
+        "qty": 5,
+        "price": 5.5
+      },
+      {
+        "position": 8,
+        "quarters": 2050,
+        "qty": 20,
+        "price": 0.25
+      }
+    ]
+  },
+  {
+    "date": "2026-05-09",
+    "days_since_last": 4.0,
+    "source": "May block@row3 col=I",
+    "snapshots": [
+      {
+        "position": 1,
+        "quarters": 0,
+        "qty": 1,
+        "price": 6.0
+      },
+      {
+        "position": 2,
+        "quarters": 1415,
+        "qty": 4,
+        "price": 6.5
+      },
+      {
+        "position": 3,
+        "quarters": 1046,
+        "qty": 2,
+        "price": 9.5
+      },
+      {
+        "position": 4,
+        "quarters": 552,
+        "qty": 4,
+        "price": 3.5
+      },
+      {
+        "position": 5,
+        "quarters": 656,
+        "qty": 3,
+        "price": 3.5
+      },
+      {
+        "position": 6,
+        "quarters": 1746,
+        "qty": 7,
+        "price": 4.5
+      },
+      {
+        "position": 7,
+        "quarters": 1740,
+        "qty": 5,
+        "price": 5.5
+      },
+      {
+        "position": 8,
+        "quarters": 2362,
+        "qty": 20,
+        "price": 0.25
+      }
+    ]
+  },
+  {
+    "date": "2026-05-16",
+    "days_since_last": 4.0,
+    "source": "May block@row3 col=O",
+    "snapshots": [
+      {
+        "position": 1,
+        "quarters": 0,
+        "qty": 1,
+        "price": 6.0
+      },
+      {
+        "position": 2,
+        "quarters": 1108,
+        "qty": 4,
+        "price": 6.5
+      },
+      {
+        "position": 3,
+        "quarters": 840,
+        "qty": 2,
+        "price": 9.5
+      },
+      {
+        "position": 4,
+        "quarters": 617,
+        "qty": 4,
+        "price": 3.5
+      },
+      {
+        "position": 5,
+        "quarters": 676,
+        "qty": 3,
+        "price": 3.5
+      },
+      {
+        "position": 6,
+        "quarters": 1532,
+        "qty": 7,
+        "price": 4.5
+      },
+      {
+        "position": 7,
+        "quarters": 1520,
+        "qty": 5,
+        "price": 5.5
+      },
+      {
+        "position": 8,
+        "quarters": 2028,
+        "qty": 20,
+        "price": 0.25
+      }
+    ]
+  },
+  {
+    "date": "2026-05-19",
+    "days_since_last": 3.0,
+    "source": "May block@row3 col=R",
+    "snapshots": [
+      {
+        "position": 1,
+        "quarters": 0,
+        "qty": 1,
+        "price": 6.0
+      },
+      {
+        "position": 2,
+        "quarters": 1068,
+        "qty": 4,
+        "price": 6.5
+      },
+      {
+        "position": 3,
+        "quarters": 1506,
+        "qty": 2,
+        "price": 9.5
+      },
+      {
+        "position": 4,
+        "quarters": 591,
+        "qty": 4,
+        "price": 3.5
+      },
+      {
+        "position": 5,
+        "quarters": 681,
+        "qty": 3,
+        "price": 3.5
+      },
+      {
+        "position": 6,
+        "quarters": 2110,
+        "qty": 7,
+        "price": 4.5
+      },
+      {
+        "position": 7,
+        "quarters": 1739,
+        "qty": 5,
+        "price": 5.5
+      },
+      {
+        "position": 8,
+        "quarters": 2463,
+        "qty": 20,
+        "price": 0.25
+      }
+    ]
+  },
+  {
+    "date": "2026-05-23",
+    "days_since_last": 4.0,
+    "source": "May block@row3 col=U",
+    "snapshots": [
+      {
+        "position": 1,
+        "quarters": 0,
+        "qty": 1,
+        "price": 6.0
+      },
+      {
+        "position": 2,
+        "quarters": 1039,
+        "qty": 4,
+        "price": 6.5
+      },
+      {
+        "position": 3,
+        "quarters": 682,
+        "qty": 2,
+        "price": 9.5
+      },
+      {
+        "position": 4,
+        "quarters": 394,
+        "qty": 4,
+        "price": 3.5
+      },
+      {
+        "position": 5,
+        "quarters": 472,
+        "qty": 3,
+        "price": 3.5
+      },
+      {
+        "position": 6,
+        "quarters": 882,
+        "qty": 7,
+        "price": 4.5
+      },
+      {
+        "position": 7,
+        "quarters": 1192,
+        "qty": 5,
+        "price": 5.5
+      },
+      {
+        "position": 8,
+        "quarters": 1383,
+        "qty": 20,
+        "price": 0.25
+      }
+    ]
+  },
+  {
+    "date": "2026-05-26",
+    "days_since_last": 3.0,
+    "source": "May block@row3 col=X",
+    "snapshots": [
+      {
+        "position": 1,
+        "quarters": 0,
+        "qty": 1,
+        "price": 6.0
+      },
+      {
+        "position": 2,
+        "quarters": 1352,
+        "qty": 4,
+        "price": 6.5
+      },
+      {
+        "position": 3,
+        "quarters": 1447,
+        "qty": 2,
+        "price": 9.5
+      },
+      {
+        "position": 4,
+        "quarters": 558,
+        "qty": 4,
+        "price": 3.5
+      },
+      {
+        "position": 5,
+        "quarters": 630,
+        "qty": 3,
+        "price": 3.5
+      },
+      {
+        "position": 6,
+        "quarters": 2058,
+        "qty": 7,
+        "price": 4.5
+      },
+      {
+        "position": 7,
+        "quarters": 2135,
+        "qty": 5,
+        "price": 5.5
+      },
+      {
+        "position": 8,
+        "quarters": 2488,
+        "qty": 20,
+        "price": 0.25
+      }
+    ]
+  },
+  {
+    "date": "2026-06-06",
+    "days_since_last": 5.0,
+    "source": "June block@row3 col=F",
+    "snapshots": [
+      {
+        "position": 1,
+        "quarters": 0,
+        "qty": 1,
+        "price": 6.0
+      },
+      {
+        "position": 2,
+        "quarters": 1212,
+        "qty": 4,
+        "price": 6.5
+      },
+      {
+        "position": 3,
+        "quarters": 1475,
+        "qty": 2,
+        "price": 9.5
+      },
+      {
+        "position": 4,
+        "quarters": 841,
+        "qty": 4,
+        "price": 3.5
+      },
+      {
+        "position": 5,
+        "quarters": 956,
+        "qty": 3,
+        "price": 3.5
+      },
+      {
+        "position": 6,
+        "quarters": 2183,
+        "qty": 7,
+        "price": 4.5
+      },
+      {
+        "position": 7,
+        "quarters": 1850,
+        "qty": 5,
+        "price": 5.5
+      },
+      {
+        "position": 8,
+        "quarters": 2534,
+        "qty": 20,
+        "price": 0.25
+      }
+    ]
+  },
+  {
+    "date": "2026-06-09",
+    "days_since_last": 3.0,
+    "source": "June block@row3 col=I",
+    "snapshots": [
+      {
+        "position": 1,
+        "quarters": 0,
+        "qty": 1,
+        "price": 6.0
+      },
+      {
+        "position": 2,
+        "quarters": 1016,
+        "qty": 4,
+        "price": 6.5
+      },
+      {
+        "position": 3,
+        "quarters": 1046,
+        "qty": 2,
+        "price": 9.5
+      },
+      {
+        "position": 4,
+        "quarters": 556,
+        "qty": 4,
+        "price": 3.5
+      },
+      {
+        "position": 5,
+        "quarters": 672,
+        "qty": 3,
+        "price": 3.5
+      },
+      {
+        "position": 6,
+        "quarters": 1731,
+        "qty": 7,
+        "price": 4.5
+      },
+      {
+        "position": 7,
+        "quarters": 1499,
+        "qty": 5,
+        "price": 5.5
+      },
+      {
+        "position": 8,
+        "quarters": 1989,
+        "qty": 20,
+        "price": 0.25
+      }
+    ]
+  },
+  {
+    "date": "2026-06-13",
+    "days_since_last": 4.0,
+    "source": "June block@row3 col=L",
+    "snapshots": [
+      {
+        "position": 1,
+        "quarters": 0,
+        "qty": 1,
+        "price": 6.0
+      },
+      {
+        "position": 2,
+        "quarters": 898,
+        "qty": 4,
+        "price": 6.5
+      },
+      {
+        "position": 3,
+        "quarters": 1473,
+        "qty": 2,
+        "price": 9.5
+      },
+      {
+        "position": 4,
+        "quarters": 521,
+        "qty": 4,
+        "price": 3.5
+      },
+      {
+        "position": 5,
+        "quarters": 832,
+        "qty": 3,
+        "price": 3.5
+      },
+      {
+        "position": 6,
+        "quarters": 1623,
+        "qty": 7,
+        "price": 4.5
+      },
+      {
+        "position": 7,
+        "quarters": 1456,
+        "qty": 5,
+        "price": 5.5
+      },
+      {
+        "position": 8,
+        "quarters": 2015,
+        "qty": 20,
+        "price": 0.25
+      }
+    ]
+  },
+  {
+    "date": "2026-06-16",
+    "days_since_last": 3.0,
+    "source": "June block@row3 col=O",
+    "snapshots": [
+      {
+        "position": 1,
+        "quarters": 0,
+        "qty": 1,
+        "price": 6.0
+      },
+      {
+        "position": 2,
+        "quarters": 942,
+        "qty": 4,
+        "price": 6.5
+      },
+      {
+        "position": 3,
+        "quarters": 999,
+        "qty": 2,
+        "price": 9.5
+      },
+      {
+        "position": 4,
+        "quarters": 534,
+        "qty": 4,
+        "price": 3.5
+      },
+      {
+        "position": 5,
+        "quarters": 528,
+        "qty": 3,
+        "price": 3.5
+      },
+      {
+        "position": 6,
+        "quarters": 1278,
+        "qty": 7,
+        "price": 4.5
+      },
+      {
+        "position": 7,
+        "quarters": 1651,
+        "qty": 5,
+        "price": 5.5
+      },
+      {
+        "position": 8,
+        "quarters": 1839,
+        "qty": 20,
+        "price": 0.25
+      }
+    ]
+  },
+  {
+    "date": "2026-06-20",
+    "days_since_last": 4.0,
+    "source": "June block@row3 col=R",
+    "snapshots": [
+      {
+        "position": 1,
+        "quarters": 0,
+        "qty": 1,
+        "price": 6.0
+      },
+      {
+        "position": 2,
+        "quarters": 901,
+        "qty": 4,
+        "price": 6.5
+      },
+      {
+        "position": 3,
+        "quarters": 1045,
+        "qty": 2,
+        "price": 9.5
+      },
+      {
+        "position": 4,
+        "quarters": 637,
+        "qty": 4,
+        "price": 3.5
+      },
+      {
+        "position": 5,
+        "quarters": 674,
+        "qty": 3,
+        "price": 3.5
+      },
+      {
+        "position": 6,
+        "quarters": 1733,
+        "qty": 7,
+        "price": 4.5
+      },
+      {
+        "position": 7,
+        "quarters": 1368,
+        "qty": 5,
+        "price": 5.5
+      },
+      {
+        "position": 8,
+        "quarters": 2116,
+        "qty": 20,
+        "price": 0.25
+      }
+    ]
+  },
+  {
+    "date": "2026-06-23",
+    "days_since_last": 3.0,
+    "source": "June block@row3 col=U",
+    "snapshots": [
+      {
+        "position": 1,
+        "quarters": 0,
+        "qty": 1,
+        "price": 6.0
+      },
+      {
+        "position": 2,
+        "quarters": 886,
+        "qty": 4,
+        "price": 6.5
+      },
+      {
+        "position": 3,
+        "quarters": 870,
+        "qty": 2,
+        "price": 9.5
+      },
+      {
+        "position": 4,
+        "quarters": 525,
+        "qty": 4,
+        "price": 3.5
+      },
+      {
+        "position": 5,
+        "quarters": 742,
+        "qty": 3,
+        "price": 3.5
+      },
+      {
+        "position": 6,
+        "quarters": 1962,
+        "qty": 7,
+        "price": 4.5
+      },
+      {
+        "position": 7,
+        "quarters": 1740,
+        "qty": 5,
+        "price": 5.5
+      },
+      {
+        "position": 8,
+        "quarters": 2070,
+        "qty": 20,
+        "price": 0.25
+      }
+    ]
+  },
+  {
+    "date": "2026-06-27",
+    "days_since_last": 4.0,
+    "source": "June block@row3 col=X",
+    "snapshots": [
+      {
+        "position": 1,
+        "quarters": 0,
+        "qty": 1,
+        "price": 6.0
+      },
+      {
+        "position": 2,
+        "quarters": 1227,
+        "qty": 4,
+        "price": 6.5
+      },
+      {
+        "position": 3,
+        "quarters": 1186,
+        "qty": 2,
+        "price": 9.5
+      },
+      {
+        "position": 4,
+        "quarters": 519,
+        "qty": 4,
+        "price": 3.5
+      },
+      {
+        "position": 5,
+        "quarters": 639,
+        "qty": 3,
+        "price": 3.5
+      },
+      {
+        "position": 6,
+        "quarters": 1440,
+        "qty": 7,
+        "price": 4.5
+      },
+      {
+        "position": 7,
+        "quarters": 1122,
+        "qty": 5,
+        "price": 5.5
+      },
+      {
+        "position": 8,
+        "quarters": 1954,
+        "qty": 20,
+        "price": 0.25
+      }
+    ]
+  },
+  {
+    "date": "2026-07-04",
+    "days_since_last": 4.0,
+    "source": "july block@row3 col=F",
+    "snapshots": [
+      {
+        "position": 1,
+        "quarters": 0,
+        "qty": 1,
+        "price": 6.0
+      },
+      {
+        "position": 2,
+        "quarters": 693,
+        "qty": 4,
+        "price": 6.5
+      },
+      {
+        "position": 3,
+        "quarters": 1506,
+        "qty": 2,
+        "price": 9.5
+      },
+      {
+        "position": 4,
+        "quarters": 670,
+        "qty": 4,
+        "price": 3.5
+      },
+      {
+        "position": 5,
+        "quarters": 758,
+        "qty": 3,
+        "price": 3.5
+      },
+      {
+        "position": 6,
+        "quarters": 1482,
+        "qty": 7,
+        "price": 4.5
+      },
+      {
+        "position": 7,
+        "quarters": 2049,
+        "qty": 5,
+        "price": 5.5
+      },
+      {
+        "position": 8,
+        "quarters": 2229,
+        "qty": 20,
+        "price": 0.25
+      }
+    ]
+  },
+  {
+    "date": "2026-07-07",
+    "days_since_last": 3.0,
+    "source": "july block@row3 col=I",
+    "snapshots": [
+      {
+        "position": 1,
+        "quarters": 0,
+        "qty": 1,
+        "price": 6.0
+      },
+      {
+        "position": 2,
+        "quarters": 1211,
+        "qty": 4,
+        "price": 6.5
+      },
+      {
+        "position": 3,
+        "quarters": 1177,
+        "qty": 2,
+        "price": 9.5
+      },
+      {
+        "position": 4,
+        "quarters": 759,
+        "qty": 4,
+        "price": 3.5
+      },
+      {
+        "position": 5,
+        "quarters": 600,
+        "qty": 3,
+        "price": 3.5
+      },
+      {
+        "position": 6,
+        "quarters": 1963,
+        "qty": 7,
+        "price": 4.5
+      },
+      {
+        "position": 7,
+        "quarters": 1849,
+        "qty": 5,
+        "price": 5.5
+      },
+      {
+        "position": 8,
+        "quarters": 2403,
+        "qty": 20,
+        "price": 0.25
+      }
+    ]
+  },
+  {
+    "date": "2026-07-11",
+    "days_since_last": 4.0,
+    "source": "july block@row3 col=L",
+    "snapshots": [
+      {
+        "position": 1,
+        "quarters": 0,
+        "qty": 1,
+        "price": 6.0
+      },
+      {
+        "position": 2,
+        "quarters": 1392,
+        "qty": 4,
+        "price": 6.5
+      },
+      {
+        "position": 3,
+        "quarters": 1120,
+        "qty": 2,
+        "price": 9.5
+      },
+      {
+        "position": 4,
+        "quarters": 769,
+        "qty": 4,
+        "price": 3.5
+      },
+      {
+        "position": 5,
+        "quarters": 600,
+        "qty": 3,
+        "price": 3.5
+      },
+      {
+        "position": 6,
+        "quarters": 1477,
+        "qty": 7,
+        "price": 4.5
+      },
+      {
+        "position": 7,
+        "quarters": 1505,
+        "qty": 5,
+        "price": 5.5
+      },
+      {
+        "position": 8,
+        "quarters": 2300,
+        "qty": 20,
+        "price": 0.25
+      }
+    ]
+  },
+  {
+    "date": "2026-07-14",
+    "days_since_last": 3.0,
+    "source": "july block@row3 col=O",
+    "snapshots": [
+      {
+        "position": 1,
+        "quarters": 0,
+        "qty": 1,
+        "price": 6.0
+      },
+      {
+        "position": 2,
+        "quarters": 1009,
+        "qty": 4,
+        "price": 6.5
+      },
+      {
+        "position": 3,
+        "quarters": 835,
+        "qty": 2,
+        "price": 9.5
+      },
+      {
+        "position": 4,
+        "quarters": 638,
+        "qty": 4,
+        "price": 3.5
+      },
+      {
+        "position": 5,
+        "quarters": 879,
+        "qty": 3,
+        "price": 3.5
+      },
+      {
+        "position": 6,
+        "quarters": 1946,
+        "qty": 7,
+        "price": 4.5
+      },
+      {
+        "position": 7,
+        "quarters": 1940,
+        "qty": 5,
+        "price": 5.5
+      },
+      {
+        "position": 8,
+        "quarters": 2125,
+        "qty": 20,
+        "price": 0.25
+      }
+    ]
+  },
+  {
+    "date": "2026-07-18",
+    "days_since_last": 4.0,
+    "source": "july block@row3 col=R",
+    "snapshots": [
+      {
+        "position": 1,
+        "quarters": 0,
+        "qty": 1,
+        "price": 6.0
+      },
+      {
+        "position": 2,
+        "quarters": 1085,
+        "qty": 4,
+        "price": 6.5
+      },
+      {
+        "position": 3,
+        "quarters": 1052,
+        "qty": 2,
+        "price": 9.5
+      },
+      {
+        "position": 4,
+        "quarters": 572,
+        "qty": 4,
+        "price": 3.5
+      },
+      {
+        "position": 5,
+        "quarters": 839,
+        "qty": 3,
+        "price": 3.5
+      },
+      {
+        "position": 6,
+        "quarters": 1280,
+        "qty": 7,
+        "price": 4.5
+      },
+      {
+        "position": 7,
+        "quarters": 1563,
+        "qty": 5,
+        "price": 5.5
+      },
+      {
+        "position": 8,
+        "quarters": 1835,
+        "qty": 20,
+        "price": 0.25
+      }
+    ]
+  },
+  {
+    "date": "2026-07-21",
+    "days_since_last": 3.0,
+    "source": "july block@row3 col=U",
+    "snapshots": [
+      {
+        "position": 1,
+        "quarters": 0,
+        "qty": 1,
+        "price": 6.0
+      },
+      {
+        "position": 2,
+        "quarters": 817,
+        "qty": 4,
+        "price": 6.5
+      },
+      {
+        "position": 3,
+        "quarters": 1043,
+        "qty": 2,
+        "price": 9.5
+      },
+      {
+        "position": 4,
+        "quarters": 597,
+        "qty": 4,
+        "price": 3.5
+      },
+      {
+        "position": 5,
+        "quarters": 959,
+        "qty": 3,
+        "price": 3.5
+      },
+      {
+        "position": 6,
+        "quarters": 1874,
+        "qty": 7,
+        "price": 4.5
+      },
+      {
+        "position": 7,
+        "quarters": 2139,
+        "qty": 5,
+        "price": 5.5
+      },
+      {
+        "position": 8,
+        "quarters": 2146,
+        "qty": 20,
+        "price": 0.25
+      }
+    ]
+  },
+  {
+    "date": "2026-07-25",
+    "days_since_last": 4.0,
+    "source": "july block@row3 col=X",
+    "snapshots": [
+      {
+        "position": 1,
+        "quarters": 0,
+        "qty": 1,
+        "price": 6.0
+      },
+      {
+        "position": 2,
+        "quarters": 934,
+        "qty": 4,
+        "price": 6.5
+      },
+      {
+        "position": 3,
+        "quarters": 874,
+        "qty": 2,
+        "price": 9.5
+      },
+      {
+        "position": 4,
+        "quarters": 437,
+        "qty": 4,
+        "price": 3.5
+      },
+      {
+        "position": 5,
+        "quarters": 655,
+        "qty": 3,
+        "price": 3.5
+      },
+      {
+        "position": 6,
+        "quarters": 1694,
+        "qty": 7,
+        "price": 4.5
+      },
+      {
+        "position": 7,
+        "quarters": 1676,
+        "qty": 5,
+        "price": 5.5
+      },
+      {
+        "position": 8,
+        "quarters": 1900,
+        "qty": 20,
+        "price": 0.25
+      }
+    ]
+  }
+]
