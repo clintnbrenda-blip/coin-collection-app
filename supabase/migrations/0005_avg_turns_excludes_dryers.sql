@@ -39,4 +39,6 @@ end;
 $$;
 
 -- Force every existing entry to recompute avg_turns under the corrected logic.
-update public.entry_group_snapshots set quarters_collected = quarters_collected;
+-- (the `where true` is only there to satisfy Supabase's "missing WHERE clause"
+-- safety check — we do intend to touch every row.)
+update public.entry_group_snapshots set quarters_collected = quarters_collected where true;
