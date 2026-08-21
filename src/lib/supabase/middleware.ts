@@ -31,7 +31,9 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const isAuthRoute = request.nextUrl.pathname.startsWith("/login");
+  const isAuthRoute =
+    request.nextUrl.pathname.startsWith("/login") ||
+    request.nextUrl.pathname.startsWith("/debug-env"); // TEMP: diagnosing a login issue
 
   if (!user && !isAuthRoute) {
     const url = request.nextUrl.clone();
