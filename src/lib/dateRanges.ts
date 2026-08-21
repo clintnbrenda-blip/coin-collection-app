@@ -6,6 +6,7 @@ import {
   startOfYear,
   endOfYear,
   format,
+  parseISO,
 } from "date-fns";
 
 export type Period = "month" | "quarter" | "year" | "custom";
@@ -20,40 +21,45 @@ function iso(d: Date): string {
   return format(d, "yyyy-MM-dd");
 }
 
-/** Resolves a period + optional explicit from/to (for "custom") into a concrete date range. */
+/**
+ * Resolves a period + optional explicit from/to (for "custom") into a concrete date range.
+ * `target` anchors month/quarter/year to a specific date instead of today — used when
+ * drilling into a past month from the yearly/quarterly breakdown.
+ */
 export function resolveDateRange(
   period: Period,
   customFrom?: string,
-  customTo?: string
+  customTo?: string,
+  target?: string
 ): DateRange {
-  const now = new Date();
+  const anchor = target ? parseISO(target) : new Date();
 
   switch (period) {
     case "month":
       return {
-        from: iso(startOfMonth(now)),
-        to: iso(endOfMonth(now)),
-        label: format(now, "MMMM yyyy"),
+        from: iso(startOfMonth(anchor)),
+        to: iso(endOfMonth(anchor)),
+        label: format(anchor, "MMMM yyyy"),
       };
     case "quarter": {
-      const q = Math.floor(now.getMonth() / 3) + 1;
+      const q = Math.floor(anchor.getMonth() / 3) + 1;
       return {
-        from: iso(startOfQuarter(now)),
-        to: iso(endOfQuarter(now)),
-        label: `Q${q} ${format(now, "yyyy")}`,
+        from: iso(startOfQuarter(anchor)),
+        to: iso(endOfQuarter(anchor)),
+        label: `Q${q} ${format(anchor, "yyyy")}`,
       };
     }
     case "year":
       return {
-        from: iso(startOfYear(now)),
-        to: iso(endOfYear(now)),
-        label: format(now, "yyyy"),
+        from: iso(startOfYear(anchor)),
+        to: iso(endOfYear(anchor)),
+        label: format(anchor, "yyyy"),
       };
     case "custom":
     default:
       return {
-        from: customFrom || iso(startOfMonth(now)),
-        to: customTo || iso(now),
+        from: customFrom || iso(startOfMonth(anchor)),
+        to: customTo || iso(anchor),
         label: "Custom range",
       };
   }

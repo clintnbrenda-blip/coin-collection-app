@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import { format, parseISO } from "date-fns";
 import { getCurrentProfile } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { AppHeader } from "@/components/AppHeader";
@@ -16,6 +17,7 @@ export default async function DashboardPage({
     from?: string;
     to?: string;
     group?: string;
+    target?: string;
   }>;
 }) {
   const profile = await getCurrentProfile();
@@ -24,8 +26,10 @@ export default async function DashboardPage({
 
   const sp = await searchParams;
   const period = (sp.period as Period) || "month";
-  const range = resolveDateRange(period, sp.from, sp.to);
+  const range = resolveDateRange(period, sp.from, sp.to, sp.target);
   const groupFilter = sp.group || "";
+  // Carries the group filter (and nothing else) onto links that change period/target.
+  const groupQS = groupFilter ? `&group=${groupFilter}` : "";
 
   const supabase = await createClient();
 
@@ -62,7 +66,7 @@ export default async function DashboardPage({
   const { data: vendingRows } = entryIds.length
     ? await supabase
         .from("vending_totals")
-        .select("vending_machine_id, cash_collected, coins_collected, vending_machines(name)")
+        .select("entry_id, vending_machine_id, cash_collected, coins_collected, vending_machines(name)")
         .in("entry_id", entryIds)
     : { data: [] };
 
@@ -71,17 +75,14 @@ export default async function DashboardPage({
     : { data: [] };
 
   // ---- Aggregates ----
-  const washerIncome = (snapshots ?? [])
-    .filter((s) => getMg(s)?.type === "washer")
-    .reduce((sum, s) => sum + Number(s.dollars ?? 0), 0);
-  const dryerIncome = (snapshots ?? [])
-    .filter((s) => getMg(s)?.type === "dryer")
-    .reduce((sum, s) => sum + Number(s.dollars ?? 0), 0);
-  const machineIncome = washerIncome + dryerIncome;
+  const machineIncome = (snapshots ?? []).reduce((sum, s) => sum + Number(s.dollars ?? 0), 0);
 
-  const vendingCash = (vendingRows ?? []).reduce((s, v) => s + Number(v.cash_collected ?? 0), 0);
-  const vendingCoins = (vendingRows ?? []).reduce((s, v) => s + Number(v.coins_collected ?? 0), 0);
-  const vendingIncome = vendingCash + vendingCoins;
+  const vendingByEntry = new Map<string, number>();
+  for (const v of vendingRows ?? []) {
+    const amount = Number(v.cash_collected ?? 0) + Number(v.coins_collected ?? 0);
+    vendingByEntry.set(v.entry_id, (vendingByEntry.get(v.entry_id) ?? 0) + amount);
+  }
+  const vendingIncome = [...vendingByEntry.values()].reduce((s, v) => s + v, 0);
 
   const vendingByMachine = new Map<string, { name: string; total: number }>();
   for (const v of vendingRows ?? []) {
@@ -121,6 +122,38 @@ export default async function DashboardPage({
       ? groupTurnsRows.reduce((s, g) => s + g.avgTurns, 0) / groupTurnsRows.length
       : 0;
 
+  // Monthly breakdown — lets the owner drill from a year/quarter down into one month.
+  interface MonthAgg {
+    key: string;
+    label: string;
+    income: number;
+    turnsSum: number;
+    turnsCount: number;
+    entryCount: number;
+  }
+  const monthMap = new Map<string, MonthAgg>();
+  for (const e of entries ?? []) {
+    const key = e.date.slice(0, 7); // YYYY-MM
+    const agg = monthMap.get(key) ?? {
+      key,
+      label: format(parseISO(`${key}-01`), "MMMM yyyy"),
+      income: 0,
+      turnsSum: 0,
+      turnsCount: 0,
+      entryCount: 0,
+    };
+    agg.income += Number(e.total_income ?? 0) + (vendingByEntry.get(e.id) ?? 0);
+    agg.entryCount += 1;
+    if (e.avg_turns) {
+      agg.turnsSum += Number(e.avg_turns);
+      agg.turnsCount += 1;
+    }
+    monthMap.set(key, agg);
+  }
+  const monthRows = [...monthMap.values()]
+    .map((m) => ({ ...m, avgTurns: m.turnsCount ? m.turnsSum / m.turnsCount : 0 }))
+    .sort((a, b) => b.key.localeCompare(a.key));
+
   const logRows = (entries ?? []).map((e) => {
     const emp = Array.isArray(e.profiles) ? e.profiles[0] : e.profiles;
     return {
@@ -145,7 +178,7 @@ export default async function DashboardPage({
             {(["month", "quarter", "year", "custom"] as Period[]).map((p) => (
               <Link
                 key={p}
-                href={`/dashboard?period=${p}${groupFilter ? `&group=${groupFilter}` : ""}`}
+                href={`/dashboard?period=${p}${groupQS}`}
                 className={`rounded-md px-3 py-1.5 text-sm font-medium ${
                   period === p
                     ? "bg-blue-600 text-white"
@@ -195,15 +228,51 @@ export default async function DashboardPage({
 
         <p className="text-sm text-neutral-500">{range.label} · {range.from} to {range.to}</p>
 
-        {/* Summary cards */}
-        <section className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-          <SummaryCard label="Combined income" value={`$${combinedIncome.toFixed(2)}`} highlight />
-          <SummaryCard label="Washer income" value={`$${washerIncome.toFixed(2)}`} />
-          <SummaryCard label="Dryer income" value={`$${dryerIncome.toFixed(2)}`} />
+        {/* Hero stats — income and turns get equal top billing */}
+        <section className="grid grid-cols-2 gap-3">
+          <HeroCard label="Total income" value={`$${combinedIncome.toFixed(2)}`} />
+          <HeroCard label="Avg turns" value={overallAvgTurns.toFixed(2)} />
+        </section>
+
+        <section className="grid grid-cols-3 gap-3">
           <SummaryCard label="Vending income" value={`$${vendingIncome.toFixed(2)}`} />
           <SummaryCard label="Bank deposits" value={`$${depositsTotal.toFixed(2)}`} />
           <SummaryCard label="Avg income/day" value={`$${incomePerDayAvg.toFixed(2)}`} />
         </section>
+
+        {/* Monthly breakdown — click a month to drill into its detail */}
+        {period !== "month" && monthRows.length > 0 && (
+          <section className="rounded-xl border border-neutral-200 bg-white p-4">
+            <h2 className="mb-3 font-semibold text-neutral-900">By month</h2>
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="text-left text-neutral-500">
+                  <th className="pb-2 font-medium">Month</th>
+                  <th className="pb-2 text-right font-medium">Income</th>
+                  <th className="pb-2 text-right font-medium">Avg turns</th>
+                  <th className="pb-2 text-right font-medium">Visits</th>
+                </tr>
+              </thead>
+              <tbody>
+                {monthRows.map((m) => (
+                  <tr key={m.key} className="border-t border-neutral-100">
+                    <td className="py-1.5">
+                      <Link
+                        href={`/dashboard?period=month&target=${m.key}-01${groupQS}`}
+                        className="font-medium text-blue-600 hover:underline"
+                      >
+                        {m.label}
+                      </Link>
+                    </td>
+                    <td className="py-1.5 text-right text-neutral-600">${m.income.toFixed(2)}</td>
+                    <td className="py-1.5 text-right text-neutral-600">{m.avgTurns.toFixed(2)}</td>
+                    <td className="py-1.5 text-right text-neutral-600">{m.entryCount}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </section>
+        )}
 
         {/* Turns by machine group */}
         <section className="rounded-xl border border-neutral-200 bg-white p-4">
@@ -326,25 +395,20 @@ export default async function DashboardPage({
   );
 }
 
-function SummaryCard({
-  label,
-  value,
-  highlight,
-}: {
-  label: string;
-  value: string;
-  highlight?: boolean;
-}) {
+function HeroCard({ label, value }: { label: string; value: string }) {
   return (
-    <div
-      className={`rounded-xl border p-4 ${
-        highlight ? "border-blue-200 bg-blue-50" : "border-neutral-200 bg-white"
-      }`}
-    >
-      <p className={`text-xs ${highlight ? "text-blue-700" : "text-neutral-500"}`}>{label}</p>
-      <p className={`text-xl font-semibold ${highlight ? "text-blue-900" : "text-neutral-900"}`}>
-        {value}
-      </p>
+    <div className="rounded-xl border border-blue-200 bg-blue-50 p-5 text-center">
+      <p className="text-sm text-blue-700">{label}</p>
+      <p className="text-4xl font-semibold text-blue-900">{value}</p>
+    </div>
+  );
+}
+
+function SummaryCard({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-xl border border-neutral-200 bg-white p-4">
+      <p className="text-xs text-neutral-500">{label}</p>
+      <p className="text-xl font-semibold text-neutral-900">{value}</p>
     </div>
   );
 }
