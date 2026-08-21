@@ -101,25 +101,38 @@ export default async function DashboardPage({
   const totalDays = (entries ?? []).reduce((s, e) => s + Number(e.days_since_last ?? 0), 0);
   const incomePerDayAvg = totalDays > 0 ? combinedIncome / totalDays : 0;
 
-  // per-machine-group avg turns for the period (avg of turns where quarters > 0)
-  const groupTurns = new Map<string, { name: string; turnsSum: number; count: number }>();
+  // per-machine-group avg turns for the period (avg of turns where quarters > 0).
+  // Dryer turns (group hours-of-use/day, ~70-90+) are a different metric than washer
+  // turns (per-machine cycles/day, ~2-6) — shown per-group below, but excluded from
+  // the "overall" average, matching the spreadsheet's own monthly formula which does
+  // the same (e.g. `=SUM(AG4:AG10)/6`, stopping before the dryer row).
+  const groupTurns = new Map<
+    string,
+    { name: string; type: string; turnsSum: number; count: number }
+  >();
   for (const s of snapshots ?? []) {
     if (groupFilter && s.machine_group_id !== groupFilter) continue;
     if (Number(s.quarters_collected) <= 0) continue;
     const mg = getMg(s);
     const key = s.machine_group_id;
-    const entry = groupTurns.get(key) ?? { name: mg?.name ?? "?", turnsSum: 0, count: 0 };
+    const entry = groupTurns.get(key) ?? {
+      name: mg?.name ?? "?",
+      type: mg?.type ?? "washer",
+      turnsSum: 0,
+      count: 0,
+    };
     entry.turnsSum += Number(s.turns ?? 0);
     entry.count += 1;
     groupTurns.set(key, entry);
   }
   const groupTurnsRows = [...groupTurns.values()]
-    .map((g) => ({ name: g.name, avgTurns: g.turnsSum / g.count }))
+    .map((g) => ({ name: g.name, type: g.type, avgTurns: g.turnsSum / g.count }))
     .sort((a, b) => b.avgTurns - a.avgTurns);
 
+  const washerTurnsRows = groupTurnsRows.filter((g) => g.type === "washer");
   const overallAvgTurns =
-    groupTurnsRows.length > 0
-      ? groupTurnsRows.reduce((s, g) => s + g.avgTurns, 0) / groupTurnsRows.length
+    washerTurnsRows.length > 0
+      ? washerTurnsRows.reduce((s, g) => s + g.avgTurns, 0) / washerTurnsRows.length
       : 0;
 
   // Monthly breakdown — lets the owner drill from a year/quarter down into one month.
@@ -281,9 +294,13 @@ export default async function DashboardPage({
               Turns by machine group {groupFilter ? "(filtered)" : ""}
             </h2>
             <span className="text-sm text-neutral-500">
-              Overall avg: {overallAvgTurns.toFixed(2)}
+              Overall avg (washers): {overallAvgTurns.toFixed(2)}
             </span>
           </div>
+          <p className="mb-2 text-xs text-neutral-400">
+            Dryer turns measure group hours-of-use/day, not per-machine cycles, so they&apos;re
+            shown separately below but excluded from the overall average.
+          </p>
           {groupTurnsRows.length === 0 ? (
             <p className="text-sm text-neutral-500">No data for this period.</p>
           ) : (
