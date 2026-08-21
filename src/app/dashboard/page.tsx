@@ -145,7 +145,7 @@ export default async function DashboardPage({
             {(["month", "quarter", "year", "custom"] as Period[]).map((p) => (
               <Link
                 key={p}
-                href={`/dashboard?period=${p}`}
+                href={`/dashboard?period=${p}${groupFilter ? `&group=${groupFilter}` : ""}`}
                 className={`rounded-md px-3 py-1.5 text-sm font-medium ${
                   period === p
                     ? "bg-blue-600 text-white"

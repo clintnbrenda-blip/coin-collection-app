@@ -1,9 +1,8 @@
 import { notFound, redirect } from "next/navigation";
 import { getCurrentProfile } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
+import { isWithinEditWindow } from "@/lib/editWindow";
 import { EditEntryForm } from "./EditEntryForm";
-
-const EDIT_WINDOW_MS = 60 * 60 * 1000;
 
 export default async function EditEntryPage({
   params,
@@ -25,7 +24,7 @@ export default async function EditEntryPage({
 
   const isOwner = profile.role === "owner";
   const isMine = entry.employee_id === profile.id;
-  const withinWindow = Date.now() - new Date(entry.created_at).getTime() < EDIT_WINDOW_MS;
+  const withinWindow = isWithinEditWindow(entry.created_at);
   if (!isOwner && !(isMine && withinWindow)) notFound();
 
   const [

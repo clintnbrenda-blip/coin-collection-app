@@ -4,9 +4,8 @@ import { getCurrentProfile } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { AppHeader } from "@/components/AppHeader";
 import { CHECKLIST_ITEMS } from "@/lib/checklist";
+import { isWithinEditWindow } from "@/lib/editWindow";
 import { DeleteEntryButton } from "./DeleteEntryButton";
-
-const EDIT_WINDOW_MS = 60 * 60 * 1000;
 
 export default async function EntryDetailPage({
   params,
@@ -33,8 +32,7 @@ export default async function EntryDetailPage({
   const isMine = entry.employee_id === profile.id;
   if (!isOwner && !isMine) notFound();
 
-  const withinEditWindow =
-    Date.now() - new Date(entry.created_at).getTime() < EDIT_WINDOW_MS;
+  const withinEditWindow = isWithinEditWindow(entry.created_at);
   const canEdit = isOwner || (isMine && withinEditWindow);
 
   const [{ data: snapshots }, { data: vendingRows }, { data: deposit }, { data: checklist }] =
