@@ -22,7 +22,9 @@ export async function signIn(
   const { error } = await supabase.auth.signInWithPassword({ email, password });
 
   if (error) {
-    return { error: "Incorrect email or password." };
+    // TEMP: showing the raw Supabase error for debugging a login issue.
+    // Revert to a generic "Incorrect email or password." message once resolved.
+    return { error: `${error.message} (status ${error.status ?? "?"})` };
   }
 
   redirect("/");
