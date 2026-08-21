@@ -56,6 +56,32 @@ export async function createEmployee(
   return { error: null, createdEmail: email, tempPassword };
 }
 
+export interface ResetPasswordState {
+  error: string | null;
+  tempPassword: string | null;
+}
+
+export async function resetPassword(
+  userId: string,
+  _prevState: ResetPasswordState,
+  _formData: FormData
+): Promise<ResetPasswordState> {
+  await requireOwner();
+
+  const tempPassword = generateTempPassword();
+  const admin = createAdminClient();
+
+  const { error } = await admin.auth.admin.updateUserById(userId, {
+    password: tempPassword,
+  });
+
+  if (error) {
+    return { error: error.message, tempPassword: null };
+  }
+
+  return { error: null, tempPassword };
+}
+
 export async function setActive(formData: FormData) {
   await requireOwner();
   const supabase = await createClient();

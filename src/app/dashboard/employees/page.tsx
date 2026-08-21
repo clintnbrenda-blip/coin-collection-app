@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { AppHeader } from "@/components/AppHeader";
 import { setActive, setRole } from "./actions";
 import { CreateEmployeeForm } from "./CreateEmployeeForm";
+import { ResetPasswordButton } from "./ResetPasswordButton";
 
 export default async function EmployeesPage() {
   const profile = await getCurrentProfile();
@@ -32,47 +33,55 @@ export default async function EmployeesPage() {
             {(profiles ?? []).map((p) => (
               <div
                 key={p.id}
-                className={`flex items-center justify-between gap-2 rounded-lg border p-3 ${
+                className={`rounded-lg border p-3 ${
                   p.active ? "border-neutral-200" : "border-neutral-100 bg-neutral-50 opacity-60"
                 }`}
               >
-                <div className="flex-1">
-                  <p className="text-sm font-medium text-neutral-800">{p.full_name}</p>
-                  <p className="text-xs text-neutral-400">
-                    {p.role} {!p.active && "· deactivated"}
-                  </p>
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-neutral-800">{p.full_name}</p>
+                    <p className="text-xs text-neutral-400">
+                      {p.role} {!p.active && "· deactivated"}
+                    </p>
+                  </div>
+
+                  {p.id !== profile.id && (
+                    <>
+                      <form action={setRole}>
+                        <input type="hidden" name="id" value={p.id} />
+                        <input
+                          type="hidden"
+                          name="role"
+                          value={p.role === "owner" ? "employee" : "owner"}
+                        />
+                        <button
+                          type="submit"
+                          className="rounded-md border border-neutral-300 px-2.5 py-1.5 text-xs font-medium text-neutral-600 hover:bg-neutral-100"
+                        >
+                          Make {p.role === "owner" ? "employee" : "owner"}
+                        </button>
+                      </form>
+                      <form action={setActive}>
+                        <input type="hidden" name="id" value={p.id} />
+                        <input type="hidden" name="active" value={(!p.active).toString()} />
+                        <button
+                          type="submit"
+                          className="rounded-md border border-neutral-300 px-2.5 py-1.5 text-xs font-medium text-neutral-600 hover:bg-neutral-100"
+                        >
+                          {p.active ? "Deactivate" : "Reactivate"}
+                        </button>
+                      </form>
+                    </>
+                  )}
+                  {p.id === profile.id && (
+                    <span className="text-xs text-neutral-400">(you)</span>
+                  )}
                 </div>
 
                 {p.id !== profile.id && (
-                  <>
-                    <form action={setRole}>
-                      <input type="hidden" name="id" value={p.id} />
-                      <input
-                        type="hidden"
-                        name="role"
-                        value={p.role === "owner" ? "employee" : "owner"}
-                      />
-                      <button
-                        type="submit"
-                        className="rounded-md border border-neutral-300 px-2.5 py-1.5 text-xs font-medium text-neutral-600 hover:bg-neutral-100"
-                      >
-                        Make {p.role === "owner" ? "employee" : "owner"}
-                      </button>
-                    </form>
-                    <form action={setActive}>
-                      <input type="hidden" name="id" value={p.id} />
-                      <input type="hidden" name="active" value={(!p.active).toString()} />
-                      <button
-                        type="submit"
-                        className="rounded-md border border-neutral-300 px-2.5 py-1.5 text-xs font-medium text-neutral-600 hover:bg-neutral-100"
-                      >
-                        {p.active ? "Deactivate" : "Reactivate"}
-                      </button>
-                    </form>
-                  </>
-                )}
-                {p.id === profile.id && (
-                  <span className="text-xs text-neutral-400">(you)</span>
+                  <div className="mt-2 border-t border-neutral-100 pt-2">
+                    <ResetPasswordButton userId={p.id} fullName={p.full_name} />
+                  </div>
                 )}
               </div>
             ))}
