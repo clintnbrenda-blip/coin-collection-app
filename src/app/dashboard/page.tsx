@@ -140,31 +140,49 @@ export default async function DashboardPage({
     key: string;
     label: string;
     income: number;
-    turnsSum: number;
-    turnsCount: number;
     entryCount: number;
   }
   const monthMap = new Map<string, MonthAgg>();
+  const entryIdToMonth = new Map<string, string>();
   for (const e of entries ?? []) {
     const key = e.date.slice(0, 7); // YYYY-MM
+    entryIdToMonth.set(e.id, key);
     const agg = monthMap.get(key) ?? {
       key,
       label: format(parseISO(`${key}-01`), "MMMM yyyy"),
       income: 0,
-      turnsSum: 0,
-      turnsCount: 0,
       entryCount: 0,
     };
     agg.income += Number(e.total_income ?? 0) + (vendingByEntry.get(e.id) ?? 0);
     agg.entryCount += 1;
-    if (e.avg_turns) {
-      agg.turnsSum += Number(e.avg_turns);
-      agg.turnsCount += 1;
-    }
     monthMap.set(key, agg);
   }
+
+  // Turns matching the spreadsheet's own method: average each washer group's
+  // OWN monthly average turns, then average those group-averages together —
+  // not a plain average of every visit's turns (see dashboard feedback thread).
+  const monthGroupTurns = new Map<string, Map<string, { sum: number; count: number }>>();
+  for (const s of snapshots ?? []) {
+    if (getMg(s)?.type !== "washer") continue;
+    if (Number(s.quarters_collected) <= 0) continue;
+    const month = entryIdToMonth.get(s.entry_id);
+    if (!month) continue;
+    const groupMap = monthGroupTurns.get(month) ?? new Map();
+    const g = groupMap.get(s.machine_group_id) ?? { sum: 0, count: 0 };
+    g.sum += Number(s.turns ?? 0);
+    g.count += 1;
+    groupMap.set(s.machine_group_id, g);
+    monthGroupTurns.set(month, groupMap);
+  }
+  function monthAvgTurns(month: string): number {
+    const groupMap = monthGroupTurns.get(month);
+    if (!groupMap || groupMap.size === 0) return 0;
+    const groupAverages = [...groupMap.values()].map((g) => g.sum / g.count);
+    return groupAverages.reduce((s, a) => s + a, 0) / groupAverages.length;
+  }
+
   const monthRows = [...monthMap.values()]
-    .map((m) => ({ ...m, avgTurns: m.turnsCount ? m.turnsSum / m.turnsCount : 0 }))
+    .map((m) => ({ ...m, avgTurns: monthAvgTurns(m.key) }))
     .sort((a, b) => b.key.localeCompare(a.key));
 
   const logRows = (entries ?? []).map((e) => {
