@@ -36,16 +36,25 @@ export function PhotoPickerInput({
     };
   }, [previewUrl]);
 
-  // Always release the camera when it's no longer shown, or on unmount.
+  // Release the camera only on an explicit close (Cancel / after capture) or
+  // on unmount — NOT on every `cameraOpen` change. An earlier version had a
+  // second effect keyed on `cameraOpen` whose cleanup also called
+  // `stopStream()`; because both effects shared that dependency, React ran
+  // this effect's stale cleanup (from the false-render) immediately after
+  // `openCamera()` flipped `cameraOpen` to true, which stopped the
+  // brand-new stream's tracks (via the live `streamRef.current`, since refs
+  // aren't snapshotted in closures) before the video element ever attached
+  // it. That's what produced a permanently black preview even after
+  // permission was granted. Splitting "stop" out to only fire on unmount and
+  // from `closeCamera()` removes that race entirely.
+  function stopStream() {
+    streamRef.current?.getTracks().forEach((t) => t.stop());
+    streamRef.current = null;
+  }
+
   useEffect(() => {
-    if (!cameraOpen && streamRef.current) {
-      streamRef.current.getTracks().forEach((t) => t.stop());
-      streamRef.current = null;
-    }
-    return () => {
-      streamRef.current?.getTracks().forEach((t) => t.stop());
-    };
-  }, [cameraOpen]);
+    return () => stopStream();
+  }, []);
 
   useEffect(() => {
     if (cameraOpen && videoRef.current && streamRef.current) {
@@ -53,7 +62,7 @@ export function PhotoPickerInput({
       video.srcObject = streamRef.current;
       // Some Android browsers don't honor the `autoPlay` attribute reliably
       // when srcObject is assigned programmatically — force playback
-      // explicitly (this is exactly why the preview was showing black).
+      // explicitly.
       video.play().catch(() => {
         // Autoplay can still be rejected in rare cases; the Capture button
         // stays disabled via videoWidth===0 checks either way.
@@ -84,6 +93,7 @@ export function PhotoPickerInput({
   }
 
   function closeCamera() {
+    stopStream();
     setCameraOpen(false);
   }
 
