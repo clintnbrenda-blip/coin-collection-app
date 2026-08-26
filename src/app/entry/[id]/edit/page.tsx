@@ -17,7 +17,7 @@ export default async function EditEntryPage({
 
   const { data: entry } = await supabase
     .from("collection_entries")
-    .select("id, date, days_since_last, employee_id, created_at")
+    .select("id, date, days_since_last, employee_id, created_at, location_id")
     .eq("id", id)
     .single();
   if (!entry) notFound();
@@ -33,6 +33,7 @@ export default async function EditEntryPage({
     { data: vendingRows },
     { data: deposit },
     { data: checklist },
+    { data: previousEntry },
   ] = await Promise.all([
     supabase
       .from("entry_group_snapshots")
@@ -51,6 +52,16 @@ export default async function EditEntryPage({
       .eq("entry_id", id),
     supabase.from("deposits").select("*").eq("entry_id", id).maybeSingle(),
     supabase.from("checklist_completions").select("*").eq("entry_id", id).maybeSingle(),
+    // The visit immediately before this one — used to auto-calculate days_since_last
+    // if the date gets edited, the same way the new-entry form does.
+    supabase
+      .from("collection_entries")
+      .select("date")
+      .eq("location_id", entry.location_id)
+      .lt("date", entry.date)
+      .order("date", { ascending: false })
+      .limit(1)
+      .maybeSingle(),
   ]);
 
   const machineGroups = (snapshots ?? [])
@@ -87,6 +98,7 @@ export default async function EditEntryPage({
       role={profile.role}
       date={entry.date}
       daysSinceLast={String(entry.days_since_last)}
+      previousEntryDate={previousEntry?.date ?? null}
       machineGroups={machineGroups}
       vendingMachines={vendingMachines}
       depositAmount={String(deposit?.deposit_amount ?? 0)}

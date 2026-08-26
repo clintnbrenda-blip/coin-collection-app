@@ -4,6 +4,7 @@ import { useActionState, useMemo, useState } from "react";
 import { AppHeader } from "@/components/AppHeader";
 import { CHECKLIST_ITEMS } from "@/lib/checklist";
 import { focusNextFieldOnEnter } from "@/lib/formKeyNav";
+import { todayLocalISO, daysBetween } from "@/lib/dateMath";
 import { submitEntry, type SubmitEntryState } from "./actions";
 
 interface MachineGroup {
@@ -19,20 +20,6 @@ interface VendingMachine {
   id: string;
   name: string;
   display_order: number;
-}
-
-function todayLocalISO(): string {
-  const d = new Date();
-  const offsetMs = d.getTimezoneOffset() * 60000;
-  return new Date(d.getTime() - offsetMs).toISOString().slice(0, 10);
-}
-
-function daysBetween(a: string, b: string): number {
-  const msPerDay = 24 * 60 * 60 * 1000;
-  return Math.round(
-    (new Date(a + "T00:00:00").getTime() - new Date(b + "T00:00:00").getTime()) /
-      msPerDay
-  );
 }
 
 const initialState: SubmitEntryState = { error: null };
@@ -59,8 +46,10 @@ export function EntryForm({
     () => (lastEntryDate ? daysBetween(date, lastEntryDate) : null),
     [date, lastEntryDate]
   );
-  const [daysOverride, setDaysOverride] = useState<string>("");
-  const effectiveDays = daysOverride || (computedDays !== null ? String(computedDays) : "");
+  // Days since last is auto-calculated from the date field whenever a previous
+  // entry exists — only editable as a manual fallback for the very first entry.
+  const [manualDays, setManualDays] = useState<string>("");
+  const effectiveDays = lastEntryDate ? String(computedDays ?? "") : manualDays;
 
   return (
     <div className="min-h-screen bg-neutral-50 pb-24">
@@ -105,17 +94,22 @@ export function EntryForm({
                 min="0.5"
                 name="days_since_last"
                 value={effectiveDays}
-                onChange={(e) => setDaysOverride(e.target.value)}
+                onChange={(e) => setManualDays(e.target.value)}
+                readOnly={!!lastEntryDate}
                 required
-                className="w-full rounded-lg border border-neutral-300 px-3 py-2.5 text-base"
+                className={`w-full rounded-lg border px-3 py-2.5 text-base ${
+                  lastEntryDate
+                    ? "border-neutral-200 bg-neutral-100 text-neutral-600"
+                    : "border-neutral-300"
+                }`}
               />
             </div>
           </div>
-          {!lastEntryDate && (
-            <p className="mt-2 text-xs text-neutral-500">
-              No previous entry found for this location — enter the days manually.
-            </p>
-          )}
+          <p className="mt-2 text-xs text-neutral-500">
+            {lastEntryDate
+              ? `Calculated automatically from the date above (last visit was ${lastEntryDate}).`
+              : "No previous entry found for this location — enter the days manually."}
+          </p>
         </section>
 
         {/* Machine groups */}

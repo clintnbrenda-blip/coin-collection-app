@@ -1,9 +1,10 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useMemo, useState } from "react";
 import { AppHeader } from "@/components/AppHeader";
 import { CHECKLIST_ITEMS } from "@/lib/checklist";
 import { focusNextFieldOnEnter } from "@/lib/formKeyNav";
+import { daysBetween } from "@/lib/dateMath";
 import { updateEntry, type EditEntryState } from "./actions";
 
 interface MachineGroupField {
@@ -27,8 +28,9 @@ export function EditEntryForm({
   entryId,
   employeeName,
   role,
-  date,
+  date: initialDate,
   daysSinceLast,
+  previousEntryDate,
   machineGroups,
   vendingMachines,
   depositAmount,
@@ -41,6 +43,7 @@ export function EditEntryForm({
   role: "owner" | "employee";
   date: string;
   daysSinceLast: string;
+  previousEntryDate: string | null;
   machineGroups: MachineGroupField[];
   vendingMachines: VendingMachineField[];
   depositAmount: string;
@@ -50,6 +53,14 @@ export function EditEntryForm({
 }) {
   const boundAction = updateEntry.bind(null, entryId);
   const [state, formAction, pending] = useActionState(boundAction, initialState);
+
+  const [date, setDate] = useState(initialDate);
+  const computedDays = useMemo(
+    () => (previousEntryDate ? daysBetween(date, previousEntryDate) : null),
+    [date, previousEntryDate]
+  );
+  const [manualDays, setManualDays] = useState(daysSinceLast);
+  const effectiveDays = previousEntryDate ? String(computedDays ?? "") : manualDays;
 
   return (
     <div className="min-h-screen bg-neutral-50 pb-24">
@@ -75,7 +86,8 @@ export function EditEntryForm({
               <input
                 type="date"
                 name="date"
-                defaultValue={date}
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
                 required
                 className="w-full rounded-lg border border-neutral-300 px-3 py-2.5 text-base"
               />
@@ -89,12 +101,23 @@ export function EditEntryForm({
                 step="0.5"
                 min="0.5"
                 name="days_since_last"
-                defaultValue={daysSinceLast}
+                value={effectiveDays}
+                onChange={(e) => setManualDays(e.target.value)}
+                readOnly={!!previousEntryDate}
                 required
-                className="w-full rounded-lg border border-neutral-300 px-3 py-2.5 text-base"
+                className={`w-full rounded-lg border px-3 py-2.5 text-base ${
+                  previousEntryDate
+                    ? "border-neutral-200 bg-neutral-100 text-neutral-600"
+                    : "border-neutral-300"
+                }`}
               />
             </div>
           </div>
+          <p className="mt-2 text-xs text-neutral-500">
+            {previousEntryDate
+              ? `Calculated automatically from the date above (previous visit was ${previousEntryDate}).`
+              : "No previous entry found before this one — enter the days manually."}
+          </p>
         </section>
 
         <section className="rounded-xl border border-neutral-200 bg-white p-4">
