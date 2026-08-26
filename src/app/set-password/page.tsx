@@ -6,15 +6,15 @@ import { createClient } from "@/lib/supabase/client";
 
 type Status = "checking" | "ready" | "invalid" | "saving" | "error" | "done";
 
-// Invite links (unlike password-reset links) carry their session tokens in
-// the URL fragment rather than a `?code=` query param — Supabase doesn't
-// support the PKCE exchange flow for invites, since the browser that sent
-// the invite and the browser accepting it are usually different (see the
-// comment in dashboard/employees/actions.ts). A fragment is never sent to
-// the server, so this has to be handled entirely client-side: read it here,
-// hand it to the Supabase client to establish a session, then let the
-// person set their password.
-export default function AcceptInvitePage() {
+// The universal landing page for every password-setup/reset email link —
+// a genuine invite, a self-service "forgot password", or an owner
+// resetting/re-inviting an employee. All of them now carry their session
+// tokens in the URL fragment rather than a `?code=` query param (see
+// src/lib/supabase/implicit.ts for why), which only client-side JS can
+// read — so this has to be handled entirely here: read the fragment, hand
+// it to the Supabase client to establish a session, then let the person set
+// their password.
+export default function SetPasswordPage() {
   const router = useRouter();
   const [status, setStatus] = useState<Status>("checking");
   const [error, setError] = useState<string | null>(null);
@@ -41,7 +41,7 @@ export default function AcceptInvitePage() {
     const accessToken = params.get("access_token");
     const refreshToken = params.get("refresh_token");
     if (!accessToken || !refreshToken) {
-      setError("This invite link is missing or malformed.");
+      setError("This link is missing or malformed.");
       setStatus("invalid");
       return;
     }
@@ -60,14 +60,14 @@ export default function AcceptInvitePage() {
         }
       })
       .catch(() => {
-        // A well-formed Supabase invite link never lands here — this only
-        // catches a mangled/truncated URL (bad copy-paste, an email client
-        // that broke the link) where the token isn't valid JWT shape at all,
+        // A well-formed Supabase link never lands here — this only catches
+        // a mangled/truncated URL (bad copy-paste, an email client that
+        // broke the link) where the token isn't valid JWT shape at all,
         // which throws while Supabase's client tries to decode it rather
         // than resolving with the normal { error } shape above. Without
-        // this, that case left the page stuck on "Checking your invite…"
+        // this, that case left the page stuck on "Checking your link…"
         // forever.
-        setError("This invite link is missing or malformed.");
+        setError("This link is missing or malformed.");
         setStatus("invalid");
       });
   }, []);
@@ -108,19 +108,19 @@ export default function AcceptInvitePage() {
     <div className="flex min-h-screen items-center justify-center bg-neutral-50 px-4">
       <div className="w-full max-w-sm">
         <h1 className="mb-1 text-center text-2xl font-semibold text-neutral-900">
-          Welcome to Cypress Laundry
+          Set your password
         </h1>
         <p className="mb-8 text-center text-sm text-neutral-500">
-          Set a password to finish setting up your account.
+          Choose a password for your Cypress Laundry account.
         </p>
 
         {status === "checking" && (
-          <p className="text-center text-sm text-neutral-500">Checking your invite…</p>
+          <p className="text-center text-sm text-neutral-500">Checking your link…</p>
         )}
 
         {status === "invalid" && (
           <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-center">
-            <p className="font-medium text-red-900">This invite link isn&apos;t valid</p>
+            <p className="font-medium text-red-900">This link isn&apos;t valid</p>
             <p className="mt-1 text-sm text-red-700">
               {error ?? "It may have already been used or expired."} Ask the owner to send you a
               new one.

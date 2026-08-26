@@ -4,6 +4,7 @@ import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { createImplicitFlowClient } from "@/lib/supabase/implicit";
 import { getCurrentProfile } from "@/lib/auth";
 
 async function requireOwner() {
@@ -53,13 +54,12 @@ export async function createEmployee(
 
   const { error } = await admin.auth.admin.inviteUserByEmail(email, {
     data: { full_name: fullName },
-    // NOT /auth/confirm — invites don't support the PKCE code-exchange flow
-    // password-reset links use (the inviting browser and the accepting
-    // browser are different, so Supabase can't guarantee PKCE's security
-    // properties here). Invite links instead carry the session tokens in
-    // the URL fragment, which only client-side JS can read — see
-    // /accept-invite.
-    redirectTo: `${protocol}://${host}/accept-invite`,
+    // Invites don't support the PKCE code-exchange flow password-reset
+    // links normally use (the inviting browser and the accepting browser
+    // are different, so Supabase can't guarantee PKCE's security properties
+    // here). Invite links instead carry the session tokens in the URL
+    // fragment, which only client-side JS can read — see /set-password.
+    redirectTo: `${protocol}://${host}/set-password`,
   });
 
   if (error) {
@@ -71,9 +71,13 @@ export async function createEmployee(
     // password-reset-style email instead, which works for existing accounts
     // and lands them on the same "set your password" experience.
     if (error.code === "email_exists" || error.code === "user_already_exists") {
-      const supabase = await createClient();
+      // Implicit-flow client, not the cookie-bound SSR one — this is the
+      // owner sending the email FOR someone else, so a PKCE code_verifier
+      // stored in the owner's own cookies would never be reachable from the
+      // employee's device. See src/lib/supabase/implicit.ts.
+      const supabase = createImplicitFlowClient();
       const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${protocol}://${host}/auth/confirm?next=/reset-password`,
+        redirectTo: `${protocol}://${host}/set-password`,
       });
       if (resetError) {
         return { error: resetError.message, createdEmail: null, resentExisting: false };
@@ -117,11 +121,14 @@ export async function resendInvite(
   // Same fallback createEmployee uses for an already-registered email —
   // inviteUserByEmail only works for brand-new accounts, so a "resend" for
   // an existing (even never-activated) one goes through the password-reset
-  // email instead. Same destination for the employee either way: a link to
-  // set their password.
-  const supabase = await createClient();
+  // email instead. Implicit-flow client, not the cookie-bound SSR one —
+  // this is the owner sending the email FOR someone else, so a PKCE
+  // code_verifier stored in the owner's own cookies would never be
+  // reachable from the employee's device. See
+  // src/lib/supabase/implicit.ts.
+  const supabase = createImplicitFlowClient();
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${protocol}://${host}/auth/confirm?next=/reset-password`,
+    redirectTo: `${protocol}://${host}/set-password`,
   });
 
   if (error) {

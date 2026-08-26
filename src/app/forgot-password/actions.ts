@@ -1,7 +1,7 @@
 "use server";
 
 import { headers } from "next/headers";
-import { createClient } from "@/lib/supabase/server";
+import { createImplicitFlowClient } from "@/lib/supabase/implicit";
 
 export interface RequestResetState {
   error: string | null;
@@ -25,9 +25,13 @@ export async function requestPasswordReset(
   const host = headersList.get("host");
   const protocol = host?.startsWith("localhost") ? "http" : "https";
 
-  const supabase = await createClient();
+  // Uses the plain implicit-flow client, not the cookie-bound SSR one —
+  // resets are routinely requested on one device and completed on another
+  // (checking email on a phone after requesting from a computer). See
+  // src/lib/supabase/implicit.ts for why the SSR client can't do this.
+  const supabase = createImplicitFlowClient();
   await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${protocol}://${host}/auth/confirm?next=/reset-password`,
+    redirectTo: `${protocol}://${host}/set-password`,
   });
 
   // Always report success, whether or not that email is actually registered

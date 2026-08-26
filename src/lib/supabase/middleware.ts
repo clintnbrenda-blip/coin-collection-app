@@ -33,13 +33,21 @@ export async function updateSession(request: NextRequest) {
 
   const isAuthRoute =
     request.nextUrl.pathname.startsWith("/login") ||
-    request.nextUrl.pathname.startsWith("/forgot-password") ||
-    // Invite links land here with no session cookie yet — the tokens only
-    // arrive in the URL fragment, which client-side JS reads and exchanges
-    // for a session itself (see accept-invite/page.tsx).
-    request.nextUrl.pathname.startsWith("/accept-invite");
+    request.nextUrl.pathname.startsWith("/forgot-password");
 
-  if (!user && !isAuthRoute) {
+  // /set-password's whole job is to establish (or replace) a session from
+  // the tokens in its own URL fragment — the tokens only arrive there,
+  // which client-side JS reads and exchanges for a session itself (see
+  // set-password/page.tsx), so the server never sees a cookie for it on
+  // first arrival. It must be exempt from BOTH redirect branches below, not
+  // just the "no session yet" one: someone opening the link on a shared
+  // device (or the owner testing while logged in as themselves) already has
+  // an unrelated session, and bouncing them to "/" before the page loads
+  // would silently discard the link's tokens instead of switching to the
+  // account it points at.
+  const isPasswordLinkRoute = request.nextUrl.pathname.startsWith("/set-password");
+
+  if (!user && !isAuthRoute && !isPasswordLinkRoute) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     return NextResponse.redirect(url);
