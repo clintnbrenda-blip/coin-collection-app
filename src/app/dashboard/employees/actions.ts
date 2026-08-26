@@ -88,6 +88,49 @@ export async function createEmployee(
   return { error: null, createdEmail: email, resentExisting: false };
 }
 
+export interface ResendInviteState {
+  error: string | null;
+  sentTo: string | null;
+}
+
+export async function resendInvite(
+  userId: string,
+  _prevState: ResendInviteState,
+  _formData: FormData
+): Promise<ResendInviteState> {
+  await requireOwner();
+
+  const headersList = await headers();
+  const host = headersList.get("host");
+  const protocol = host?.startsWith("localhost") ? "http" : "https";
+
+  const admin = createAdminClient();
+
+  // profiles has no email column (it lives on auth.users) — look it up by id
+  // rather than requiring the caller to already know it.
+  const { data, error: lookupError } = await admin.auth.admin.getUserById(userId);
+  if (lookupError || !data.user.email) {
+    return { error: "Could not find that account's email address.", sentTo: null };
+  }
+  const email = data.user.email;
+
+  // Same fallback createEmployee uses for an already-registered email —
+  // inviteUserByEmail only works for brand-new accounts, so a "resend" for
+  // an existing (even never-activated) one goes through the password-reset
+  // email instead. Same destination for the employee either way: a link to
+  // set their password.
+  const supabase = await createClient();
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${protocol}://${host}/auth/confirm?next=/reset-password`,
+  });
+
+  if (error) {
+    return { error: error.message, sentTo: null };
+  }
+
+  return { error: null, sentTo: email };
+}
+
 export interface ResetPasswordState {
   error: string | null;
   tempPassword: string | null;

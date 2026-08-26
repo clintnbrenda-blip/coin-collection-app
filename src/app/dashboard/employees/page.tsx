@@ -6,6 +6,7 @@ import { AppHeader } from "@/components/AppHeader";
 import { setActive, setRole } from "./actions";
 import { CreateEmployeeForm } from "./CreateEmployeeForm";
 import { ResetPasswordButton } from "./ResetPasswordButton";
+import { ResendInviteButton } from "./ResendInviteButton";
 
 export default async function EmployeesPage() {
   const profile = await getCurrentProfile();
@@ -79,7 +80,8 @@ export default async function EmployeesPage() {
                 </div>
 
                 {p.id !== profile.id && (
-                  <div className="mt-2 border-t border-neutral-100 pt-2">
+                  <div className="mt-2 flex flex-wrap gap-2 border-t border-neutral-100 pt-2">
+                    <ResendInviteButton userId={p.id} />
                     <ResetPasswordButton userId={p.id} fullName={p.full_name} />
                   </div>
                 )}
