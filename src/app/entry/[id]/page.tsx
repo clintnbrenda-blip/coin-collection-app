@@ -36,7 +36,7 @@ export default async function EntryDetailPage({
   const withinEditWindow = isWithinEditWindow(entry.created_at);
   const canEdit = isOwner || (isMine && withinEditWindow);
 
-  const [{ data: snapshots }, { data: vendingRows }, { data: deposit }, { data: checklist }] =
+  const [{ data: snapshots }, { data: vendingRows }, { data: deposit }, { data: checklist }, { data: photoRows }] =
     await Promise.all([
       supabase
         .from("entry_group_snapshots")
@@ -52,7 +52,27 @@ export default async function EntryDetailPage({
         .select("*")
         .eq("entry_id", id)
         .maybeSingle(),
+      supabase.from("photos").select("kind, storage_path").eq("entry_id", id),
     ]);
+
+  // Photos live in a private bucket (RLS-gated) — turn each stored path into a
+  // short-lived signed URL so the <img> tags below can actually load them.
+  async function signedUrl(path: string | null | undefined) {
+    if (!path) return null;
+    const { data } = await supabase.storage.from("entry-photos").createSignedUrl(path, 3600);
+    return data?.signedUrl ?? null;
+  }
+
+  const collectionSheetPath =
+    photoRows?.find((p) => p.kind === "coin_collection_sheet")?.storage_path ?? null;
+  const balanceSheetPath =
+    photoRows?.find((p) => p.kind === "coin_balance_sheet")?.storage_path ?? null;
+
+  const [collectionSheetUrl, balanceSheetUrl, depositSlipUrl] = await Promise.all([
+    signedUrl(collectionSheetPath),
+    signedUrl(balanceSheetPath),
+    signedUrl(deposit?.deposit_slip_photo_path),
+  ]);
 
   const sortedSnapshots = [...(snapshots ?? [])].sort((a, b) => {
     const mgA = Array.isArray(a.machine_groups) ? a.machine_groups[0] : a.machine_groups;
@@ -153,9 +173,67 @@ export default async function EntryDetailPage({
               <h2 className="mb-2 font-semibold text-neutral-900">Bank deposit</h2>
               <p className="text-sm text-neutral-600">
                 ${Number(deposit?.deposit_amount ?? 0).toFixed(2)}
-                {deposit?.deposit_slip_photo_path ? " · slip photo attached" : " · no slip photo"}
+                {!deposit?.deposit_slip_photo_path && " · no slip photo"}
               </p>
+              {depositSlipUrl ? (
+                <a href={depositSlipUrl} target="_blank" rel="noopener noreferrer">
+                  {/* eslint-disable-next-line @next/next/no-img-element -- short-lived signed URL, not worth Next's Image pipeline */}
+                  <img
+                    src={depositSlipUrl}
+                    alt="Deposit slip"
+                    className="mt-2 h-32 w-full rounded-lg border border-neutral-200 object-cover"
+                  />
+                </a>
+              ) : (
+                deposit?.deposit_slip_photo_path && (
+                  <p className="mt-2 text-xs text-red-600">
+                    Slip photo is on file but couldn&apos;t be loaded right now.
+                  </p>
+                )
+              )}
             </section>
+
+            {(collectionSheetPath || balanceSheetPath) && (
+              <section className="rounded-xl border border-neutral-200 bg-white p-4">
+                <h2 className="mb-2 font-semibold text-neutral-900">Photos</h2>
+                <div className="grid grid-cols-2 gap-3">
+                  {collectionSheetPath && (
+                    <div>
+                      <p className="mb-1 text-xs text-neutral-500">Coin collection sheet</p>
+                      {collectionSheetUrl ? (
+                        <a href={collectionSheetUrl} target="_blank" rel="noopener noreferrer">
+                          {/* eslint-disable-next-line @next/next/no-img-element -- short-lived signed URL, not worth Next's Image pipeline */}
+                          <img
+                            src={collectionSheetUrl}
+                            alt="Coin collection sheet"
+                            className="h-32 w-full rounded-lg border border-neutral-200 object-cover"
+                          />
+                        </a>
+                      ) : (
+                        <p className="text-xs text-red-600">Couldn&apos;t be loaded right now.</p>
+                      )}
+                    </div>
+                  )}
+                  {balanceSheetPath && (
+                    <div>
+                      <p className="mb-1 text-xs text-neutral-500">Coin balance sheet</p>
+                      {balanceSheetUrl ? (
+                        <a href={balanceSheetUrl} target="_blank" rel="noopener noreferrer">
+                          {/* eslint-disable-next-line @next/next/no-img-element -- short-lived signed URL, not worth Next's Image pipeline */}
+                          <img
+                            src={balanceSheetUrl}
+                            alt="Coin balance sheet"
+                            className="h-32 w-full rounded-lg border border-neutral-200 object-cover"
+                          />
+                        </a>
+                      ) : (
+                        <p className="text-xs text-red-600">Couldn&apos;t be loaded right now.</p>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </section>
+            )}
 
             <section className="rounded-xl border border-neutral-200 bg-white p-4">
               <h2 className="mb-2 font-semibold text-neutral-900">Checklist</h2>
