@@ -5,11 +5,12 @@ import {
   endOfQuarter,
   startOfYear,
   endOfYear,
+  subMonths,
   format,
   parseISO,
 } from "date-fns";
 
-export type Period = "month" | "quarter" | "year" | "custom";
+export type Period = "lastMonth" | "month" | "quarter" | "year" | "custom";
 
 export interface DateRange {
   from: string; // yyyy-MM-dd, inclusive
@@ -35,6 +36,14 @@ export function resolveDateRange(
   const anchor = target ? parseISO(target) : new Date();
 
   switch (period) {
+    case "lastMonth": {
+      const lastMonth = subMonths(anchor, 1);
+      return {
+        from: iso(startOfMonth(lastMonth)),
+        to: iso(endOfMonth(lastMonth)),
+        label: format(lastMonth, "MMMM yyyy"),
+      };
+    }
     case "month":
       return {
         from: iso(startOfMonth(anchor)),

@@ -9,6 +9,14 @@ import { ExportCsvButton } from "./ExportCsvButton";
 import { PrintButton } from "./PrintButton";
 import { GroupFilterSelect } from "./GroupFilterSelect";
 
+const PERIOD_LABELS: Record<Period, string> = {
+  lastMonth: "Last Month",
+  month: "Month",
+  quarter: "Quarter",
+  year: "Year",
+  custom: "Custom",
+};
+
 export default async function DashboardPage({
   searchParams,
 }: {
@@ -206,7 +214,7 @@ export default async function DashboardPage({
         {/* Filters */}
         <form className="flex flex-wrap items-end gap-3 rounded-xl border border-neutral-200 bg-white p-4 print:hidden">
           <div className="flex gap-1.5">
-            {(["month", "quarter", "year", "custom"] as Period[]).map((p) => (
+            {(["lastMonth", "month", "quarter", "year", "custom"] as Period[]).map((p) => (
               <Link
                 key={p}
                 href={`/dashboard?period=${p}${groupQS}`}
@@ -216,7 +224,7 @@ export default async function DashboardPage({
                     : "bg-neutral-100 text-neutral-700 hover:bg-neutral-200"
                 }`}
               >
-                {p[0].toUpperCase() + p.slice(1)}
+                {PERIOD_LABELS[p]}
               </Link>
             ))}
           </div>
@@ -272,7 +280,7 @@ export default async function DashboardPage({
         </section>
 
         {/* Monthly breakdown — click a month to drill into its detail */}
-        {period !== "month" && monthRows.length > 0 && (
+        {period !== "month" && period !== "lastMonth" && monthRows.length > 0 && (
           <section className="rounded-xl border border-neutral-200 bg-white p-4">
             <h2 className="mb-3 font-semibold text-neutral-900">By month</h2>
             <table className="w-full text-sm">
