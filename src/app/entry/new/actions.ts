@@ -107,38 +107,7 @@ export async function submitEntry(
     // Bank deposit is submitted separately (by whoever ends up taking it to
     // the bank — often a different employee) via /deposits, not here.
 
-    // 4. Optional extra photos (coin collection sheet / coin balance sheet).
-    const collectionSheetPhoto = formData.get(
-      "coin_collection_sheet_photo"
-    ) as File | null;
-    if (collectionSheetPhoto && collectionSheetPhoto.size > 0) {
-      const path = await uploadEntryPhoto(
-        supabase,
-        entryId,
-        collectionSheetPhoto,
-        "coin-collection-sheet"
-      );
-      await supabase
-        .from("photos")
-        .insert({ entry_id: entryId, storage_path: path, kind: "coin_collection_sheet" });
-    }
-
-    const balanceSheetPhoto = formData.get(
-      "coin_balance_sheet_photo"
-    ) as File | null;
-    if (balanceSheetPhoto && balanceSheetPhoto.size > 0) {
-      const path = await uploadEntryPhoto(
-        supabase,
-        entryId,
-        balanceSheetPhoto,
-        "coin-balance-sheet"
-      );
-      await supabase
-        .from("photos")
-        .insert({ entry_id: entryId, storage_path: path, kind: "coin_balance_sheet" });
-    }
-
-    // 6. Checklist completion.
+    // 4. Checklist completion.
     const checkedItems = CHECKLIST_ITEMS.filter(
       (item) => formData.get(`checklist_${item.key}`) === "on"
     ).map((item) => item.key);
@@ -164,19 +133,4 @@ export async function submitEntry(
   }
 
   redirect(`/entry/${entryId}`);
-}
-
-async function uploadEntryPhoto(
-  supabase: Awaited<ReturnType<typeof createClient>>,
-  entryId: string,
-  file: File,
-  label: string
-): Promise<string> {
-  const ext = file.name.split(".").pop() || "jpg";
-  const path = `${entryId}/${label}-${Date.now()}.${ext}`;
-  const { error } = await supabase.storage
-    .from("entry-photos")
-    .upload(path, file, { contentType: file.type, upsert: false });
-  if (error) throw new Error(`Could not upload ${label} photo.`);
-  return path;
 }

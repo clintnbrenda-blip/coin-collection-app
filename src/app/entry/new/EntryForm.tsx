@@ -6,7 +6,6 @@ import { CHECKLIST_ITEMS } from "@/lib/checklist";
 import { focusNextFieldOnEnter } from "@/lib/formKeyNav";
 import { todayLocalISO, daysBetween } from "@/lib/dateMath";
 import { loadDraft, saveDraft, markPendingSubmit, type EntryDraft } from "@/lib/entryDraft";
-import { PhotoPickerInput } from "@/components/PhotoPickerInput";
 import { submitEntry, type SubmitEntryState } from "./actions";
 
 interface MachineGroup {
@@ -254,24 +253,6 @@ export function EntryForm({
                 </div>
               </div>
             ))}
-          </div>
-        </section>
-
-        {/* Photos (optional) — deposit slip is handled separately under Deposits */}
-        <section className="rounded-xl border border-neutral-200 bg-white p-4">
-          <h2 className="mb-3 font-semibold text-neutral-900">Photos</h2>
-          <p className="mb-3 text-xs text-neutral-400">
-            Optional. Photos aren&apos;t saved if you leave this page — everything else is.
-          </p>
-          <div className="space-y-4">
-            <PhotoPickerInput
-              name="coin_collection_sheet_photo"
-              label="Coin collection sheet photo"
-            />
-            <PhotoPickerInput
-              name="coin_balance_sheet_photo"
-              label="Coin balance sheet photo"
-            />
           </div>
         </section>
 
