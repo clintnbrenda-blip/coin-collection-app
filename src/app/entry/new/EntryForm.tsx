@@ -6,6 +6,7 @@ import { CHECKLIST_ITEMS } from "@/lib/checklist";
 import { focusNextFieldOnEnter } from "@/lib/formKeyNav";
 import { todayLocalISO, daysBetween } from "@/lib/dateMath";
 import { loadDraft, saveDraft, markPendingSubmit, type EntryDraft } from "@/lib/entryDraft";
+import { PhotoPickerInput } from "@/components/PhotoPickerInput";
 import { submitEntry, type SubmitEntryState } from "./actions";
 
 interface MachineGroup {
@@ -262,31 +263,15 @@ export function EntryForm({
           <p className="mb-3 text-xs text-neutral-400">
             Optional. Photos aren&apos;t saved if you leave this page — everything else is.
           </p>
-          <div className="space-y-3">
-            <div>
-              <label className="mb-1 block text-sm font-medium text-neutral-700">
-                Coin collection sheet photo
-              </label>
-              <input
-                type="file"
-                name="coin_collection_sheet_photo"
-                accept="image/*"
-                capture="environment"
-                className="w-full text-sm"
-              />
-            </div>
-            <div>
-              <label className="mb-1 block text-sm font-medium text-neutral-700">
-                Coin balance sheet photo
-              </label>
-              <input
-                type="file"
-                name="coin_balance_sheet_photo"
-                accept="image/*"
-                capture="environment"
-                className="w-full text-sm"
-              />
-            </div>
+          <div className="space-y-4">
+            <PhotoPickerInput
+              name="coin_collection_sheet_photo"
+              label="Coin collection sheet photo"
+            />
+            <PhotoPickerInput
+              name="coin_balance_sheet_photo"
+              label="Coin balance sheet photo"
+            />
           </div>
         </section>
 

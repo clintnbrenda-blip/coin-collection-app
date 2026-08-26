@@ -2,6 +2,7 @@
 
 import { useActionState, useEffect, useState } from "react";
 import { focusNextFieldOnEnter } from "@/lib/formKeyNav";
+import { PhotoPickerInput } from "@/components/PhotoPickerInput";
 import { submitDeposit, type SubmitDepositState } from "./actions";
 
 const initialState: SubmitDepositState = { error: null };
@@ -90,15 +91,9 @@ export function DepositForm({
             />
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium text-neutral-700">
-              Deposit slip photo{hasExistingPhoto ? " (replace)" : ""}
-            </label>
-            <input
-              type="file"
+            <PhotoPickerInput
               name="deposit_slip_photo"
-              accept="image/*"
-              capture="environment"
-              className="w-full text-sm"
+              label={`Deposit slip photo${hasExistingPhoto ? " (replace)" : ""}`}
             />
             <p className="mt-1 text-xs text-neutral-400">
               Photo can&apos;t be saved as a draft — attach it right before submitting.
