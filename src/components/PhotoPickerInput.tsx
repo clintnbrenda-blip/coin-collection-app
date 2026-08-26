@@ -2,13 +2,30 @@
 
 import { useEffect, useRef, useState } from "react";
 
+// iOS Safari has a well-documented bug where <input capture> triggers a
+// memory-constrained inline capture mode that frequently fails with a
+// system "unable to complete due to low memory" error, especially on
+// modern high-resolution cameras. Android doesn't have this problem, so we
+// only skip the direct-camera-jump behavior on iOS — there, tapping "Take
+// photo" falls back to the OS's own (non-buggy) picker, which still offers
+// "Take Photo" as one of its own menu options.
+function isIOS(): boolean {
+  if (typeof navigator === "undefined") return false;
+  return (
+    /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+    // iPadOS 13+ reports as "MacIntel" but has touch support, unlike a real Mac.
+    (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1)
+  );
+}
+
 /**
  * Two explicit buttons instead of relying on the phone/browser's default file
  * picker (which shows different, sometimes single-option, menus depending on
  * OS/browser): "Choose photo" opens the gallery/library, "Take photo" opens
- * the camera directly. Both drive the same underlying file input, so only
- * one file ever gets submitted under `name`. Shows a thumbnail of whatever
- * was picked.
+ * the camera directly (Android) or falls back to the OS's own picker (iOS,
+ * to avoid a Safari camera-capture crash — see isIOS() above). Both drive the
+ * same underlying file input, so only one file ever gets submitted under
+ * `name`. Shows a thumbnail of whatever was picked.
  */
 export function PhotoPickerInput({
   name,
@@ -31,7 +48,7 @@ export function PhotoPickerInput({
   function openPicker(useCamera: boolean) {
     const input = inputRef.current;
     if (!input) return;
-    if (useCamera) {
+    if (useCamera && !isIOS()) {
       input.setAttribute("capture", "environment");
     } else {
       input.removeAttribute("capture");
