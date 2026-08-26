@@ -49,7 +49,15 @@ export function PhotoPickerInput({
 
   useEffect(() => {
     if (cameraOpen && videoRef.current && streamRef.current) {
-      videoRef.current.srcObject = streamRef.current;
+      const video = videoRef.current;
+      video.srcObject = streamRef.current;
+      // Some Android browsers don't honor the `autoPlay` attribute reliably
+      // when srcObject is assigned programmatically — force playback
+      // explicitly (this is exactly why the preview was showing black).
+      video.play().catch(() => {
+        // Autoplay can still be rejected in rare cases; the Capture button
+        // stays disabled via videoWidth===0 checks either way.
+      });
     }
   }, [cameraOpen]);
 
