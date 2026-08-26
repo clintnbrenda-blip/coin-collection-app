@@ -10,7 +10,7 @@ export function AppHeader({
   title: string;
   fullName: string;
   role?: "owner" | "employee";
-  activeTab?: "dashboard" | "collection";
+  activeTab?: "dashboard" | "collection" | "deposits";
 }) {
   return (
     <header className="sticky top-0 z-10 border-b border-neutral-200 bg-white/95 backdrop-blur">
@@ -38,18 +38,20 @@ export function AppHeader({
           </div>
         </div>
 
-        {role === "owner" && (
-          <nav className="mt-3 flex gap-1.5">
-            <Link
-              href="/dashboard"
-              className={`rounded-md px-3 py-1.5 text-sm font-medium ${
-                activeTab === "dashboard"
-                  ? "bg-blue-600 text-white"
-                  : "bg-neutral-100 text-neutral-700 hover:bg-neutral-200"
-              }`}
-            >
-              Dashboard
-            </Link>
+        {role && (
+          <nav className="mt-3 flex flex-wrap gap-1.5">
+            {role === "owner" && (
+              <Link
+                href="/dashboard"
+                className={`rounded-md px-3 py-1.5 text-sm font-medium ${
+                  activeTab === "dashboard"
+                    ? "bg-blue-600 text-white"
+                    : "bg-neutral-100 text-neutral-700 hover:bg-neutral-200"
+                }`}
+              >
+                Dashboard
+              </Link>
+            )}
             <Link
               href="/entry/new"
               className={`rounded-md px-3 py-1.5 text-sm font-medium ${
@@ -59,6 +61,16 @@ export function AppHeader({
               }`}
             >
               Collection
+            </Link>
+            <Link
+              href="/deposits"
+              className={`rounded-md px-3 py-1.5 text-sm font-medium ${
+                activeTab === "deposits"
+                  ? "bg-blue-600 text-white"
+                  : "bg-neutral-100 text-neutral-700 hover:bg-neutral-200"
+              }`}
+            >
+              Deposits
             </Link>
           </nav>
         )}

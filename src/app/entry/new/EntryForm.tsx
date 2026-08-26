@@ -33,7 +33,6 @@ function defaultDraft(employeeName: string): EntryDraft {
     quarters: {},
     vendingCash: {},
     vendingCoins: {},
-    depositAmount: "",
     checkedItems: {},
     signedBy: employeeName,
     signedDate: today,
@@ -257,71 +256,37 @@ export function EntryForm({
           </div>
         </section>
 
-        {/* Bank deposit */}
+        {/* Photos (optional) — deposit slip is handled separately under Deposits */}
         <section className="rounded-xl border border-neutral-200 bg-white p-4">
-          <h2 className="mb-3 font-semibold text-neutral-900">Bank deposit</h2>
+          <h2 className="mb-3 font-semibold text-neutral-900">Photos</h2>
+          <p className="mb-3 text-xs text-neutral-400">
+            Optional. Photos aren&apos;t saved if you leave this page — everything else is.
+          </p>
           <div className="space-y-3">
             <div>
               <label className="mb-1 block text-sm font-medium text-neutral-700">
-                Deposit amount
-              </label>
-              <input
-                type="number"
-                step="0.01"
-                min="0"
-                name="deposit_amount"
-                placeholder="0"
-                value={draft.depositAmount}
-                onChange={(e) => update({ depositAmount: e.target.value })}
-                className="w-full rounded-lg border border-neutral-300 px-3 py-2.5 text-base"
-              />
-            </div>
-            <div>
-              <label className="mb-1 block text-sm font-medium text-neutral-700">
-                Deposit slip photo
+                Coin collection sheet photo
               </label>
               <input
                 type="file"
-                name="deposit_slip_photo"
+                name="coin_collection_sheet_photo"
                 accept="image/*"
                 capture="environment"
                 className="w-full text-sm"
               />
-              <p className="mt-1 text-xs text-neutral-400">
-                Photos aren&apos;t saved if you leave this page — everything else is.
-              </p>
             </div>
-            <details className="text-sm text-neutral-600">
-              <summary className="cursor-pointer select-none">
-                Optional: coin collection / balance sheet photos
-              </summary>
-              <div className="mt-3 space-y-3">
-                <div>
-                  <label className="mb-1 block text-sm font-medium text-neutral-700">
-                    Coin collection sheet photo
-                  </label>
-                  <input
-                    type="file"
-                    name="coin_collection_sheet_photo"
-                    accept="image/*"
-                    capture="environment"
-                    className="w-full text-sm"
-                  />
-                </div>
-                <div>
-                  <label className="mb-1 block text-sm font-medium text-neutral-700">
-                    Coin balance sheet photo
-                  </label>
-                  <input
-                    type="file"
-                    name="coin_balance_sheet_photo"
-                    accept="image/*"
-                    capture="environment"
-                    className="w-full text-sm"
-                  />
-                </div>
-              </div>
-            </details>
+            <div>
+              <label className="mb-1 block text-sm font-medium text-neutral-700">
+                Coin balance sheet photo
+              </label>
+              <input
+                type="file"
+                name="coin_balance_sheet_photo"
+                accept="image/*"
+                capture="environment"
+                className="w-full text-sm"
+              />
+            </div>
           </div>
         </section>
 

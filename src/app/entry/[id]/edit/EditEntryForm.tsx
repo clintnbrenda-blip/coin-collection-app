@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useMemo, useState } from "react";
+import Link from "next/link";
 import { AppHeader } from "@/components/AppHeader";
 import { CHECKLIST_ITEMS } from "@/lib/checklist";
 import { focusNextFieldOnEnter } from "@/lib/formKeyNav";
@@ -192,35 +193,18 @@ export function EditEntryForm({
         </section>
 
         <section className="rounded-xl border border-neutral-200 bg-white p-4">
-          <h2 className="mb-3 font-semibold text-neutral-900">Bank deposit</h2>
-          <div className="space-y-3">
-            <div>
-              <label className="mb-1 block text-sm font-medium text-neutral-700">
-                Deposit amount
-              </label>
-              <input
-                type="number"
-                step="0.01"
-                min="0"
-                name="deposit_amount"
-                placeholder="0"
-                defaultValue={depositAmount === "0" ? undefined : depositAmount}
-                className="w-full rounded-lg border border-neutral-300 px-3 py-2.5 text-base"
-              />
-            </div>
-            <div>
-              <label className="mb-1 block text-sm font-medium text-neutral-700">
-                Replace deposit slip photo (optional)
-              </label>
-              <input
-                type="file"
-                name="deposit_slip_photo"
-                accept="image/*"
-                capture="environment"
-                className="w-full text-sm"
-              />
-            </div>
-          </div>
+          <h2 className="mb-1 font-semibold text-neutral-900">Bank deposit</h2>
+          <p className="text-sm text-neutral-600">
+            {depositAmount !== "0"
+              ? `Currently recorded: $${Number(depositAmount).toFixed(2)}.`
+              : "Not recorded yet."}
+          </p>
+          <Link
+            href={`/deposits/${entryId}`}
+            className="mt-2 inline-block text-sm text-blue-600 hover:underline"
+          >
+            {depositAmount !== "0" ? "Update deposit" : "Submit deposit"} →
+          </Link>
         </section>
 
         <section className="rounded-xl border border-neutral-200 bg-white p-4">

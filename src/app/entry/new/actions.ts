@@ -104,33 +104,10 @@ export async function submitEntry(
       if (vendError) throw new Error("Could not save vending totals.");
     }
 
-    // 4. Deposit + optional slip photo.
-    const depositAmount = Number(formData.get("deposit_amount") ?? 0) || 0;
-    let depositSlipPath: string | null = null;
+    // Bank deposit is submitted separately (by whoever ends up taking it to
+    // the bank — often a different employee) via /deposits, not here.
 
-    const depositPhoto = formData.get("deposit_slip_photo") as File | null;
-    if (depositPhoto && depositPhoto.size > 0) {
-      depositSlipPath = await uploadEntryPhoto(
-        supabase,
-        entryId,
-        depositPhoto,
-        "deposit-slip"
-      );
-      await supabase.from("photos").insert({
-        entry_id: entryId,
-        storage_path: depositSlipPath,
-        kind: "deposit_slip",
-      });
-    }
-
-    const { error: depError } = await supabase.from("deposits").insert({
-      entry_id: entryId,
-      deposit_amount: depositAmount,
-      deposit_slip_photo_path: depositSlipPath,
-    });
-    if (depError) throw new Error("Could not save the deposit.");
-
-    // 5. Optional extra photos (coin collection sheet / coin balance sheet).
+    // 4. Optional extra photos (coin collection sheet / coin balance sheet).
     const collectionSheetPhoto = formData.get(
       "coin_collection_sheet_photo"
     ) as File | null;

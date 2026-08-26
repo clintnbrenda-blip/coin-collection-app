@@ -82,24 +82,7 @@ export async function updateEntry(
     );
   }
 
-  const depositUpdate: { deposit_amount: number; deposit_slip_photo_path?: string } = {
-    deposit_amount: Number(formData.get("deposit_amount") ?? 0) || 0,
-  };
-  const depositPhoto = formData.get("deposit_slip_photo") as File | null;
-  if (depositPhoto && depositPhoto.size > 0) {
-    const ext = depositPhoto.name.split(".").pop() || "jpg";
-    const path = `${entryId}/deposit-slip-${Date.now()}.${ext}`;
-    const { error: uploadError } = await supabase.storage
-      .from("entry-photos")
-      .upload(path, depositPhoto, { contentType: depositPhoto.type });
-    if (!uploadError) {
-      depositUpdate.deposit_slip_photo_path = path;
-      await supabase
-        .from("photos")
-        .insert({ entry_id: entryId, storage_path: path, kind: "deposit_slip" });
-    }
-  }
-  await supabase.from("deposits").update(depositUpdate).eq("entry_id", entryId);
+  // Bank deposit is managed separately now, via /deposits/[id] — not this form.
 
   const checkedItems = CHECKLIST_ITEMS.filter(
     (item) => formData.get(`checklist_${item.key}`) === "on"

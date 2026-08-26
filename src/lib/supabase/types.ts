@@ -238,6 +238,10 @@ export interface Database {
         Args: Record<string, never>;
         Returns: boolean;
       };
+      entries_pending_deposit: {
+        Args: Record<string, never>;
+        Returns: { id: string; date: string }[];
+      };
     };
     Enums: Record<string, never>;
     CompositeTypes: Record<string, never>;
