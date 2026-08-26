@@ -1,10 +1,11 @@
 "use client";
 
-import { useActionState, useMemo, useState } from "react";
+import { useActionState, useEffect, useMemo, useState } from "react";
 import { AppHeader } from "@/components/AppHeader";
 import { CHECKLIST_ITEMS } from "@/lib/checklist";
 import { focusNextFieldOnEnter } from "@/lib/formKeyNav";
 import { todayLocalISO, daysBetween } from "@/lib/dateMath";
+import { loadDraft, saveDraft, markPendingSubmit, type EntryDraft } from "@/lib/entryDraft";
 import { submitEntry, type SubmitEntryState } from "./actions";
 
 interface MachineGroup {
@@ -24,6 +25,21 @@ interface VendingMachine {
 
 const initialState: SubmitEntryState = { error: null };
 
+function defaultDraft(employeeName: string): EntryDraft {
+  const today = todayLocalISO();
+  return {
+    date: today,
+    manualDays: "",
+    quarters: {},
+    vendingCash: {},
+    vendingCoins: {},
+    depositAmount: "",
+    checkedItems: {},
+    signedBy: employeeName,
+    signedDate: today,
+  };
+}
+
 export function EntryForm({
   locationId,
   employeeName,
@@ -41,15 +57,59 @@ export function EntryForm({
 }) {
   const [state, formAction, pending] = useActionState(submitEntry, initialState);
 
-  const [date, setDate] = useState(todayLocalISO());
+  // Start with SSR-safe defaults, then pull in anything saved on this device
+  // right after mount (avoids a hydration mismatch from reading storage
+  // during the initial render).
+  const [draft, setDraft] = useState<EntryDraft>(() => defaultDraft(employeeName));
+  const [restored, setRestored] = useState(false);
+
+  useEffect(() => {
+    // Syncing in from an external system (this device's storage) on mount —
+    // there's no way to derive this during render since it's unavailable
+    // server-side, so an effect is the correct tool here.
+    const saved = loadDraft();
+    if (saved) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setDraft((prev) => ({ ...prev, ...saved }));
+      setRestored(true);
+    }
+  }, []);
+
+  function update(partial: Partial<EntryDraft>) {
+    setDraft((prev) => {
+      const next = { ...prev, ...partial };
+      saveDraft(next);
+      return next;
+    });
+  }
+
+  function updateMap(
+    field: "quarters" | "vendingCash" | "vendingCoins",
+    id: string,
+    value: string
+  ) {
+    setDraft((prev) => {
+      const next = { ...prev, [field]: { ...prev[field], [id]: value } };
+      saveDraft(next);
+      return next;
+    });
+  }
+
+  function toggleChecklistItem(key: string, checked: boolean) {
+    setDraft((prev) => {
+      const next = { ...prev, checkedItems: { ...prev.checkedItems, [key]: checked } };
+      saveDraft(next);
+      return next;
+    });
+  }
+
   const computedDays = useMemo(
-    () => (lastEntryDate ? daysBetween(date, lastEntryDate) : null),
-    [date, lastEntryDate]
+    () => (lastEntryDate ? daysBetween(draft.date, lastEntryDate) : null),
+    [draft.date, lastEntryDate]
   );
   // Days since last is auto-calculated from the date field whenever a previous
   // entry exists — only editable as a manual fallback for the very first entry.
-  const [manualDays, setManualDays] = useState<string>("");
-  const effectiveDays = lastEntryDate ? String(computedDays ?? "") : manualDays;
+  const effectiveDays = lastEntryDate ? String(computedDays ?? "") : draft.manualDays;
 
   return (
     <div className="min-h-screen bg-neutral-50 pb-24">
@@ -62,10 +122,17 @@ export function EntryForm({
 
       <form
         action={formAction}
+        onSubmit={markPendingSubmit}
         onKeyDown={focusNextFieldOnEnter}
         className="mx-auto max-w-2xl space-y-6 p-4"
       >
         <input type="hidden" name="location_id" value={locationId} />
+
+        {restored && (
+          <p className="rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-800">
+            Restored what you&apos;d already entered before this page closed.
+          </p>
+        )}
 
         {/* Date & days since last */}
         <section className="rounded-xl border border-neutral-200 bg-white p-4">
@@ -78,8 +145,8 @@ export function EntryForm({
               <input
                 type="date"
                 name="date"
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
+                value={draft.date}
+                onChange={(e) => update({ date: e.target.value })}
                 required
                 className="w-full rounded-lg border border-neutral-300 px-3 py-2.5 text-base"
               />
@@ -94,7 +161,7 @@ export function EntryForm({
                 min="0.5"
                 name="days_since_last"
                 value={effectiveDays}
-                onChange={(e) => setManualDays(e.target.value)}
+                onChange={(e) => update({ manualDays: e.target.value })}
                 readOnly={!!lastEntryDate}
                 required
                 className={`w-full rounded-lg border px-3 py-2.5 text-base ${
@@ -137,6 +204,8 @@ export function EntryForm({
                   min="0"
                   step="1"
                   placeholder="0"
+                  value={draft.quarters[mg.id] ?? ""}
+                  onChange={(e) => updateMap("quarters", mg.id, e.target.value)}
                   className="w-24 rounded-lg border border-neutral-300 px-3 py-2 text-right text-base"
                 />
               </div>
@@ -162,6 +231,8 @@ export function EntryForm({
                       min="0"
                       name={`vending_cash_${vm.id}`}
                       placeholder="0"
+                      value={draft.vendingCash[vm.id] ?? ""}
+                      onChange={(e) => updateMap("vendingCash", vm.id, e.target.value)}
                       className="w-full rounded-lg border border-neutral-300 px-3 py-2.5 text-base"
                     />
                   </div>
@@ -175,6 +246,8 @@ export function EntryForm({
                       min="0"
                       name={`vending_coins_${vm.id}`}
                       placeholder="0"
+                      value={draft.vendingCoins[vm.id] ?? ""}
+                      onChange={(e) => updateMap("vendingCoins", vm.id, e.target.value)}
                       className="w-full rounded-lg border border-neutral-300 px-3 py-2.5 text-base"
                     />
                   </div>
@@ -198,6 +271,8 @@ export function EntryForm({
                 min="0"
                 name="deposit_amount"
                 placeholder="0"
+                value={draft.depositAmount}
+                onChange={(e) => update({ depositAmount: e.target.value })}
                 className="w-full rounded-lg border border-neutral-300 px-3 py-2.5 text-base"
               />
             </div>
@@ -212,6 +287,9 @@ export function EntryForm({
                 capture="environment"
                 className="w-full text-sm"
               />
+              <p className="mt-1 text-xs text-neutral-400">
+                Photos aren&apos;t saved if you leave this page — everything else is.
+              </p>
             </div>
             <details className="text-sm text-neutral-600">
               <summary className="cursor-pointer select-none">
@@ -272,6 +350,8 @@ export function EntryForm({
                     <input
                       type="checkbox"
                       name={`checklist_${item.key}`}
+                      checked={draft.checkedItems[item.key] ?? false}
+                      onChange={(e) => toggleChecklistItem(item.key, e.target.checked)}
                       className="mt-0.5 h-4 w-4 rounded border-neutral-300"
                     />
                     {item.text}
@@ -289,7 +369,8 @@ export function EntryForm({
               <input
                 type="text"
                 name="signed_by"
-                defaultValue={employeeName}
+                value={draft.signedBy}
+                onChange={(e) => update({ signedBy: e.target.value })}
                 required
                 className="w-full rounded-lg border border-neutral-300 px-3 py-2.5 text-base"
               />
@@ -301,7 +382,8 @@ export function EntryForm({
               <input
                 type="date"
                 name="signed_date"
-                defaultValue={todayLocalISO()}
+                value={draft.signedDate}
+                onChange={(e) => update({ signedDate: e.target.value })}
                 required
                 className="w-full rounded-lg border border-neutral-300 px-3 py-2.5 text-base"
               />
