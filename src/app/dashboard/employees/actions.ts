@@ -1,5 +1,6 @@
 "use server";
 
+import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -16,11 +17,13 @@ async function requireOwner() {
 export interface CreateEmployeeState {
   error: string | null;
   createdEmail: string | null;
-  tempPassword: string | null;
 }
 
 function generateTempPassword(): string {
-  // Readable-ish random password the owner relays directly to the employee.
+  // Readable-ish random password the owner relays directly to the employee —
+  // still used by the force-reset action below (for someone locked out of
+  // both their account AND their email), just not for new-account creation
+  // anymore.
   const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789";
   return Array.from({ length: 12 }, () => chars[Math.floor(Math.random() * chars.length)]).join("");
 }
@@ -35,25 +38,35 @@ export async function createEmployee(
   const fullName = String(formData.get("full_name") ?? "").trim();
 
   if (!email || !fullName) {
-    return { error: "Name and email are required.", createdEmail: null, tempPassword: null };
+    return { error: "Name and email are required.", createdEmail: null };
   }
 
-  const tempPassword = generateTempPassword();
+  // Derive the site origin from the request itself, same as the
+  // forgot-password flow — this app is reachable at both the custom domain
+  // and the .vercel.app one.
+  const headersList = await headers();
+  const host = headersList.get("host");
+  const protocol = host?.startsWith("localhost") ? "http" : "https";
+
   const admin = createAdminClient();
 
-  const { error } = await admin.auth.admin.createUser({
-    email,
-    password: tempPassword,
-    email_confirm: true,
-    user_metadata: { full_name: fullName },
+  const { error } = await admin.auth.admin.inviteUserByEmail(email, {
+    data: { full_name: fullName },
+    // NOT /auth/confirm — invites don't support the PKCE code-exchange flow
+    // password-reset links use (the inviting browser and the accepting
+    // browser are different, so Supabase can't guarantee PKCE's security
+    // properties here). Invite links instead carry the session tokens in
+    // the URL fragment, which only client-side JS can read — see
+    // /accept-invite.
+    redirectTo: `${protocol}://${host}/accept-invite`,
   });
 
   if (error) {
-    return { error: error.message, createdEmail: null, tempPassword: null };
+    return { error: error.message, createdEmail: null };
   }
 
   revalidatePath("/dashboard/employees");
-  return { error: null, createdEmail: email, tempPassword };
+  return { error: null, createdEmail: email };
 }
 
 export interface ResetPasswordState {

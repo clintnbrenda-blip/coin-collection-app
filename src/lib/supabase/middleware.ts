@@ -33,7 +33,11 @@ export async function updateSession(request: NextRequest) {
 
   const isAuthRoute =
     request.nextUrl.pathname.startsWith("/login") ||
-    request.nextUrl.pathname.startsWith("/forgot-password");
+    request.nextUrl.pathname.startsWith("/forgot-password") ||
+    // Invite links land here with no session cookie yet — the tokens only
+    // arrive in the URL fragment, which client-side JS reads and exchanges
+    // for a session itself (see accept-invite/page.tsx).
+    request.nextUrl.pathname.startsWith("/accept-invite");
 
   if (!user && !isAuthRoute) {
     const url = request.nextUrl.clone();
