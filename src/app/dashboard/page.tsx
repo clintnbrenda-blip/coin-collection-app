@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { format, parseISO } from "date-fns";
+import { format, parseISO, startOfMonth, endOfMonth, subMonths } from "date-fns";
 import { getCurrentProfile } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { AppHeader } from "@/components/AppHeader";
@@ -8,6 +8,7 @@ import { resolveDateRange, type Period } from "@/lib/dateRanges";
 import { ExportCsvButton } from "./ExportCsvButton";
 import { PrintButton } from "./PrintButton";
 import { GroupFilterSelect } from "./GroupFilterSelect";
+import { TrendChart, type TrendPoint } from "./TrendChart";
 
 const PERIOD_LABELS: Record<Period, string> = {
   lastMonth: "Last Month",
@@ -61,6 +62,24 @@ export default async function DashboardPage({
     .gte("date", range.from)
     .lte("date", range.to)
     .order("date", { ascending: false });
+
+  // Trend chart: current month (the one range.to falls in) plus the two months
+  // before it, independent of whatever period is actually selected above.
+  const chartAnchorMonth = startOfMonth(parseISO(range.to));
+  const chartFrom = format(startOfMonth(subMonths(chartAnchorMonth, 2)), "yyyy-MM-dd");
+  const chartTo = format(endOfMonth(chartAnchorMonth), "yyyy-MM-dd");
+  const { data: trendEntries } = await supabase
+    .from("collection_entries")
+    .select("date, avg_turns, income_per_day")
+    .eq("location_id", location?.id ?? "")
+    .gte("date", chartFrom)
+    .lte("date", chartTo)
+    .order("date", { ascending: true });
+  const trendPoints: TrendPoint[] = (trendEntries ?? []).map((e) => ({
+    date: e.date,
+    turns: e.avg_turns !== null ? Number(e.avg_turns) : null,
+    incomePerDay: e.income_per_day !== null ? Number(e.income_per_day) : null,
+  }));
 
   const entryIds = (entries ?? []).map((e) => e.id);
 
@@ -278,6 +297,8 @@ export default async function DashboardPage({
           <SummaryCard label="Bank deposits" value={`$${depositsTotal.toFixed(2)}`} />
           <SummaryCard label="Avg income/day" value={`$${incomePerDayAvg.toFixed(2)}`} />
         </section>
+
+        <TrendChart points={trendPoints} />
 
         {/* Monthly breakdown — click a month to drill into its detail */}
         {period !== "month" && period !== "lastMonth" && monthRows.length > 0 && (
