@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { signOut } from "@/app/actions";
+import { HeaderMenu } from "@/components/HeaderMenu";
 
 export function AppHeader({
   title,
@@ -30,22 +30,7 @@ export function AppHeader({
               <p className="text-xs text-neutral-500">{fullName}</p>
             </div>
           </div>
-          <div className="flex items-center gap-1">
-            <Link
-              href="/account"
-              className="rounded-md px-3 py-1.5 text-sm font-medium text-neutral-600 hover:bg-neutral-100"
-            >
-              Account
-            </Link>
-            <form action={signOut}>
-              <button
-                type="submit"
-                className="rounded-md px-3 py-1.5 text-sm font-medium text-neutral-600 hover:bg-neutral-100"
-              >
-                Sign out
-              </button>
-            </form>
-          </div>
+          <HeaderMenu role={role} />
         </div>
 
         {role && (

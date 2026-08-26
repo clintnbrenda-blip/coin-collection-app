@@ -453,15 +453,6 @@ export default async function DashboardPage({
             </div>
           )}
         </section>
-
-        <div className="print:hidden">
-          <Link
-            href="/dashboard/machine-groups"
-            className="text-sm text-blue-600 hover:underline"
-          >
-            Manage machine groups &amp; employees →
-          </Link>
-        </div>
       </div>
     </div>
   );
