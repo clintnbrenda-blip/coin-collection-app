@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useActionState } from "react";
 import { signIn, type SignInState } from "./actions";
 
@@ -11,9 +12,14 @@ export default function LoginPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-neutral-50 px-4">
       <div className="w-full max-w-sm">
-        <h1 className="mb-1 text-center text-2xl font-semibold text-neutral-900">
-          Coin Collection Tracker
-        </h1>
+        <Image
+          src="/brand/cypress-laundry-logo.png"
+          alt="Cypress Laundry"
+          width={2912}
+          height={1331}
+          priority
+          className="mx-auto mb-6 h-auto w-56"
+        />
         <p className="mb-8 text-center text-sm text-neutral-500">
           Sign in to log a collection or view reports.
         </p>

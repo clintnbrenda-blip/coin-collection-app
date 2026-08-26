@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { signOut } from "@/app/actions";
 
@@ -16,9 +17,18 @@ export function AppHeader({
     <header className="sticky top-0 z-10 border-b border-neutral-200 bg-white/95 backdrop-blur">
       <div className="mx-auto max-w-4xl px-4 py-3">
         <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-lg font-semibold text-neutral-900">{title}</h1>
-            <p className="text-xs text-neutral-500">{fullName}</p>
+          <div className="flex items-center gap-2.5">
+            <Image
+              src="/brand/icon-mark-96.png"
+              alt=""
+              width={36}
+              height={36}
+              className="shrink-0"
+            />
+            <div>
+              <h1 className="text-lg font-semibold text-neutral-900">{title}</h1>
+              <p className="text-xs text-neutral-500">{fullName}</p>
+            </div>
           </div>
           <div className="flex items-center gap-1">
             <Link

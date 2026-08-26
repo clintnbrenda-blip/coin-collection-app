@@ -12,6 +12,26 @@
   --font-mono: var(--font-geist-mono);
 }
 
+/* Cypress Laundry brand blue, sampled directly from the logo (the swirl mark
+   is exactly #015887) and pinned at the 600 step — the shade almost every
+   button/link/hero-card in the app already uses via `blue-600`. Overriding
+   Tailwind's built-in blue scale here (rather than hunting down every
+   `bg-blue-*`/`text-blue-*`/`border-blue-*` class across the codebase) makes
+   the whole app pick up the brand color automatically. */
+@theme {
+  --color-blue-50: #f4f8fa;
+  --color-blue-100: #e5f0f5;
+  --color-blue-200: #c4dfee;
+  --color-blue-300: #92cae8;
+  --color-blue-400: #3eaeea;
+  --color-blue-500: #0b88cb;
+  --color-blue-600: #015887;
+  --color-blue-700: #01456a;
+  --color-blue-800: #023450;
+  --color-blue-900: #032435;
+  --color-blue-950: #031621;
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
