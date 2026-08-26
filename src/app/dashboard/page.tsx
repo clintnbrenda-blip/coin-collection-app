@@ -200,7 +200,7 @@ export default async function DashboardPage({
 
   return (
     <div className="min-h-screen bg-neutral-50 pb-24 print:bg-white">
-      <AppHeader title="Dashboard" fullName={profile.fullName} />
+      <AppHeader title="Dashboard" fullName={profile.fullName} role={profile.role} activeTab="dashboard" />
 
       <div className="mx-auto max-w-4xl space-y-6 p-4">
         {/* Filters */}

@@ -9,7 +9,7 @@ export default async function AccountPage() {
 
   return (
     <div className="min-h-screen bg-neutral-50 pb-24">
-      <AppHeader title="My Account" fullName={profile.fullName} />
+      <AppHeader title="My Account" fullName={profile.fullName} role={profile.role} />
 
       <div className="mx-auto max-w-2xl space-y-6 p-4">
         <section className="rounded-xl border border-neutral-200 bg-white p-4">

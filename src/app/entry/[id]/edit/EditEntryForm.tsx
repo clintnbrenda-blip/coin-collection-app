@@ -26,6 +26,7 @@ const initialState: EditEntryState = { error: null };
 export function EditEntryForm({
   entryId,
   employeeName,
+  role,
   date,
   daysSinceLast,
   machineGroups,
@@ -37,6 +38,7 @@ export function EditEntryForm({
 }: {
   entryId: string;
   employeeName: string;
+  role: "owner" | "employee";
   date: string;
   daysSinceLast: string;
   machineGroups: MachineGroupField[];
@@ -51,7 +53,12 @@ export function EditEntryForm({
 
   return (
     <div className="min-h-screen bg-neutral-50 pb-24">
-      <AppHeader title="Edit Collection Entry" fullName={employeeName} />
+      <AppHeader
+        title="Edit Collection Entry"
+        fullName={employeeName}
+        role={role}
+        activeTab="collection"
+      />
 
       <form
         action={formAction}

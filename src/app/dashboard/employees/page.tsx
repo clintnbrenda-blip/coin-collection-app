@@ -20,7 +20,7 @@ export default async function EmployeesPage() {
 
   return (
     <div className="min-h-screen bg-neutral-50 pb-24">
-      <AppHeader title="Employee Accounts" fullName={profile.fullName} />
+      <AppHeader title="Employee Accounts" fullName={profile.fullName} role={profile.role} activeTab="dashboard" />
 
       <div className="mx-auto max-w-2xl space-y-6 p-4">
         <Link href="/dashboard" className="text-sm text-blue-600 hover:underline">

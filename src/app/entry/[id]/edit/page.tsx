@@ -84,6 +84,7 @@ export default async function EditEntryPage({
     <EditEntryForm
       entryId={entry.id}
       employeeName={profile.fullName}
+      role={profile.role}
       date={entry.date}
       daysSinceLast={String(entry.days_since_last)}
       machineGroups={machineGroups}

@@ -40,12 +40,14 @@ const initialState: SubmitEntryState = { error: null };
 export function EntryForm({
   locationId,
   employeeName,
+  role,
   machineGroups,
   vendingMachines,
   lastEntryDate,
 }: {
   locationId: string;
   employeeName: string;
+  role: "owner" | "employee";
   machineGroups: MachineGroup[];
   vendingMachines: VendingMachine[];
   lastEntryDate: string | null;
@@ -62,7 +64,12 @@ export function EntryForm({
 
   return (
     <div className="min-h-screen bg-neutral-50 pb-24">
-      <AppHeader title="New Collection Entry" fullName={employeeName} />
+      <AppHeader
+        title="New Collection Entry"
+        fullName={employeeName}
+        role={role}
+        activeTab="collection"
+      />
 
       <form
         action={formAction}

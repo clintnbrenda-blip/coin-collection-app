@@ -66,7 +66,7 @@ export default async function EntryDetailPage({
 
   return (
     <div className="min-h-screen bg-neutral-50 pb-24">
-      <AppHeader title="Collection Entry" fullName={profile.fullName} />
+      <AppHeader title="Collection Entry" fullName={profile.fullName} role={profile.role} activeTab="collection" />
 
       <div className="mx-auto max-w-2xl space-y-6 p-4">
         {isOwner ? (

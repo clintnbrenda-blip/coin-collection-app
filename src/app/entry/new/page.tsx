@@ -49,6 +49,7 @@ export default async function NewEntryPage() {
     <EntryForm
       locationId={location.id}
       employeeName={profile.fullName}
+      role={profile.role}
       machineGroups={machineGroups ?? []}
       vendingMachines={vendingMachines ?? []}
       lastEntryDate={lastEntry?.date ?? null}
