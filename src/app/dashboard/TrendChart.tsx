@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { format, parseISO } from "date-fns";
 
 export interface TrendPoint {
@@ -15,21 +15,48 @@ export interface TrendPoint {
 // green, two months back always amber.
 const MONTH_COLORS = ["#2563eb", "#10b981", "#f59e0b"];
 
-const W = 640;
 const H = 220;
 const PAD_L = 40;
 const PAD_R = 10;
 const PAD_T = 16;
-const PAD_B = 24;
-const PLOT_W = W - PAD_L - PAD_R;
+const PAD_B = 28;
 const PLOT_H = H - PAD_T - PAD_B;
+const DEFAULT_WIDTH = 640;
 
-function xForDay(day: number): number {
-  return PAD_L + ((day - 1) / 30) * PLOT_W;
+function xForDay(day: number, plotW: number): number {
+  return PAD_L + ((day - 1) / 30) * plotW;
 }
 
 export function TrendChart({ points }: { points: TrendPoint[] }) {
   const [metric, setMetric] = useState<"turns" | "incomePerDay">("turns");
+
+  // The viewBox width tracks the container's real measured pixel width (not a
+  // fixed design width scaled to fit) — otherwise 1 SVG unit maps to a
+  // different number of actual pixels on a phone (narrow container, big
+  // scale-down) than on a desktop dashboard (wide container, little
+  // scale-down), so a single font-size constant can never look right at both
+  // sizes: it was rendering as ~5px, unreadable, at phone widths. Measuring
+  // the real width keeps 1 unit == 1px everywhere, so fixed font sizes below
+  // stay legible regardless of screen size.
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [width, setWidth] = useState(DEFAULT_WIDTH);
+
+  useLayoutEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    // Measure synchronously right away — don't wait on ResizeObserver's first
+    // callback, whose timing (especially on an initially-backgrounded tab)
+    // isn't guaranteed to happen before paint.
+    setWidth(el.getBoundingClientRect().width);
+    const observer = new ResizeObserver((entries) => {
+      const w = entries[0]?.contentRect.width;
+      if (w) setWidth(w);
+    });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  const plotW = Math.max(width - PAD_L - PAD_R, 1);
 
   const months = useMemo(() => {
     const byMonth = new Map<string, TrendPoint[]>();
@@ -68,6 +95,10 @@ export function TrendChart({ points }: { points: TrendPoint[] }) {
   }));
 
   const dayTicks = Array.from({ length: 31 }, (_, i) => i + 1);
+  // Labeling all 31 days packs numbers so tight they become illegible on a
+  // narrow screen — gridlines stay for every day, but only a handful of days
+  // get an actual number under them.
+  const labeledDays = new Set([1, 5, 10, 15, 20, 25, 30]);
 
   return (
     <section className="rounded-xl border border-neutral-200 bg-white p-4">
@@ -107,70 +138,80 @@ export function TrendChart({ points }: { points: TrendPoint[] }) {
             ))}
           </div>
 
-          <svg viewBox={`0 0 ${W} ${H}`} className="block w-full" role="img" aria-label="Trend chart">
-            {/* horizontal gridlines + y-axis labels */}
-            {yTicks.map((t) => (
-              <g key={t.y}>
-                <line x1={PAD_L} y1={t.y} x2={W - PAD_R} y2={t.y} stroke="#e5e5e5" strokeWidth={1} />
-                <text x={PAD_L - 6} y={t.y + 3} fontSize={9} fill="#a3a3a3" textAnchor="end">
-                  {t.label}
-                </text>
-              </g>
-            ))}
+          <div ref={containerRef} className="w-full">
+            <svg
+              viewBox={`0 0 ${width} ${H}`}
+              width="100%"
+              height={H}
+              role="img"
+              aria-label="Trend chart"
+            >
+              {/* horizontal gridlines + y-axis labels */}
+              {yTicks.map((t) => (
+                <g key={t.y}>
+                  <line x1={PAD_L} y1={t.y} x2={width - PAD_R} y2={t.y} stroke="#e5e5e5" strokeWidth={1} />
+                  <text x={PAD_L - 6} y={t.y + 4} fontSize={11} fill="#737373" textAnchor="end">
+                    {t.label}
+                  </text>
+                </g>
+              ))}
 
-            {/* vertical gridline + day label for every day */}
-            {dayTicks.map((day) => (
-              <g key={day}>
-                <line
-                  x1={xForDay(day)}
-                  y1={PAD_T}
-                  x2={xForDay(day)}
-                  y2={H - PAD_B + 4}
-                  stroke="#eeeeee"
-                  strokeWidth={1}
-                />
-                <text
-                  x={xForDay(day)}
-                  y={H - PAD_B + 13}
-                  fontSize={7}
-                  fill="#a3a3a3"
-                  textAnchor="middle"
-                >
-                  {day}
-                </text>
-              </g>
-            ))}
+              {/* vertical gridline + day label for every day */}
+              {dayTicks.map((day) => (
+                <g key={day}>
+                  <line
+                    x1={xForDay(day, plotW)}
+                    y1={PAD_T}
+                    x2={xForDay(day, plotW)}
+                    y2={H - PAD_B + 4}
+                    stroke="#eeeeee"
+                    strokeWidth={1}
+                  />
+                  {labeledDays.has(day) && (
+                    <text
+                      x={xForDay(day, plotW)}
+                      y={H - PAD_B + 18}
+                      fontSize={11}
+                      fill="#737373"
+                      textAnchor="middle"
+                    >
+                      {day}
+                    </text>
+                  )}
+                </g>
+              ))}
 
-            <line x1={PAD_L} y1={H - PAD_B} x2={W - PAD_R} y2={H - PAD_B} stroke="#cccccc" strokeWidth={1} />
-            <line x1={PAD_L} y1={PAD_T} x2={PAD_L} y2={H - PAD_B} stroke="#cccccc" strokeWidth={1} />
+              <line x1={PAD_L} y1={H - PAD_B} x2={width - PAD_R} y2={H - PAD_B} stroke="#cccccc" strokeWidth={1} />
+              <line x1={PAD_L} y1={PAD_T} x2={PAD_L} y2={H - PAD_B} stroke="#cccccc" strokeWidth={1} />
 
-            {months.map((m) => (
-              <g key={m.key}>
-                <polyline
-                  fill="none"
-                  stroke={m.color}
-                  strokeWidth={2}
-                  points={m.points.map((p) => `${xForDay(p.day)},${yFor(p.value)}`).join(" ")}
-                />
-                {m.points.map((p) => (
-                  <circle
-                    key={p.day}
-                    cx={xForDay(p.day)}
-                    cy={yFor(p.value)}
-                    r={4}
-                    fill={m.color}
-                    stroke="#fff"
-                    strokeWidth={1.5}
-                  >
-                    <title>
-                      {m.label} {p.day}:{" "}
-                      {metric === "turns" ? p.value.toFixed(2) : `$${p.value.toFixed(2)}`}
-                    </title>
-                  </circle>
-                ))}
-              </g>
-            ))}
-          </svg>
+              {months.map((m) => (
+                <g key={m.key}>
+                  <polyline
+                    fill="none"
+                    stroke={m.color}
+                    strokeWidth={2}
+                    points={m.points.map((p) => `${xForDay(p.day, plotW)},${yFor(p.value)}`).join(" ")}
+                  />
+                  {m.points.map((p) => (
+                    <circle
+                      key={p.day}
+                      cx={xForDay(p.day, plotW)}
+                      cy={yFor(p.value)}
+                      r={4}
+                      fill={m.color}
+                      stroke="#fff"
+                      strokeWidth={1.5}
+                    >
+                      <title>
+                        {m.label} {p.day}:{" "}
+                        {metric === "turns" ? p.value.toFixed(2) : `$${p.value.toFixed(2)}`}
+                      </title>
+                    </circle>
+                  ))}
+                </g>
+              ))}
+            </svg>
+          </div>
         </>
       )}
     </section>

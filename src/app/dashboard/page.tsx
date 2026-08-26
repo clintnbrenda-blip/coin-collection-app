@@ -232,7 +232,7 @@ export default async function DashboardPage({
       <div className="mx-auto max-w-4xl space-y-6 p-4">
         {/* Filters */}
         <form className="flex flex-wrap items-end gap-3 rounded-xl border border-neutral-200 bg-white p-4 print:hidden">
-          <div className="flex gap-1.5">
+          <div className="flex flex-wrap gap-1.5">
             {(["lastMonth", "month", "quarter", "year", "custom"] as Period[]).map((p) => (
               <Link
                 key={p}
@@ -304,33 +304,35 @@ export default async function DashboardPage({
         {period !== "month" && period !== "lastMonth" && monthRows.length > 0 && (
           <section className="rounded-xl border border-neutral-200 bg-white p-4">
             <h2 className="mb-3 font-semibold text-neutral-900">By month</h2>
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="text-left text-neutral-500">
-                  <th className="pb-2 font-medium">Month</th>
-                  <th className="pb-2 text-right font-medium">Income</th>
-                  <th className="pb-2 text-right font-medium">Avg turns</th>
-                  <th className="pb-2 text-right font-medium">Visits</th>
-                </tr>
-              </thead>
-              <tbody>
-                {monthRows.map((m) => (
-                  <tr key={m.key} className="border-t border-neutral-100">
-                    <td className="py-1.5">
-                      <Link
-                        href={`/dashboard?period=month&target=${m.key}-01${groupQS}`}
-                        className="font-medium text-blue-600 hover:underline"
-                      >
-                        {m.label}
-                      </Link>
-                    </td>
-                    <td className="py-1.5 text-right text-neutral-600">${m.income.toFixed(2)}</td>
-                    <td className="py-1.5 text-right text-neutral-600">{m.avgTurns.toFixed(2)}</td>
-                    <td className="py-1.5 text-right text-neutral-600">{m.entryCount}</td>
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[420px] text-sm">
+                <thead>
+                  <tr className="text-left text-neutral-500">
+                    <th className="pb-2 font-medium">Month</th>
+                    <th className="pb-2 text-right font-medium">Income</th>
+                    <th className="pb-2 text-right font-medium">Avg turns</th>
+                    <th className="pb-2 text-right font-medium">Visits</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {monthRows.map((m) => (
+                    <tr key={m.key} className="border-t border-neutral-100">
+                      <td className="py-1.5 whitespace-nowrap">
+                        <Link
+                          href={`/dashboard?period=month&target=${m.key}-01${groupQS}`}
+                          className="font-medium text-blue-600 hover:underline"
+                        >
+                          {m.label}
+                        </Link>
+                      </td>
+                      <td className="py-1.5 text-right text-neutral-600">${m.income.toFixed(2)}</td>
+                      <td className="py-1.5 text-right text-neutral-600">{m.avgTurns.toFixed(2)}</td>
+                      <td className="py-1.5 text-right text-neutral-600">{m.entryCount}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </section>
         )}
 
@@ -351,24 +353,26 @@ export default async function DashboardPage({
           {groupTurnsRows.length === 0 ? (
             <p className="text-sm text-neutral-500">No data for this period.</p>
           ) : (
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="text-left text-neutral-500">
-                  <th className="pb-2 font-medium">Group</th>
-                  <th className="pb-2 text-right font-medium">Avg turns/day</th>
-                </tr>
-              </thead>
-              <tbody>
-                {groupTurnsRows.map((g) => (
-                  <tr key={g.name} className="border-t border-neutral-100">
-                    <td className="py-1.5 text-neutral-800">{g.name}</td>
-                    <td className="py-1.5 text-right text-neutral-600">
-                      {g.avgTurns.toFixed(2)}
-                    </td>
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[280px] text-sm">
+                <thead>
+                  <tr className="text-left text-neutral-500">
+                    <th className="pb-2 font-medium">Group</th>
+                    <th className="pb-2 text-right font-medium">Avg turns/day</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {groupTurnsRows.map((g) => (
+                    <tr key={g.name} className="border-t border-neutral-100">
+                      <td className="py-1.5 whitespace-nowrap text-neutral-800">{g.name}</td>
+                      <td className="py-1.5 text-right text-neutral-600">
+                        {g.avgTurns.toFixed(2)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           )}
         </section>
 
@@ -378,22 +382,24 @@ export default async function DashboardPage({
           {vendingByMachineRows.length === 0 ? (
             <p className="text-sm text-neutral-500">No data for this period.</p>
           ) : (
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="text-left text-neutral-500">
-                  <th className="pb-2 font-medium">Machine</th>
-                  <th className="pb-2 text-right font-medium">Income</th>
-                </tr>
-              </thead>
-              <tbody>
-                {vendingByMachineRows.map((v) => (
-                  <tr key={v.name} className="border-t border-neutral-100">
-                    <td className="py-1.5 text-neutral-800">{v.name}</td>
-                    <td className="py-1.5 text-right text-neutral-600">${v.total.toFixed(2)}</td>
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[280px] text-sm">
+                <thead>
+                  <tr className="text-left text-neutral-500">
+                    <th className="pb-2 font-medium">Machine</th>
+                    <th className="pb-2 text-right font-medium">Income</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {vendingByMachineRows.map((v) => (
+                    <tr key={v.name} className="border-t border-neutral-100">
+                      <td className="py-1.5 whitespace-nowrap text-neutral-800">{v.name}</td>
+                      <td className="py-1.5 text-right text-neutral-600">${v.total.toFixed(2)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           )}
         </section>
 
@@ -409,40 +415,42 @@ export default async function DashboardPage({
           {logRows.length === 0 ? (
             <p className="text-sm text-neutral-500">No entries for this period.</p>
           ) : (
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="text-left text-neutral-500">
-                  <th className="pb-2 font-medium">Date</th>
-                  <th className="pb-2 font-medium">Employee</th>
-                  <th className="pb-2 text-right font-medium">Days</th>
-                  <th className="pb-2 text-right font-medium">Income</th>
-                  <th className="pb-2 text-right font-medium">Avg turns</th>
-                  <th className="pb-2 text-right font-medium">Income/day</th>
-                </tr>
-              </thead>
-              <tbody>
-                {logRows.map((r) => (
-                  <tr key={r.id} className="border-t border-neutral-100">
-                    <td className="py-1.5">
-                      <Link href={`/entry/${r.id}`} className="text-blue-600 hover:underline">
-                        {r.date}
-                      </Link>
-                    </td>
-                    <td className="py-1.5 text-neutral-600">{r.employee}</td>
-                    <td className="py-1.5 text-right text-neutral-600">{r.daysSinceLast}</td>
-                    <td className="py-1.5 text-right text-neutral-600">
-                      ${r.totalIncome.toFixed(2)}
-                    </td>
-                    <td className="py-1.5 text-right text-neutral-600">
-                      {r.avgTurns !== null ? r.avgTurns.toFixed(2) : "—"}
-                    </td>
-                    <td className="py-1.5 text-right text-neutral-600">
-                      {r.incomePerDay !== null ? `$${r.incomePerDay.toFixed(2)}` : "—"}
-                    </td>
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[560px] text-sm">
+                <thead>
+                  <tr className="text-left text-neutral-500">
+                    <th className="pb-2 font-medium">Date</th>
+                    <th className="pb-2 font-medium">Employee</th>
+                    <th className="pb-2 text-right font-medium">Days</th>
+                    <th className="pb-2 text-right font-medium">Income</th>
+                    <th className="pb-2 text-right font-medium">Avg turns</th>
+                    <th className="pb-2 text-right font-medium">Income/day</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {logRows.map((r) => (
+                    <tr key={r.id} className="border-t border-neutral-100">
+                      <td className="py-1.5 whitespace-nowrap">
+                        <Link href={`/entry/${r.id}`} className="text-blue-600 hover:underline">
+                          {r.date}
+                        </Link>
+                      </td>
+                      <td className="py-1.5 whitespace-nowrap text-neutral-600">{r.employee}</td>
+                      <td className="py-1.5 text-right text-neutral-600">{r.daysSinceLast}</td>
+                      <td className="py-1.5 text-right text-neutral-600">
+                        ${r.totalIncome.toFixed(2)}
+                      </td>
+                      <td className="py-1.5 text-right text-neutral-600">
+                        {r.avgTurns !== null ? r.avgTurns.toFixed(2) : "—"}
+                      </td>
+                      <td className="py-1.5 text-right text-neutral-600">
+                        {r.incomePerDay !== null ? `$${r.incomePerDay.toFixed(2)}` : "—"}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           )}
         </section>
 
@@ -461,18 +469,18 @@ export default async function DashboardPage({
 
 function HeroCard({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-xl border border-blue-200 bg-blue-50 p-5 text-center">
+    <div className="rounded-xl border border-blue-200 bg-blue-50 p-3 text-center sm:p-5">
       <p className="text-sm text-blue-700">{label}</p>
-      <p className="text-4xl font-semibold text-blue-900">{value}</p>
+      <p className="text-2xl font-semibold text-blue-900 sm:text-4xl">{value}</p>
     </div>
   );
 }
 
 function SummaryCard({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-xl border border-neutral-200 bg-white p-4">
+    <div className="rounded-xl border border-neutral-200 bg-white p-3 sm:p-4">
       <p className="text-xs text-neutral-500">{label}</p>
-      <p className="text-xl font-semibold text-neutral-900">{value}</p>
+      <p className="text-base font-semibold text-neutral-900 sm:text-xl">{value}</p>
     </div>
   );
 }
