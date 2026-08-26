@@ -21,11 +21,6 @@ export default async function DepositsListPage() {
       />
 
       <div className="mx-auto max-w-2xl space-y-4 p-4">
-        <p className="text-sm text-neutral-500">
-          Any collection still waiting on a bank deposit shows up here — anyone can submit
-          one, not just whoever did the collection.
-        </p>
-
         {error && (
           <p className="rounded-lg bg-red-50 p-3 text-sm text-red-700">
             Could not load pending deposits.
