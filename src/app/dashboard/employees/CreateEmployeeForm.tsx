@@ -6,6 +6,7 @@ import { createEmployee, type CreateEmployeeState } from "./actions";
 const initialState: CreateEmployeeState = {
   error: null,
   createdEmail: null,
+  resentExisting: false,
 };
 
 export function CreateEmployeeForm() {
@@ -42,7 +43,11 @@ export function CreateEmployeeForm() {
 
       {state.createdEmail && (
         <div className="mt-3 rounded-lg bg-green-50 p-3 text-sm text-green-800">
-          <p className="font-medium">Invite sent to {state.createdEmail}.</p>
+          <p className="font-medium">
+            {state.resentExisting
+              ? `An account already existed for ${state.createdEmail} — sent a password-setup link instead.`
+              : `Invite sent to ${state.createdEmail}.`}
+          </p>
           <p className="mt-1 text-xs text-green-700">
             They&apos;ll get an email with a link to set their own password and get started.
           </p>

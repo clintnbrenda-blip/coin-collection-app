@@ -17,6 +17,7 @@ async function requireOwner() {
 export interface CreateEmployeeState {
   error: string | null;
   createdEmail: string | null;
+  resentExisting: boolean;
 }
 
 function generateTempPassword(): string {
@@ -38,7 +39,7 @@ export async function createEmployee(
   const fullName = String(formData.get("full_name") ?? "").trim();
 
   if (!email || !fullName) {
-    return { error: "Name and email are required.", createdEmail: null };
+    return { error: "Name and email are required.", createdEmail: null, resentExisting: false };
   }
 
   // Derive the site origin from the request itself, same as the
@@ -62,11 +63,29 @@ export async function createEmployee(
   });
 
   if (error) {
-    return { error: error.message, createdEmail: null };
+    // inviteUserByEmail refuses to re-send a "new user" invite once the
+    // email already has an account — which happens the moment ANY invite
+    // attempt for it succeeds, even one that never actually got completed
+    // (e.g. it landed on a broken link, like the Site URL misconfiguration
+    // that caused exactly this the first time around). Fall back to a
+    // password-reset-style email instead, which works for existing accounts
+    // and lands them on the same "set your password" experience.
+    if (error.code === "email_exists" || error.code === "user_already_exists") {
+      const supabase = await createClient();
+      const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${protocol}://${host}/auth/confirm?next=/reset-password`,
+      });
+      if (resetError) {
+        return { error: resetError.message, createdEmail: null, resentExisting: false };
+      }
+      revalidatePath("/dashboard/employees");
+      return { error: null, createdEmail: email, resentExisting: true };
+    }
+    return { error: error.message, createdEmail: null, resentExisting: false };
   }
 
   revalidatePath("/dashboard/employees");
-  return { error: null, createdEmail: email };
+  return { error: null, createdEmail: email, resentExisting: false };
 }
 
 export interface ResetPasswordState {
