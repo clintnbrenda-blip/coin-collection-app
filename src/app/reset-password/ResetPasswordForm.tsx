@@ -12,10 +12,10 @@ export function ResetPasswordForm() {
     <div className="flex min-h-screen items-center justify-center bg-neutral-50 px-4">
       <div className="w-full max-w-sm">
         <h1 className="mb-1 text-center text-2xl font-semibold text-neutral-900">
-          Set a new password
+          Set your password
         </h1>
         <p className="mb-8 text-center text-sm text-neutral-500">
-          Choose a new password for your account.
+          Choose a password for your Cypress Laundry account.
         </p>
 
         <form action={formAction} className="space-y-4">
