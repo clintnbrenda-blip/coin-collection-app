@@ -26,7 +26,7 @@ export function ExportCsvButton({
         Employee: r.employee,
         "Days since last": r.daysSinceLast,
         "Total income": r.totalIncome.toFixed(2),
-        "Avg turns": r.avgTurns !== null ? r.avgTurns.toFixed(2) : "",
+        "Avg turns": r.avgTurns !== null ? r.avgTurns.toFixed(1) : "",
         "Income/day": r.incomePerDay !== null ? r.incomePerDay.toFixed(2) : "",
       }))
     );

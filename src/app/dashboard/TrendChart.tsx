@@ -204,7 +204,7 @@ export function TrendChart({ points }: { points: TrendPoint[] }) {
                     >
                       <title>
                         {m.label} {p.day}:{" "}
-                        {metric === "turns" ? p.value.toFixed(2) : `$${p.value.toFixed(2)}`}
+                        {metric === "turns" ? p.value.toFixed(1) : `$${p.value.toFixed(2)}`}
                       </title>
                     </circle>
                   ))}

@@ -91,7 +91,7 @@ export default async function EntryDetailPage({
             <p className="mt-1 text-xs text-blue-700">
               {entry.date} · {entry.days_since_last} day
               {Number(entry.days_since_last) === 1 ? "" : "s"} since last · avg turns{" "}
-              {entry.avg_turns ? Number(entry.avg_turns).toFixed(2) : "—"}
+              {entry.avg_turns ? Number(entry.avg_turns).toFixed(1) : "—"}
             </p>
           </section>
         ) : (
@@ -131,7 +131,7 @@ export default async function EntryDetailPage({
                           ${Number(s.dollars ?? 0).toFixed(2)}
                         </td>
                         <td className="py-1.5 text-right text-neutral-600">
-                          {Number(s.turns ?? 0).toFixed(2)}
+                          {Number(s.turns ?? 0).toFixed(1)}
                         </td>
                       </tr>
                     );

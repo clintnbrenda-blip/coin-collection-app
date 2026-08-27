@@ -295,7 +295,7 @@ export default async function DashboardPage({
         {/* Hero stats — income and turns get equal top billing */}
         <section className="grid grid-cols-2 gap-3">
           <HeroCard label="Total income" value={`$${combinedIncome.toFixed(2)}`} />
-          <HeroCard label="Avg turns" value={overallAvgTurns.toFixed(2)} />
+          <HeroCard label="Avg turns" value={overallAvgTurns.toFixed(1)} />
         </section>
 
         <section className="grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -333,7 +333,7 @@ export default async function DashboardPage({
                         </Link>
                       </td>
                       <td className="py-1.5 text-right text-neutral-600">${m.income.toFixed(2)}</td>
-                      <td className="py-1.5 text-right text-neutral-600">{m.avgTurns.toFixed(2)}</td>
+                      <td className="py-1.5 text-right text-neutral-600">{m.avgTurns.toFixed(1)}</td>
                       <td className="py-1.5 text-right text-neutral-600">{m.entryCount}</td>
                     </tr>
                   ))}
@@ -350,7 +350,7 @@ export default async function DashboardPage({
               Turns by machine group {groupFilter ? "(filtered)" : ""}
             </h2>
             <span className="text-sm text-neutral-500">
-              Overall avg (washers): {overallAvgTurns.toFixed(2)}
+              Overall avg (washers): {overallAvgTurns.toFixed(1)}
             </span>
           </div>
           <p className="mb-2 text-xs text-neutral-400">
@@ -373,7 +373,7 @@ export default async function DashboardPage({
                     <tr key={g.name} className="border-t border-neutral-100">
                       <td className="py-1.5 whitespace-nowrap text-neutral-800">{g.name}</td>
                       <td className="py-1.5 text-right text-neutral-600">
-                        {g.avgTurns.toFixed(2)}
+                        {g.avgTurns.toFixed(1)}
                       </td>
                     </tr>
                   ))}
@@ -448,7 +448,7 @@ export default async function DashboardPage({
                         ${r.totalIncome.toFixed(2)}
                       </td>
                       <td className="py-1.5 text-right text-neutral-600">
-                        {r.avgTurns !== null ? r.avgTurns.toFixed(2) : "—"}
+                        {r.avgTurns !== null ? r.avgTurns.toFixed(1) : "—"}
                       </td>
                       <td className="py-1.5 text-right text-neutral-600">
                         {r.incomePerDay !== null ? `$${r.incomePerDay.toFixed(2)}` : "—"}
