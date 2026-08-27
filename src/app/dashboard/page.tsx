@@ -298,7 +298,8 @@ export default async function DashboardPage({
           <HeroCard label="Avg turns" value={overallAvgTurns.toFixed(2)} />
         </section>
 
-        <section className="grid grid-cols-3 gap-3">
+        <section className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <SummaryCard label="Machine income" value={`$${machineIncome.toFixed(2)}`} />
           <SummaryCard label="Vending income" value={`$${vendingIncome.toFixed(2)}`} />
           <SummaryCard label="Bank deposits" value={`$${depositsTotal.toFixed(2)}`} />
           <SummaryCard label="Avg income/day" value={`$${incomePerDayAvg.toFixed(2)}`} />
