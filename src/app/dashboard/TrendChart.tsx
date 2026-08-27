@@ -2,6 +2,7 @@
 
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { format, parseISO } from "date-fns";
+import { formatMoney, formatMoneyWhole } from "@/lib/formatMoney";
 
 export interface TrendPoint {
   date: string; // yyyy-MM-dd
@@ -91,7 +92,7 @@ export function TrendChart({ points }: { points: TrendPoint[] }) {
   const yTicks = [0, 0.25, 0.5, 0.75, 1].map((f) => ({
     y: yFor(maxValue * f),
     label:
-      metric === "turns" ? (maxValue * f).toFixed(1) : `$${Math.round(maxValue * f)}`,
+      metric === "turns" ? (maxValue * f).toFixed(1) : formatMoneyWhole(maxValue * f),
   }));
 
   const dayTicks = Array.from({ length: 31 }, (_, i) => i + 1);
@@ -204,7 +205,7 @@ export function TrendChart({ points }: { points: TrendPoint[] }) {
                     >
                       <title>
                         {m.label} {p.day}:{" "}
-                        {metric === "turns" ? p.value.toFixed(1) : `$${p.value.toFixed(2)}`}
+                        {metric === "turns" ? p.value.toFixed(1) : formatMoney(p.value)}
                       </title>
                     </circle>
                   ))}

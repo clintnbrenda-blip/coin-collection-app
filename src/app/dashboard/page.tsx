@@ -5,6 +5,7 @@ import { getCurrentProfile } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { AppHeader } from "@/components/AppHeader";
 import { resolveDateRange, type Period } from "@/lib/dateRanges";
+import { formatMoney } from "@/lib/formatMoney";
 import { ExportCsvButton } from "./ExportCsvButton";
 import { PrintButton } from "./PrintButton";
 import { GroupFilterSelect } from "./GroupFilterSelect";
@@ -294,15 +295,15 @@ export default async function DashboardPage({
 
         {/* Hero stats — income and turns get equal top billing */}
         <section className="grid grid-cols-2 gap-3">
-          <HeroCard label="Total income" value={`$${combinedIncome.toFixed(2)}`} />
+          <HeroCard label="Total income" value={formatMoney(combinedIncome)} />
           <HeroCard label="Avg turns" value={overallAvgTurns.toFixed(1)} />
         </section>
 
         <section className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-          <SummaryCard label="Machine income" value={`$${machineIncome.toFixed(2)}`} />
-          <SummaryCard label="Vending income" value={`$${vendingIncome.toFixed(2)}`} />
-          <SummaryCard label="Bank deposits" value={`$${depositsTotal.toFixed(2)}`} />
-          <SummaryCard label="Avg income/day" value={`$${incomePerDayAvg.toFixed(2)}`} />
+          <SummaryCard label="Machine income" value={formatMoney(machineIncome)} />
+          <SummaryCard label="Vending income" value={formatMoney(vendingIncome)} />
+          <SummaryCard label="Bank deposits" value={formatMoney(depositsTotal)} />
+          <SummaryCard label="Avg income/day" value={formatMoney(incomePerDayAvg)} />
         </section>
 
         <TrendChart points={trendPoints} />
@@ -332,7 +333,7 @@ export default async function DashboardPage({
                           {m.label}
                         </Link>
                       </td>
-                      <td className="py-1.5 text-right text-neutral-600">${m.income.toFixed(2)}</td>
+                      <td className="py-1.5 text-right text-neutral-600">{formatMoney(m.income)}</td>
                       <td className="py-1.5 text-right text-neutral-600">{m.avgTurns.toFixed(1)}</td>
                       <td className="py-1.5 text-right text-neutral-600">{m.entryCount}</td>
                     </tr>
@@ -401,7 +402,7 @@ export default async function DashboardPage({
                   {vendingByMachineRows.map((v) => (
                     <tr key={v.name} className="border-t border-neutral-100">
                       <td className="py-1.5 whitespace-nowrap text-neutral-800">{v.name}</td>
-                      <td className="py-1.5 text-right text-neutral-600">${v.total.toFixed(2)}</td>
+                      <td className="py-1.5 text-right text-neutral-600">{formatMoney(v.total)}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -445,13 +446,13 @@ export default async function DashboardPage({
                       <td className="py-1.5 whitespace-nowrap text-neutral-600">{r.employee}</td>
                       <td className="py-1.5 text-right text-neutral-600">{r.daysSinceLast}</td>
                       <td className="py-1.5 text-right text-neutral-600">
-                        ${r.totalIncome.toFixed(2)}
+                        {formatMoney(r.totalIncome)}
                       </td>
                       <td className="py-1.5 text-right text-neutral-600">
                         {r.avgTurns !== null ? r.avgTurns.toFixed(1) : "—"}
                       </td>
                       <td className="py-1.5 text-right text-neutral-600">
-                        {r.incomePerDay !== null ? `$${r.incomePerDay.toFixed(2)}` : "—"}
+                        {r.incomePerDay !== null ? formatMoney(r.incomePerDay) : "—"}
                       </td>
                     </tr>
                   ))}

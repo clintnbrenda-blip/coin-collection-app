@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { AppHeader } from "@/components/AppHeader";
 import { CHECKLIST_ITEMS } from "@/lib/checklist";
 import { isWithinEditWindow } from "@/lib/editWindow";
+import { formatMoney } from "@/lib/formatMoney";
 import { DeleteEntryButton } from "./DeleteEntryButton";
 import { ClearDraftOnMount } from "./ClearDraftOnMount";
 
@@ -86,7 +87,7 @@ export default async function EntryDetailPage({
           <section className="rounded-xl border border-blue-200 bg-blue-50 p-4 text-center">
             <p className="text-sm text-blue-700">Total income (machines)</p>
             <p className="text-3xl font-semibold text-blue-900">
-              ${(entry.total_income ?? 0).toFixed(2)}
+              {formatMoney(entry.total_income ?? 0)}
             </p>
             <p className="mt-1 text-xs text-blue-700">
               {entry.date} · {entry.days_since_last} day
@@ -128,7 +129,7 @@ export default async function EntryDetailPage({
                           {s.quarters_collected}
                         </td>
                         <td className="py-1.5 text-right text-neutral-600">
-                          ${Number(s.dollars ?? 0).toFixed(2)}
+                          {formatMoney(Number(s.dollars ?? 0))}
                         </td>
                         <td className="py-1.5 text-right text-neutral-600">
                           {Number(s.turns ?? 0).toFixed(1)}
@@ -149,21 +150,21 @@ export default async function EntryDetailPage({
                     : v.vending_machines;
                   return (
                     <li key={i}>
-                      {vm?.name}: cash ${Number(v.cash_collected ?? 0).toFixed(2)} + coins $
-                      {Number(v.coins_collected ?? 0).toFixed(2)}
+                      {vm?.name}: cash {formatMoney(Number(v.cash_collected ?? 0))} + coins{" "}
+                      {formatMoney(Number(v.coins_collected ?? 0))}
                     </li>
                   );
                 })}
               </ul>
               <p className="mt-2 text-sm font-medium text-neutral-800">
-                Total: ${vendingTotal.toFixed(2)}
+                Total: {formatMoney(vendingTotal)}
               </p>
             </section>
 
             <section className="rounded-xl border border-neutral-200 bg-white p-4">
               <h2 className="mb-2 font-semibold text-neutral-900">Bank deposit</h2>
               <p className="text-sm text-neutral-600">
-                ${Number(deposit?.deposit_amount ?? 0).toFixed(2)}
+                {formatMoney(Number(deposit?.deposit_amount ?? 0))}
                 {!deposit?.deposit_slip_photo_path && " · no slip photo"}
               </p>
               {depositSlipUrl ? (

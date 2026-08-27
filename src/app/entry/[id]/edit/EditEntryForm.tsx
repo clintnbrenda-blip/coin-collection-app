@@ -6,6 +6,7 @@ import { AppHeader } from "@/components/AppHeader";
 import { CHECKLIST_ITEMS } from "@/lib/checklist";
 import { focusNextFieldOnEnter } from "@/lib/formKeyNav";
 import { daysBetween } from "@/lib/dateMath";
+import { formatMoney } from "@/lib/formatMoney";
 import { updateEntry, type EditEntryState } from "./actions";
 
 interface MachineGroupField {
@@ -132,7 +133,7 @@ export function EditEntryForm({
                 >
                   {mg.name}
                   <span className="ml-1 text-xs text-neutral-400">
-                    (qty {mg.qty} · ${mg.price.toFixed(2)})
+                    (qty {mg.qty} · {formatMoney(mg.price)})
                   </span>
                 </label>
                 <input
@@ -196,7 +197,7 @@ export function EditEntryForm({
           <h2 className="mb-1 font-semibold text-neutral-900">Bank deposit</h2>
           <p className="text-sm text-neutral-600">
             {depositAmount !== "0"
-              ? `Currently recorded: $${Number(depositAmount).toFixed(2)}.`
+              ? `Currently recorded: ${formatMoney(Number(depositAmount))}.`
               : "Not recorded yet."}
           </p>
           <Link

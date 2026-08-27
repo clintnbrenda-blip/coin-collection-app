@@ -2,6 +2,7 @@
 
 import { useActionState, useEffect, useState } from "react";
 import { focusNextFieldOnEnter } from "@/lib/formKeyNav";
+import { formatMoney } from "@/lib/formatMoney";
 import { PhotoPickerInput } from "@/components/PhotoPickerInput";
 import { submitDeposit, type SubmitDepositState } from "./actions";
 
@@ -68,7 +69,7 @@ export function DepositForm({
         <h2 className="mb-1 font-semibold text-neutral-900">Collection date: {date}</h2>
         {existingAmount !== null && (
           <p className="mb-3 text-xs text-amber-700">
-            A deposit of ${existingAmount.toFixed(2)} is already recorded for this entry —
+            A deposit of {formatMoney(existingAmount)} is already recorded for this entry —
             submitting again will replace it.
           </p>
         )}

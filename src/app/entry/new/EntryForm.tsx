@@ -6,6 +6,7 @@ import { CHECKLIST_ITEMS } from "@/lib/checklist";
 import { focusNextFieldOnEnter } from "@/lib/formKeyNav";
 import { todayLocalISO, daysBetween } from "@/lib/dateMath";
 import { loadDraft, saveDraft, markPendingSubmit, type EntryDraft } from "@/lib/entryDraft";
+import { formatMoney } from "@/lib/formatMoney";
 import { submitEntry, type SubmitEntryState } from "./actions";
 
 interface MachineGroup {
@@ -192,7 +193,7 @@ export function EntryForm({
                 >
                   {mg.name}
                   <span className="ml-1 text-xs text-neutral-400">
-                    (qty {mg.qty} · ${mg.price.toFixed(2)})
+                    (qty {mg.qty} · {formatMoney(mg.price)})
                   </span>
                 </label>
                 <input
