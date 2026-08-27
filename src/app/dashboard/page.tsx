@@ -86,7 +86,9 @@ export default async function DashboardPage({
   const { data: snapshots } = entryIds.length
     ? await supabase
         .from("entry_group_snapshots")
-        .select("entry_id, machine_group_id, quarters_collected, dollars, turns, machine_groups(name, type)")
+        .select(
+          "entry_id, machine_group_id, quarters_collected, dollars, turns, machine_groups(name, type, display_order)"
+        )
         .in("entry_id", entryIds)
     : { data: [] };
 
@@ -135,7 +137,7 @@ export default async function DashboardPage({
   // the same (e.g. `=SUM(AG4:AG10)/6`, stopping before the dryer row).
   const groupTurns = new Map<
     string,
-    { name: string; type: string; turnsSum: number; count: number }
+    { name: string; type: string; displayOrder: number; turnsSum: number; count: number }
   >();
   for (const s of snapshots ?? []) {
     if (groupFilter && s.machine_group_id !== groupFilter) continue;
@@ -145,6 +147,7 @@ export default async function DashboardPage({
     const entry = groupTurns.get(key) ?? {
       name: mg?.name ?? "?",
       type: mg?.type ?? "washer",
+      displayOrder: mg?.display_order ?? 0,
       turnsSum: 0,
       count: 0,
     };
@@ -152,9 +155,12 @@ export default async function DashboardPage({
     entry.count += 1;
     groupTurns.set(key, entry);
   }
+  // Same order as the collection sheet (display_order), not sorted by value —
+  // Clint doesn't want the rows reshuffling based on which group has more
+  // turns this period.
   const groupTurnsRows = [...groupTurns.values()]
-    .map((g) => ({ name: g.name, type: g.type, avgTurns: g.turnsSum / g.count }))
-    .sort((a, b) => b.avgTurns - a.avgTurns);
+    .map((g) => ({ name: g.name, type: g.type, displayOrder: g.displayOrder, avgTurns: g.turnsSum / g.count }))
+    .sort((a, b) => a.displayOrder - b.displayOrder);
 
   const washerTurnsRows = groupTurnsRows.filter((g) => g.type === "washer");
   const overallAvgTurns =
@@ -477,7 +483,10 @@ function SummaryCard({ label, value }: { label: string; value: string }) {
 }
 
 interface SnapshotWithGroup {
-  machine_groups: { name: string; type: string } | { name: string; type: string }[] | null;
+  machine_groups:
+    | { name: string; type: string; display_order: number }
+    | { name: string; type: string; display_order: number }[]
+    | null;
 }
 function getMg(s: SnapshotWithGroup) {
   return Array.isArray(s.machine_groups) ? s.machine_groups[0] : s.machine_groups;
