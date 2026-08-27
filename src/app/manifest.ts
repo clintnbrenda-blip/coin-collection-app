@@ -5,10 +5,12 @@ import type { MetadataRoute } from "next";
 // site into a standalone app icon on a phone instead of just a bookmark.
 export default function manifest(): MetadataRoute.Manifest {
   return {
+    id: "/",
     name: "Cypress Laundry — Coin Collection Tracker",
     short_name: "Cypress Coins",
     description: "Coin collection, bank deposit, and reporting tracker for Cypress Laundry.",
     start_url: "/",
+    scope: "/",
     display: "standalone",
     background_color: "#ffffff",
     theme_color: "#015887",
