@@ -19,6 +19,8 @@ export async function updateMachineGroup(formData: FormData) {
   const id = String(formData.get("id"));
   const qty = Number(formData.get("qty"));
   const price = Number(formData.get("price"));
+  const storeNumbersRaw = String(formData.get("store_numbers") ?? "").trim();
+  const storeNumbers = storeNumbersRaw === "" ? null : storeNumbersRaw;
 
   if (!id || !Number.isFinite(qty) || qty <= 0 || !Number.isFinite(price) || price <= 0) {
     throw new Error("Qty and price must be positive numbers.");
@@ -26,7 +28,12 @@ export async function updateMachineGroup(formData: FormData) {
 
   // Only affects entries created from now on — past entries keep their
   // qty_at_time/price_at_time snapshot, so this never rewrites history.
-  await supabase.from("machine_groups").update({ qty, price }).eq("id", id);
+  // store_numbers (the physical machine numbers in the store) has no such
+  // history to preserve — it's just a label, safe to update freely.
+  await supabase
+    .from("machine_groups")
+    .update({ qty, price, store_numbers: storeNumbers })
+    .eq("id", id);
   revalidatePath("/dashboard/machine-groups");
 }
 
@@ -57,6 +64,8 @@ export async function addMachineGroup(formData: FormData) {
   const type = String(formData.get("type") ?? "washer");
   const qty = Number(formData.get("qty"));
   const price = Number(formData.get("price"));
+  const storeNumbersRaw = String(formData.get("store_numbers") ?? "").trim();
+  const storeNumbers = storeNumbersRaw === "" ? null : storeNumbersRaw;
 
   if (!name || !Number.isFinite(qty) || qty <= 0 || !Number.isFinite(price) || price <= 0) {
     throw new Error("Name, qty, and price are required.");
@@ -79,6 +88,7 @@ export async function addMachineGroup(formData: FormData) {
     type,
     qty,
     price,
+    store_numbers: storeNumbers,
     display_order: (maxOrder?.display_order ?? 0) + 1,
   });
 

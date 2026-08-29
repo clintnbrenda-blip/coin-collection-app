@@ -41,7 +41,9 @@ export default async function EntryDetailPage({
     await Promise.all([
       supabase
         .from("entry_group_snapshots")
-        .select("id, quarters_collected, dollars, turns, machine_groups(name, type, display_order)")
+        .select(
+          "id, quarters_collected, dollars, turns, machine_groups(name, type, store_numbers, display_order)"
+        )
         .eq("entry_id", id),
       supabase
         .from("vending_totals")
@@ -124,7 +126,12 @@ export default async function EntryDetailPage({
                       : s.machine_groups;
                     return (
                       <tr key={s.id} className="border-t border-neutral-100">
-                        <td className="py-1.5 text-neutral-800">{mg?.name}</td>
+                        <td className="py-1.5 text-neutral-800">
+                          {mg?.store_numbers && (
+                            <span className="font-semibold">#{mg.store_numbers} · </span>
+                          )}
+                          {mg?.name}
+                        </td>
                         <td className="py-1.5 text-right text-neutral-600">
                           {s.quarters_collected}
                         </td>

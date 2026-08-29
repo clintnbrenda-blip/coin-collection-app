@@ -15,6 +15,7 @@ interface MachineGroup {
   type: "washer" | "dryer";
   qty: number;
   price: number;
+  store_numbers: string | null;
   display_order: number;
 }
 
@@ -191,6 +192,9 @@ export function EntryForm({
                   htmlFor={`quarters_${mg.id}`}
                   className="text-sm text-neutral-700"
                 >
+                  {mg.store_numbers && (
+                    <span className="font-semibold text-neutral-900">#{mg.store_numbers} · </span>
+                  )}
                   {mg.name}
                   <span className="ml-1 text-xs text-neutral-400">
                     (qty {mg.qty} · {formatMoney(mg.price)})

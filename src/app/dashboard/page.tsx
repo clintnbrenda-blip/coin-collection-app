@@ -88,7 +88,7 @@ export default async function DashboardPage({
     ? await supabase
         .from("entry_group_snapshots")
         .select(
-          "entry_id, machine_group_id, quarters_collected, dollars, turns, machine_groups(name, type, display_order)"
+          "entry_id, machine_group_id, quarters_collected, dollars, turns, machine_groups(name, type, store_numbers, display_order)"
         )
         .in("entry_id", entryIds)
     : { data: [] };
@@ -138,7 +138,14 @@ export default async function DashboardPage({
   // the same (e.g. `=SUM(AG4:AG10)/6`, stopping before the dryer row).
   const groupTurns = new Map<
     string,
-    { name: string; type: string; displayOrder: number; turnsSum: number; count: number }
+    {
+      name: string;
+      type: string;
+      storeNumbers: string | null;
+      displayOrder: number;
+      turnsSum: number;
+      count: number;
+    }
   >();
   for (const s of snapshots ?? []) {
     if (groupFilter && s.machine_group_id !== groupFilter) continue;
@@ -148,6 +155,7 @@ export default async function DashboardPage({
     const entry = groupTurns.get(key) ?? {
       name: mg?.name ?? "?",
       type: mg?.type ?? "washer",
+      storeNumbers: mg?.store_numbers ?? null,
       displayOrder: mg?.display_order ?? 0,
       turnsSum: 0,
       count: 0,
@@ -160,7 +168,13 @@ export default async function DashboardPage({
   // Clint doesn't want the rows reshuffling based on which group has more
   // turns this period.
   const groupTurnsRows = [...groupTurns.values()]
-    .map((g) => ({ name: g.name, type: g.type, displayOrder: g.displayOrder, avgTurns: g.turnsSum / g.count }))
+    .map((g) => ({
+      name: g.name,
+      type: g.type,
+      storeNumbers: g.storeNumbers,
+      displayOrder: g.displayOrder,
+      avgTurns: g.turnsSum / g.count,
+    }))
     .sort((a, b) => a.displayOrder - b.displayOrder);
 
   const washerTurnsRows = groupTurnsRows.filter((g) => g.type === "washer");
@@ -372,7 +386,10 @@ export default async function DashboardPage({
                 <tbody>
                   {groupTurnsRows.map((g) => (
                     <tr key={g.name} className="border-t border-neutral-100">
-                      <td className="py-1.5 whitespace-nowrap text-neutral-800">{g.name}</td>
+                      <td className="py-1.5 whitespace-nowrap text-neutral-800">
+                        {g.storeNumbers && <span className="font-semibold">#{g.storeNumbers} · </span>}
+                        {g.name}
+                      </td>
                       <td className="py-1.5 text-right text-neutral-600">
                         {g.avgTurns.toFixed(1)}
                       </td>
@@ -486,8 +503,8 @@ function SummaryCard({ label, value }: { label: string; value: string }) {
 
 interface SnapshotWithGroup {
   machine_groups:
-    | { name: string; type: string; display_order: number }
-    | { name: string; type: string; display_order: number }[]
+    | { name: string; type: string; store_numbers: string | null; display_order: number }
+    | { name: string; type: string; store_numbers: string | null; display_order: number }[]
     | null;
 }
 function getMg(s: SnapshotWithGroup) {

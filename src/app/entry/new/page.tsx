@@ -25,7 +25,7 @@ export default async function NewEntryPage() {
 
   const { data: machineGroups } = await supabase
     .from("machine_groups")
-    .select("id, name, type, qty, price, display_order")
+    .select("id, name, type, qty, price, store_numbers, display_order")
     .eq("location_id", location.id)
     .eq("active", true)
     .order("display_order", { ascending: true });

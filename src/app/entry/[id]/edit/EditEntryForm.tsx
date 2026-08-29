@@ -14,6 +14,7 @@ interface MachineGroupField {
   name: string;
   qty: number;
   price: number;
+  storeNumbers: string | null;
   quartersCollected: number;
 }
 
@@ -131,6 +132,9 @@ export function EditEntryForm({
                   htmlFor={`quarters_${mg.machineGroupId}`}
                   className="text-sm text-neutral-700"
                 >
+                  {mg.storeNumbers && (
+                    <span className="font-semibold text-neutral-900">#{mg.storeNumbers} · </span>
+                  )}
                   {mg.name}
                   <span className="ml-1 text-xs text-neutral-400">
                     (qty {mg.qty} · {formatMoney(mg.price)})

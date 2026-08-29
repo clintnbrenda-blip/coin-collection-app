@@ -49,6 +49,7 @@ export interface Database {
           type: MachineType;
           qty: number;
           price: number;
+          store_numbers: string | null;
           display_order: number;
           active: boolean;
           created_at: string;
@@ -60,6 +61,7 @@ export interface Database {
           type: MachineType;
           qty: number;
           price: number;
+          store_numbers?: string | null;
           display_order?: number;
           active?: boolean;
         };
@@ -67,6 +69,7 @@ export interface Database {
           name: string;
           qty: number;
           price: number;
+          store_numbers: string | null;
           display_order: number;
           active: boolean;
         }>;

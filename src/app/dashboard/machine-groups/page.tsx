@@ -22,7 +22,7 @@ export default async function MachineGroupsPage() {
 
   const { data: machineGroups } = await supabase
     .from("machine_groups")
-    .select("id, name, type, qty, price, active, display_order")
+    .select("id, name, type, qty, price, store_numbers, active, display_order")
     .order("display_order", { ascending: true });
 
   const { data: vendingMachines } = await supabase
@@ -50,14 +50,25 @@ export default async function MachineGroupsPage() {
               <form
                 key={mg.id}
                 action={updateMachineGroup}
-                className={`flex items-center gap-2 rounded-lg border p-3 ${
+                className={`flex flex-wrap items-center gap-2 rounded-lg border p-3 ${
                   mg.active ? "border-neutral-200" : "border-neutral-100 bg-neutral-50 opacity-60"
                 }`}
               >
                 <input type="hidden" name="id" value={mg.id} />
-                <div className="flex-1">
+                <div className="min-w-[140px] flex-1">
                   <p className="text-sm font-medium text-neutral-800">{mg.name}</p>
                   <p className="text-xs text-neutral-400">{mg.type}</p>
+                </div>
+                <div>
+                  <label className="mb-0.5 block text-xs text-neutral-500">Store #</label>
+                  <input
+                    type="text"
+                    name="store_numbers"
+                    placeholder="e.g. 2-5"
+                    defaultValue={mg.store_numbers ?? ""}
+                    disabled={!mg.active}
+                    className="w-28 rounded-md border border-neutral-300 px-2 py-1 text-sm"
+                  />
                 </div>
                 <div>
                   <label className="mb-0.5 block text-xs text-neutral-500">Qty</label>
@@ -125,13 +136,18 @@ export default async function MachineGroupsPage() {
                 className="rounded-md border border-neutral-300 px-2 py-1.5 text-sm"
               />
               <input
+                name="store_numbers"
+                placeholder="Store # (e.g. 2-5)"
+                className="rounded-md border border-neutral-300 px-2 py-1.5 text-sm"
+              />
+              <input
                 name="price"
                 type="number"
                 step="0.01"
                 min="0.01"
                 placeholder="Price"
                 required
-                className="col-span-2 rounded-md border border-neutral-300 px-2 py-1.5 text-sm"
+                className="rounded-md border border-neutral-300 px-2 py-1.5 text-sm"
               />
               <button
                 type="submit"

@@ -38,7 +38,7 @@ export default async function EditEntryPage({
     supabase
       .from("entry_group_snapshots")
       .select(
-        "id, machine_group_id, quarters_collected, machine_groups(name, qty, price, display_order)"
+        "id, machine_group_id, quarters_collected, machine_groups(name, qty, price, store_numbers, display_order)"
       )
       .eq("entry_id", id),
     supabase
@@ -72,6 +72,7 @@ export default async function EditEntryPage({
         name: mg?.name ?? "",
         qty: mg?.qty ?? 0,
         price: mg?.price ?? 0,
+        storeNumbers: mg?.store_numbers ?? null,
         quartersCollected: s.quarters_collected,
         displayOrder: mg?.display_order ?? 0,
       };
