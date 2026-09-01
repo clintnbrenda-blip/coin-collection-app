@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { PasswordInput } from "@/components/PasswordInput";
 
 type Status = "checking" | "ready" | "invalid" | "saving" | "error" | "done";
 
@@ -144,9 +145,9 @@ export default function SetPasswordPage() {
               >
                 Password
               </label>
-              <input
+              <PasswordInput
                 id="password"
-                type="password"
+                name="password"
                 required
                 minLength={8}
                 autoComplete="new-password"
@@ -163,9 +164,9 @@ export default function SetPasswordPage() {
               >
                 Confirm password
               </label>
-              <input
+              <PasswordInput
                 id="confirm_password"
-                type="password"
+                name="confirm_password"
                 required
                 minLength={8}
                 autoComplete="new-password"
