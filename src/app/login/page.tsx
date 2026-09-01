@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Suspense, useActionState } from "react";
 import { useSearchParams } from "next/navigation";
 import { signIn, type SignInState } from "./actions";
+import { PasswordInput } from "@/components/PasswordInput";
 
 const initialState: SignInState = { error: null };
 
@@ -63,10 +64,9 @@ export default function LoginPage() {
             <label htmlFor="password" className="mb-1 block text-sm font-medium text-neutral-700">
               Password
             </label>
-            <input
+            <PasswordInput
               id="password"
               name="password"
-              type="password"
               autoComplete="current-password"
               required
               className="w-full rounded-lg border border-neutral-300 px-3 py-2.5 text-base focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
