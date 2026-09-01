@@ -8,12 +8,31 @@ export function DeleteChecklistItemButton({ id, itemKey }: { id: string; itemKey
       action={async (formData: FormData) => {
         if (
           !confirm(
-            "Permanently delete this checklist item? This cannot be undone. (If it's ever been checked on a submitted entry, this will be blocked automatically — retire it instead in that case.)"
+            "Permanently delete this checklist item? This cannot be undone."
           )
         ) {
           return;
         }
-        const result = await deleteChecklistItem(formData);
+
+        let result = await deleteChecklistItem(formData);
+
+        // Blocked specifically because it's used on a real entry — the one
+        // case the owner might deliberately want to override. A second,
+        // more explicit confirmation spells out exactly what that costs
+        // before actually forcing it through.
+        if (result.error && result.blockedByUsage) {
+          const proceed = confirm(
+            `${result.error}\n\nDelete it anyway?`
+          );
+          if (!proceed) return;
+
+          const retryData = new FormData();
+          retryData.set("id", id);
+          retryData.set("key", itemKey);
+          retryData.set("force", "true");
+          result = await deleteChecklistItem(retryData);
+        }
+
         if (result.error) {
           alert(result.error);
         }

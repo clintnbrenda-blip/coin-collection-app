@@ -50,6 +50,10 @@ export async function reactivateChecklistItem(formData: FormData) {
 
 export interface DeleteChecklistItemState {
   error: string | null;
+  // True only when the block is specifically "this is used on a real
+  // entry" — the one case the owner might deliberately want to override.
+  // Any other error (missing item, DB failure) is not force-able.
+  blockedByUsage?: boolean;
 }
 
 export async function deleteChecklistItem(
@@ -60,30 +64,34 @@ export async function deleteChecklistItem(
 
   const id = String(formData.get("id"));
   const key = String(formData.get("key"));
+  const force = formData.get("force") === "true";
   if (!id || !key) return { error: "Missing item." };
 
-  // Only allow a true, permanent delete for an item that has never actually
-  // been checked on a real submitted entry — otherwise this would silently
-  // erase a checkmark from historical records. checked_items is a text[];
-  // .contains() maps to Postgres's @> ("array contains this element").
+  // By default, only allow a delete for an item that's never actually been
+  // checked on a real submitted entry, since deleting one that has silently
+  // erases that checkmark from historical records. Clint can explicitly
+  // choose to override this (force=true) after seeing exactly what that
+  // means — see DeleteChecklistItemButton's second confirmation.
   //
   // Returns a result object instead of throwing — Next.js redacts a thrown
   // Server Action error's message in production ("An error occurred in the
   // Server Components render...") for security, which was swallowing this
   // function's actual explanation and just showing a generic error instead.
-  const { count, error: lookupError } = await supabase
-    .from("checklist_completions")
-    .select("entry_id", { count: "exact", head: true })
-    .contains("checked_items", [key]);
+  if (!force) {
+    const { count, error: lookupError } = await supabase
+      .from("checklist_completions")
+      .select("entry_id", { count: "exact", head: true })
+      .contains("checked_items", [key]);
 
-  if (lookupError) {
-    return { error: "Could not verify whether this item is used on any entry." };
-  }
-  if (count && count > 0) {
-    return {
-      error:
-        "Can't delete — this item is checked on at least one submitted entry. Retire it instead to keep that history intact.",
-    };
+    if (lookupError) {
+      return { error: "Could not verify whether this item is used on any entry." };
+    }
+    if (count && count > 0) {
+      return {
+        error: `This item is checked on ${count} submitted entr${count === 1 ? "y" : "ies"}. Deleting it will permanently remove that checkmark from history — there's no way to get it back.`,
+        blockedByUsage: true,
+      };
+    }
   }
 
   const { error: deleteError } = await supabase.from("checklist_items").delete().eq("id", id);
