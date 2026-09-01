@@ -3,7 +3,7 @@
 import { useActionState, useMemo, useState } from "react";
 import Link from "next/link";
 import { AppHeader } from "@/components/AppHeader";
-import { CHECKLIST_ITEMS } from "@/lib/checklist";
+import { groupChecklistItems, type ChecklistItem } from "@/lib/checklist";
 import { focusNextFieldOnEnter } from "@/lib/formKeyNav";
 import { daysBetween } from "@/lib/dateMath";
 import { formatMoney } from "@/lib/formatMoney";
@@ -37,6 +37,7 @@ export function EditEntryForm({
   machineGroups,
   vendingMachines,
   depositAmount,
+  checklistItems,
   checkedItems,
   signedBy,
   signedDate,
@@ -50,6 +51,7 @@ export function EditEntryForm({
   machineGroups: MachineGroupField[];
   vendingMachines: VendingMachineField[];
   depositAmount: string;
+  checklistItems: ChecklistItem[];
   checkedItems: string[];
   signedBy: string;
   signedDate: string;
@@ -214,15 +216,7 @@ export function EditEntryForm({
 
         <section className="rounded-xl border border-neutral-200 bg-white p-4">
           <h2 className="mb-3 font-semibold text-neutral-900">Checklist</h2>
-          {Object.entries(
-            CHECKLIST_ITEMS.reduce<Record<string, typeof CHECKLIST_ITEMS>>(
-              (groups, item) => {
-                (groups[item.section] ??= []).push(item);
-                return groups;
-              },
-              {}
-            )
-          ).map(([section, items]) => (
+          {groupChecklistItems(checklistItems).map(([section, items]) => (
             <div key={section} className="mb-4 last:mb-0">
               <h3 className="mb-2 text-sm font-medium text-neutral-500">{section}</h3>
               <div className="space-y-2">

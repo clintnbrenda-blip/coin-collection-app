@@ -1,61 +1,38 @@
-// Hardcoded to match the owner's paper checklist (spec Section 4a).
-// Changing wording here only affects new entries — past entries keep the
-// checked_items keys they were submitted with, so nothing historical shifts.
+// Checklist items live in the `checklist_items` table now (see migration
+// 0009 and /dashboard/checklist) — the owner edits wording/sections himself
+// instead of needing a code change. This file just keeps the shared type and
+// a small helper both submit actions use.
 export interface ChecklistItem {
   key: string;
   section: string;
   text: string;
 }
 
-export const CHECKLIST_ITEMS: ChecklistItem[] = [
-  {
-    key: "washers_dryers_collected",
-    section: "Washers and Dryers",
-    text: "Collect coins from all washers and record totals.",
-  },
-  {
-    key: "dryers_collected",
-    section: "Washers and Dryers",
-    text: "Collect coins from all dryers and record totals.",
-  },
-  {
-    key: "vending_collected",
-    section: "Washers and Dryers",
-    text: "Remove all cash and coins from snack and soda vending machines and record totals.",
-  },
-  {
-    key: "changer_cash_to_pouch",
-    section: "Money changers",
-    text: "Open and remove cash from changers; put cash into zipper bank pouch; put pouch into the safe until ready to leave.",
-  },
-  {
-    key: "changer_refill_coin_boxes",
-    section: "Money changers",
-    text: "Refill coin boxes in changers.",
-  },
-  {
-    key: "leftover_coins_to_safe",
-    section: "Money changers",
-    text: "Put leftover coins into containers in the safe.",
-  },
-  {
-    key: "check_staff_container_balance",
-    section: "Money changers",
-    text: "Check the balance of coins in the small container used for staff use.",
-  },
-  {
-    key: "leave_40_start_new_balance",
-    section: "Money changers",
-    text: "Leave at least $40 in that container and start a new balance paper.",
-  },
-  {
-    key: "check_lock_box_cash",
-    section: "Money changers",
-    text: "Check cash in the lock box.",
-  },
-  {
-    key: "bank_deposit",
-    section: "Money changers",
-    text: "Take cash to the bank deposit.",
-  },
-];
+/**
+ * Reads which checklist boxes were checked directly off the submitted
+ * FormData (any `checklist_<key>` field with value "on"), rather than
+ * needing to already know the full valid key list. This means the two
+ * submit actions (new entry, edit entry) don't need their own DB round-trip
+ * just to figure out which keys are legitimate — whatever checkboxes the
+ * form actually rendered (active items, plus any retired-but-previously-
+ * checked one carried forward on edit) is exactly what gets saved.
+ */
+export function getCheckedChecklistKeys(formData: FormData): string[] {
+  const prefix = "checklist_";
+  const keys: string[] = [];
+  for (const [name, value] of formData.entries()) {
+    if (name.startsWith(prefix) && value === "on") {
+      keys.push(name.slice(prefix.length));
+    }
+  }
+  return keys;
+}
+
+/** Groups a flat item list by section, preserving each section's first-seen order. */
+export function groupChecklistItems<T extends ChecklistItem>(items: T[]): [string, T[]][] {
+  const groups = items.reduce<Record<string, T[]>>((acc, item) => {
+    (acc[item.section] ??= []).push(item);
+    return acc;
+  }, {});
+  return Object.entries(groups);
+}

@@ -71,6 +71,13 @@ export function HeaderMenu({ role }: { role?: "owner" | "employee" }) {
                 Manage machine groups
               </Link>
               <Link
+                href="/dashboard/checklist"
+                onClick={() => setOpen(false)}
+                className="block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50"
+              >
+                Manage checklist
+              </Link>
+              <Link
                 href="/dashboard/employees"
                 onClick={() => setOpen(false)}
                 className="block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50"

@@ -3,7 +3,6 @@ import Link from "next/link";
 import { getCurrentProfile } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { AppHeader } from "@/components/AppHeader";
-import { CHECKLIST_ITEMS } from "@/lib/checklist";
 import { isWithinEditWindow } from "@/lib/editWindow";
 import { formatMoney } from "@/lib/formatMoney";
 import { DeleteEntryButton } from "./DeleteEntryButton";
@@ -23,7 +22,7 @@ export default async function EntryDetailPage({
   const { data: entry } = await supabase
     .from("collection_entries")
     .select(
-      "id, date, days_since_last, total_income, avg_turns, income_per_day, employee_id, created_at"
+      "id, date, days_since_last, total_income, avg_turns, income_per_day, employee_id, created_at, location_id"
     )
     .eq("id", id)
     .single();
@@ -37,25 +36,37 @@ export default async function EntryDetailPage({
   const withinEditWindow = isWithinEditWindow(entry.created_at);
   const canEdit = isOwner || (isMine && withinEditWindow);
 
-  const [{ data: snapshots }, { data: vendingRows }, { data: deposit }, { data: checklist }] =
-    await Promise.all([
-      supabase
-        .from("entry_group_snapshots")
-        .select(
-          "id, quarters_collected, dollars, turns, machine_groups(name, type, store_numbers, display_order)"
-        )
-        .eq("entry_id", id),
-      supabase
-        .from("vending_totals")
-        .select("cash_collected, coins_collected, vending_machines(name)")
-        .eq("entry_id", id),
-      supabase.from("deposits").select("*").eq("entry_id", id).maybeSingle(),
-      supabase
-        .from("checklist_completions")
-        .select("*")
-        .eq("entry_id", id)
-        .maybeSingle(),
-    ]);
+  const [
+    { data: snapshots },
+    { data: vendingRows },
+    { data: deposit },
+    { data: checklist },
+    { data: checklistItems },
+  ] = await Promise.all([
+    supabase
+      .from("entry_group_snapshots")
+      .select(
+        "id, quarters_collected, dollars, turns, machine_groups(name, type, store_numbers, display_order)"
+      )
+      .eq("entry_id", id),
+    supabase
+      .from("vending_totals")
+      .select("cash_collected, coins_collected, vending_machines(name)")
+      .eq("entry_id", id),
+    supabase.from("deposits").select("*").eq("entry_id", id).maybeSingle(),
+    supabase
+      .from("checklist_completions")
+      .select("*")
+      .eq("entry_id", id)
+      .maybeSingle(),
+    // Every item, active or retired — a retired item still needs to show its
+    // checked/unchecked state on entries submitted while it was in use.
+    supabase
+      .from("checklist_items")
+      .select("key, text")
+      .eq("location_id", entry.location_id)
+      .order("display_order", { ascending: true }),
+  ]);
 
   // The deposit slip photo lives in a private bucket (RLS-gated) — turn its
   // stored path into a short-lived signed URL so the <img> tag below can
@@ -197,7 +208,7 @@ export default async function EntryDetailPage({
               {checklist ? (
                 <>
                   <ul className="space-y-1 text-sm text-neutral-600">
-                    {CHECKLIST_ITEMS.map((item) => (
+                    {(checklistItems ?? []).map((item) => (
                       <li key={item.key}>
                         {checklist.checked_items.includes(item.key) ? "✅" : "⬜"}{" "}
                         {item.text}

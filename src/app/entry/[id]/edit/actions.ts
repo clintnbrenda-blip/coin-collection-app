@@ -3,7 +3,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentProfile } from "@/lib/auth";
-import { CHECKLIST_ITEMS } from "@/lib/checklist";
+import { getCheckedChecklistKeys } from "@/lib/checklist";
 
 export interface EditEntryState {
   error: string | null;
@@ -84,9 +84,7 @@ export async function updateEntry(
 
   // Bank deposit is managed separately now, via /deposits/[id] — not this form.
 
-  const checkedItems = CHECKLIST_ITEMS.filter(
-    (item) => formData.get(`checklist_${item.key}`) === "on"
-  ).map((item) => item.key);
+  const checkedItems = getCheckedChecklistKeys(formData);
   await supabase
     .from("checklist_completions")
     .update({

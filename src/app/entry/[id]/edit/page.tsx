@@ -34,6 +34,7 @@ export default async function EditEntryPage({
     { data: deposit },
     { data: checklist },
     { data: previousEntry },
+    { data: allChecklistItems },
   ] = await Promise.all([
     supabase
       .from("entry_group_snapshots")
@@ -62,7 +63,19 @@ export default async function EditEntryPage({
       .order("date", { ascending: false })
       .limit(1)
       .maybeSingle(),
+    // Fetch every item, not just active ones — if an item gets retired
+    // while it's already checked on an entry still inside its edit window,
+    // hiding it here would silently drop that checked state on next save.
+    supabase
+      .from("checklist_items")
+      .select("key, section, text, active")
+      .eq("location_id", entry.location_id)
+      .order("display_order", { ascending: true }),
   ]);
+
+  const checklistItems = (allChecklistItems ?? []).filter(
+    (item) => item.active || checklist?.checked_items.includes(item.key)
+  );
 
   const machineGroups = (snapshots ?? [])
     .map((s) => {
@@ -103,6 +116,7 @@ export default async function EditEntryPage({
       machineGroups={machineGroups}
       vendingMachines={vendingMachines}
       depositAmount={String(deposit?.deposit_amount ?? 0)}
+      checklistItems={checklistItems}
       checkedItems={checklist?.checked_items ?? []}
       signedBy={checklist?.signed_by ?? profile.fullName}
       signedDate={checklist?.signed_date ?? entry.date}

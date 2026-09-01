@@ -75,6 +75,33 @@ export interface Database {
         }>;
         Relationships: [];
       };
+      checklist_items: {
+        Row: {
+          id: string;
+          location_id: string;
+          key: string;
+          section: string;
+          text: string;
+          display_order: number;
+          active: boolean;
+          created_at: string;
+        };
+        Insert: {
+          location_id: string;
+          key: string;
+          section: string;
+          text: string;
+          display_order?: number;
+          active?: boolean;
+        };
+        Update: Partial<{
+          section: string;
+          text: string;
+          display_order: number;
+          active: boolean;
+        }>;
+        Relationships: [];
+      };
       collection_entries: {
         Row: {
           id: string;

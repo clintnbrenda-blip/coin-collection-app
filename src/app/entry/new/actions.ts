@@ -3,7 +3,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentProfile } from "@/lib/auth";
-import { CHECKLIST_ITEMS } from "@/lib/checklist";
+import { getCheckedChecklistKeys } from "@/lib/checklist";
 
 export interface SubmitEntryState {
   error: string | null;
@@ -108,9 +108,7 @@ export async function submitEntry(
     // the bank — often a different employee) via /deposits, not here.
 
     // 4. Checklist completion.
-    const checkedItems = CHECKLIST_ITEMS.filter(
-      (item) => formData.get(`checklist_${item.key}`) === "on"
-    ).map((item) => item.key);
+    const checkedItems = getCheckedChecklistKeys(formData);
 
     const signedBy = String(formData.get("signed_by") ?? profile.fullName);
     const signedDate = String(formData.get("signed_date") ?? date);

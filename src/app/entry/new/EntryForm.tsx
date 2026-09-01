@@ -2,7 +2,7 @@
 
 import { useActionState, useEffect, useMemo, useState } from "react";
 import { AppHeader } from "@/components/AppHeader";
-import { CHECKLIST_ITEMS } from "@/lib/checklist";
+import { groupChecklistItems, type ChecklistItem } from "@/lib/checklist";
 import { focusNextFieldOnEnter } from "@/lib/formKeyNav";
 import { todayLocalISO, daysBetween } from "@/lib/dateMath";
 import { loadDraft, saveDraft, markPendingSubmit, type EntryDraft } from "@/lib/entryDraft";
@@ -47,6 +47,7 @@ export function EntryForm({
   role,
   machineGroups,
   vendingMachines,
+  checklistItems,
   lastEntryDate,
 }: {
   locationId: string;
@@ -54,6 +55,7 @@ export function EntryForm({
   role: "owner" | "employee";
   machineGroups: MachineGroup[];
   vendingMachines: VendingMachine[];
+  checklistItems: ChecklistItem[];
   lastEntryDate: string | null;
 }) {
   const [state, formAction, pending] = useActionState(submitEntry, initialState);
@@ -264,15 +266,7 @@ export function EntryForm({
         {/* Checklist */}
         <section className="rounded-xl border border-neutral-200 bg-white p-4">
           <h2 className="mb-3 font-semibold text-neutral-900">Checklist</h2>
-          {Object.entries(
-            CHECKLIST_ITEMS.reduce<Record<string, typeof CHECKLIST_ITEMS>>(
-              (groups, item) => {
-                (groups[item.section] ??= []).push(item);
-                return groups;
-              },
-              {}
-            )
-          ).map(([section, items]) => (
+          {groupChecklistItems(checklistItems).map(([section, items]) => (
             <div key={section} className="mb-4 last:mb-0">
               <h3 className="mb-2 text-sm font-medium text-neutral-500">
                 {section}

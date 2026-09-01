@@ -45,6 +45,13 @@ export default async function NewEntryPage() {
     .limit(1)
     .maybeSingle();
 
+  const { data: checklistItems } = await supabase
+    .from("checklist_items")
+    .select("key, section, text")
+    .eq("location_id", location.id)
+    .eq("active", true)
+    .order("display_order", { ascending: true });
+
   return (
     <EntryForm
       locationId={location.id}
@@ -52,6 +59,7 @@ export default async function NewEntryPage() {
       role={profile.role}
       machineGroups={machineGroups ?? []}
       vendingMachines={vendingMachines ?? []}
+      checklistItems={checklistItems ?? []}
       lastEntryDate={lastEntry?.date ?? null}
     />
   );
