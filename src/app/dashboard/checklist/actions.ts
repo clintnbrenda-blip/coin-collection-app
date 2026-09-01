@@ -48,6 +48,36 @@ export async function reactivateChecklistItem(formData: FormData) {
   revalidatePath("/dashboard/checklist");
 }
 
+export async function deleteChecklistItem(formData: FormData) {
+  await requireOwner();
+  const supabase = await createClient();
+
+  const id = String(formData.get("id"));
+  const key = String(formData.get("key"));
+  if (!id || !key) throw new Error("Missing item.");
+
+  // Only allow a true, permanent delete for an item that has never actually
+  // been checked on a real submitted entry — otherwise this would silently
+  // erase a checkmark from historical records. checked_items is a text[];
+  // .contains() maps to Postgres's @> ("array contains this element").
+  const { count, error: lookupError } = await supabase
+    .from("checklist_completions")
+    .select("entry_id", { count: "exact", head: true })
+    .contains("checked_items", [key]);
+
+  if (lookupError) {
+    throw new Error("Could not verify whether this item is used on any entry.");
+  }
+  if (count && count > 0) {
+    throw new Error(
+      "Can't delete — this item is checked on at least one submitted entry. Retire it instead to keep that history intact."
+    );
+  }
+
+  await supabase.from("checklist_items").delete().eq("id", id);
+  revalidatePath("/dashboard/checklist");
+}
+
 export async function addChecklistItem(formData: FormData) {
   const profile = await requireOwner();
   const supabase = await createClient();

@@ -10,6 +10,7 @@ import {
   reactivateChecklistItem,
   addChecklistItem,
 } from "./actions";
+import { DeleteChecklistItemButton } from "./DeleteChecklistItemButton";
 
 export default async function ChecklistPage() {
   const profile = await getCurrentProfile();
@@ -45,57 +46,63 @@ export default async function ChecklistPage() {
             <h2 className="mb-3 font-semibold text-neutral-900">{section}</h2>
             <div className="space-y-3">
               {sectionItems.map((item) => (
-                <form
+                <div
                   key={item.id}
-                  action={updateChecklistItem}
                   className={`rounded-lg border p-3 ${
                     item.active
                       ? "border-neutral-200"
                       : "border-neutral-100 bg-neutral-50 opacity-60"
                   }`}
                 >
-                  <input type="hidden" name="id" value={item.id} />
-                  <div className="mb-2">
-                    <label className="mb-0.5 block text-xs text-neutral-500">Section</label>
-                    <input
-                      type="text"
-                      name="section"
-                      list="checklist-sections"
-                      defaultValue={item.section}
-                      disabled={!item.active}
-                      required
-                      className="w-full rounded-md border border-neutral-300 px-2 py-1 text-sm"
-                    />
-                  </div>
-                  <div className="mb-2">
-                    <label className="mb-0.5 block text-xs text-neutral-500">Text</label>
-                    <textarea
-                      name="text"
-                      defaultValue={item.text}
-                      disabled={!item.active}
-                      required
-                      rows={2}
-                      className="w-full rounded-md border border-neutral-300 px-2 py-1 text-sm"
-                    />
-                  </div>
-                  <div className="flex gap-2">
-                    {item.active && (
+                  <form action={updateChecklistItem}>
+                    <input type="hidden" name="id" value={item.id} />
+                    <div className="mb-2">
+                      <label className="mb-0.5 block text-xs text-neutral-500">Section</label>
+                      <input
+                        type="text"
+                        name="section"
+                        list="checklist-sections"
+                        defaultValue={item.section}
+                        disabled={!item.active}
+                        required
+                        className="w-full rounded-md border border-neutral-300 px-2 py-1 text-sm"
+                      />
+                    </div>
+                    <div className="mb-2">
+                      <label className="mb-0.5 block text-xs text-neutral-500">Text</label>
+                      <textarea
+                        name="text"
+                        defaultValue={item.text}
+                        disabled={!item.active}
+                        required
+                        rows={2}
+                        className="w-full rounded-md border border-neutral-300 px-2 py-1 text-sm"
+                      />
+                    </div>
+                    <div className="flex gap-2">
+                      {item.active && (
+                        <button
+                          type="submit"
+                          className="rounded-md bg-blue-600 px-2.5 py-1.5 text-xs font-medium text-white hover:bg-blue-700"
+                        >
+                          Save
+                        </button>
+                      )}
                       <button
                         type="submit"
-                        className="rounded-md bg-blue-600 px-2.5 py-1.5 text-xs font-medium text-white hover:bg-blue-700"
+                        formAction={item.active ? retireChecklistItem : reactivateChecklistItem}
+                        className="rounded-md border border-neutral-300 px-2.5 py-1.5 text-xs font-medium text-neutral-600 hover:bg-neutral-100"
                       >
-                        Save
+                        {item.active ? "Retire" : "Reactivate"}
                       </button>
-                    )}
-                    <button
-                      type="submit"
-                      formAction={item.active ? retireChecklistItem : reactivateChecklistItem}
-                      className="rounded-md border border-neutral-300 px-2.5 py-1.5 text-xs font-medium text-neutral-600 hover:bg-neutral-100"
-                    >
-                      {item.active ? "Retire" : "Reactivate"}
-                    </button>
-                  </div>
-                </form>
+                    </div>
+                  </form>
+                  {!item.active && (
+                    <div className="mt-2 flex justify-end border-t border-neutral-200 pt-2">
+                      <DeleteChecklistItemButton id={item.id} itemKey={item.key} />
+                    </div>
+                  )}
+                </div>
               ))}
             </div>
           </section>
