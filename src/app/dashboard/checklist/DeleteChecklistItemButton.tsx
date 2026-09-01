@@ -13,10 +13,9 @@ export function DeleteChecklistItemButton({ id, itemKey }: { id: string; itemKey
         ) {
           return;
         }
-        try {
-          await deleteChecklistItem(formData);
-        } catch (err) {
-          alert(err instanceof Error ? err.message : "Could not delete this item.");
+        const result = await deleteChecklistItem(formData);
+        if (result.error) {
+          alert(result.error);
         }
       }}
     >

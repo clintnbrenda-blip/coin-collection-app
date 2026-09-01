@@ -48,34 +48,51 @@ export async function reactivateChecklistItem(formData: FormData) {
   revalidatePath("/dashboard/checklist");
 }
 
-export async function deleteChecklistItem(formData: FormData) {
+export interface DeleteChecklistItemState {
+  error: string | null;
+}
+
+export async function deleteChecklistItem(
+  formData: FormData
+): Promise<DeleteChecklistItemState> {
   await requireOwner();
   const supabase = await createClient();
 
   const id = String(formData.get("id"));
   const key = String(formData.get("key"));
-  if (!id || !key) throw new Error("Missing item.");
+  if (!id || !key) return { error: "Missing item." };
 
   // Only allow a true, permanent delete for an item that has never actually
   // been checked on a real submitted entry — otherwise this would silently
   // erase a checkmark from historical records. checked_items is a text[];
   // .contains() maps to Postgres's @> ("array contains this element").
+  //
+  // Returns a result object instead of throwing — Next.js redacts a thrown
+  // Server Action error's message in production ("An error occurred in the
+  // Server Components render...") for security, which was swallowing this
+  // function's actual explanation and just showing a generic error instead.
   const { count, error: lookupError } = await supabase
     .from("checklist_completions")
     .select("entry_id", { count: "exact", head: true })
     .contains("checked_items", [key]);
 
   if (lookupError) {
-    throw new Error("Could not verify whether this item is used on any entry.");
+    return { error: "Could not verify whether this item is used on any entry." };
   }
   if (count && count > 0) {
-    throw new Error(
-      "Can't delete — this item is checked on at least one submitted entry. Retire it instead to keep that history intact."
-    );
+    return {
+      error:
+        "Can't delete — this item is checked on at least one submitted entry. Retire it instead to keep that history intact.",
+    };
   }
 
-  await supabase.from("checklist_items").delete().eq("id", id);
+  const { error: deleteError } = await supabase.from("checklist_items").delete().eq("id", id);
+  if (deleteError) {
+    return { error: "Could not delete this item. Try again." };
+  }
+
   revalidatePath("/dashboard/checklist");
+  return { error: null };
 }
 
 export async function addChecklistItem(formData: FormData) {
