@@ -189,13 +189,13 @@ export default async function ExportReportPage({
                         <th className="border-l border-neutral-200 pb-2 pr-2 pl-2 font-medium">
                           Group
                         </th>
-                        <th className="border-l border-neutral-200 pb-2 pl-2 text-right font-medium">
+                        <th className="border-l border-neutral-200 pb-2 pl-2 text-left font-medium">
                           Quarters
                         </th>
-                        <th className="border-l border-neutral-200 pb-2 pl-3 text-right font-medium">
+                        <th className="border-l border-neutral-200 pb-2 pl-3 text-left font-medium">
                           $
                         </th>
-                        <th className="border-l border-neutral-200 pb-2 pl-3 text-right font-medium">
+                        <th className="border-l border-neutral-200 pb-2 pl-3 text-left font-medium">
                           Turns
                         </th>
                       </tr>
@@ -216,13 +216,13 @@ export default async function ExportReportPage({
                               )}
                               {mg?.name}
                             </td>
-                            <td className="border-l border-neutral-200 py-1.5 pl-2 text-right whitespace-nowrap text-neutral-600">
+                            <td className="border-l border-neutral-200 py-1.5 pl-2 text-left whitespace-nowrap text-neutral-600">
                               {s.quarters_collected}
                             </td>
-                            <td className="border-l border-neutral-200 py-1.5 pl-3 text-right whitespace-nowrap text-neutral-600">
+                            <td className="border-l border-neutral-200 py-1.5 pl-3 text-left whitespace-nowrap text-neutral-600">
                               {formatMoney(Number(s.dollars ?? 0))}
                             </td>
-                            <td className="border-l border-neutral-200 py-1.5 pl-3 text-right whitespace-nowrap text-neutral-600">
+                            <td className="border-l border-neutral-200 py-1.5 pl-3 text-left whitespace-nowrap text-neutral-600">
                               {Number(s.turns ?? 0).toFixed(1)}
                             </td>
                           </tr>
