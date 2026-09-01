@@ -3,7 +3,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentProfile } from "@/lib/auth";
-import { getCheckedChecklistKeys } from "@/lib/checklist";
+import { getCheckedChecklistKeys, buildChecklistSnapshot } from "@/lib/checklist";
 
 export interface EditEntryState {
   error: string | null;
@@ -32,7 +32,7 @@ export async function updateEntry(
     .from("collection_entries")
     .update({ date, days_since_last: daysSinceLast, edited_at: new Date().toISOString() })
     .eq("id", entryId)
-    .select("id")
+    .select("id, location_id")
     .maybeSingle();
 
   if (entryError) {
@@ -84,11 +84,37 @@ export async function updateEntry(
 
   // Bank deposit is managed separately now, via /deposits/[id] — not this form.
 
+  // Checklist — snapshot the item set at *this edit's* submit time, same as a
+  // brand-new entry. Include retired items already checked on this entry's
+  // existing completion (mirrors the filter the edit page uses to render the
+  // form), so re-saving an old entry never drops a checkmark that was valid
+  // when it was originally submitted.
   const checkedItems = getCheckedChecklistKeys(formData);
+
+  const [{ data: existingCompletion }, { data: allChecklistItems }] = await Promise.all([
+    supabase
+      .from("checklist_completions")
+      .select("checked_items")
+      .eq("entry_id", entryId)
+      .maybeSingle(),
+    supabase
+      .from("checklist_items")
+      .select("key, section, text, active")
+      .eq("location_id", updated.location_id)
+      .order("display_order", { ascending: true }),
+  ]);
+
+  const previouslyChecked = existingCompletion?.checked_items ?? [];
+  const relevantItems = (allChecklistItems ?? []).filter(
+    (item) => item.active || previouslyChecked.includes(item.key)
+  );
+  const itemsSnapshot = buildChecklistSnapshot(relevantItems, checkedItems);
+
   await supabase
     .from("checklist_completions")
     .update({
       checked_items: checkedItems,
+      items_snapshot: itemsSnapshot,
       signed_by: String(formData.get("signed_by") ?? profile.fullName),
       signed_date: String(formData.get("signed_date") ?? date),
     })

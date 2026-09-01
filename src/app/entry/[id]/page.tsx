@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { AppHeader } from "@/components/AppHeader";
 import { isWithinEditWindow } from "@/lib/editWindow";
 import { formatMoney } from "@/lib/formatMoney";
+import { PrintButton } from "@/components/PrintButton";
 import { DeleteEntryButton } from "./DeleteEntryButton";
 import { ClearDraftOnMount } from "./ClearDraftOnMount";
 
@@ -36,37 +37,25 @@ export default async function EntryDetailPage({
   const withinEditWindow = isWithinEditWindow(entry.created_at);
   const canEdit = isOwner || (isMine && withinEditWindow);
 
-  const [
-    { data: snapshots },
-    { data: vendingRows },
-    { data: deposit },
-    { data: checklist },
-    { data: checklistItems },
-  ] = await Promise.all([
-    supabase
-      .from("entry_group_snapshots")
-      .select(
-        "id, quarters_collected, dollars, turns, machine_groups(name, type, store_numbers, display_order)"
-      )
-      .eq("entry_id", id),
-    supabase
-      .from("vending_totals")
-      .select("cash_collected, coins_collected, vending_machines(name)")
-      .eq("entry_id", id),
-    supabase.from("deposits").select("*").eq("entry_id", id).maybeSingle(),
-    supabase
-      .from("checklist_completions")
-      .select("*")
-      .eq("entry_id", id)
-      .maybeSingle(),
-    // Every item, active or retired — a retired item still needs to show its
-    // checked/unchecked state on entries submitted while it was in use.
-    supabase
-      .from("checklist_items")
-      .select("key, text")
-      .eq("location_id", entry.location_id)
-      .order("display_order", { ascending: true }),
-  ]);
+  const [{ data: snapshots }, { data: vendingRows }, { data: deposit }, { data: checklist }] =
+    await Promise.all([
+      supabase
+        .from("entry_group_snapshots")
+        .select(
+          "id, quarters_collected, dollars, turns, machine_groups(name, type, store_numbers, display_order)"
+        )
+        .eq("entry_id", id),
+      supabase
+        .from("vending_totals")
+        .select("cash_collected, coins_collected, vending_machines(name)")
+        .eq("entry_id", id),
+      supabase.from("deposits").select("*").eq("entry_id", id).maybeSingle(),
+      // items_snapshot is frozen at submit/edit time — a self-contained record
+      // of exactly what the checklist looked like, independent of whatever
+      // checklist_items contains now (items can be edited, retired, or
+      // deleted later with zero effect on what this entry displays).
+      supabase.from("checklist_completions").select("*").eq("entry_id", id).maybeSingle(),
+    ]);
 
   // The deposit slip photo lives in a private bucket (RLS-gated) — turn its
   // stored path into a short-lived signed URL so the <img> tag below can
@@ -91,11 +80,17 @@ export default async function EntryDetailPage({
   );
 
   return (
-    <div className="min-h-screen bg-neutral-50 pb-24">
+    <div className="min-h-screen bg-neutral-50 pb-24 print:bg-white">
       <ClearDraftOnMount />
       <AppHeader title="Collection Entry" fullName={profile.fullName} role={profile.role} activeTab="collection" />
 
       <div className="mx-auto max-w-2xl space-y-6 p-4">
+        {isOwner && (
+          <div className="flex justify-end print:hidden">
+            <PrintButton />
+          </div>
+        )}
+
         {isOwner ? (
           <section className="rounded-xl border border-blue-200 bg-blue-50 p-4 text-center">
             <p className="text-sm text-blue-700">Total income (machines)</p>
@@ -208,12 +203,17 @@ export default async function EntryDetailPage({
               {checklist ? (
                 <>
                   <ul className="space-y-1 text-sm text-neutral-600">
-                    {(checklistItems ?? []).map((item) => (
-                      <li key={item.key}>
-                        {checklist.checked_items.includes(item.key) ? "✅" : "⬜"}{" "}
-                        {item.text}
+                    {checklist.items_snapshot ? (
+                      checklist.items_snapshot.map((item, i) => (
+                        <li key={i}>
+                          {item.checked ? "✅" : "⬜"} {item.text}
+                        </li>
+                      ))
+                    ) : (
+                      <li className="text-neutral-400">
+                        No detailed checklist recorded for this entry.
                       </li>
-                    ))}
+                    )}
                   </ul>
                   <p className="mt-2 text-xs text-neutral-500">
                     Signed by {checklist.signed_by} on {checklist.signed_date}
@@ -226,7 +226,7 @@ export default async function EntryDetailPage({
           </>
         )}
 
-        <div className="flex gap-3">
+        <div className="flex gap-3 print:hidden">
           <Link
             href={profile.role === "owner" ? "/dashboard" : "/entry/new"}
             className="flex-1 rounded-lg border border-neutral-300 px-4 py-2.5 text-center text-sm font-medium text-neutral-700 hover:bg-neutral-100"
@@ -244,7 +244,7 @@ export default async function EntryDetailPage({
           {canEdit && <DeleteEntryButton entryId={entry.id} />}
         </div>
         {!canEdit && isMine && (
-          <p className="text-center text-xs text-neutral-400">
+          <p className="text-center text-xs text-neutral-400 print:hidden">
             The 1-hour edit window for this entry has passed. Ask the owner for corrections.
           </p>
         )}

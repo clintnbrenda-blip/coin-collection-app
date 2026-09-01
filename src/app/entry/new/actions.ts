@@ -3,7 +3,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentProfile } from "@/lib/auth";
-import { getCheckedChecklistKeys } from "@/lib/checklist";
+import { getCheckedChecklistKeys, buildChecklistSnapshot } from "@/lib/checklist";
 
 export interface SubmitEntryState {
   error: string | null;
@@ -107,8 +107,20 @@ export async function submitEntry(
     // Bank deposit is submitted separately (by whoever ends up taking it to
     // the bank — often a different employee) via /deposits, not here.
 
-    // 4. Checklist completion.
+    // 4. Checklist completion — snapshot the *current* checklist items at
+    // submit time (same reasoning as machine groups' qty/price snapshot
+    // above), so editing/retiring/deleting an item later never changes what
+    // this entry displays.
     const checkedItems = getCheckedChecklistKeys(formData);
+
+    const { data: checklistItems } = await supabase
+      .from("checklist_items")
+      .select("key, section, text")
+      .eq("location_id", locationId)
+      .eq("active", true)
+      .order("display_order", { ascending: true });
+
+    const itemsSnapshot = buildChecklistSnapshot(checklistItems ?? [], checkedItems);
 
     const signedBy = String(formData.get("signed_by") ?? profile.fullName);
     const signedDate = String(formData.get("signed_date") ?? date);
@@ -118,6 +130,7 @@ export async function submitEntry(
       .insert({
         entry_id: entryId,
         checked_items: checkedItems,
+        items_snapshot: itemsSnapshot,
         signed_by: signedBy,
         signed_date: signedDate,
       });

@@ -1,3 +1,5 @@
+import type { ChecklistItemSnapshot } from "@/lib/supabase/types";
+
 // Checklist items live in the `checklist_items` table now (see migration
 // 0009 and /dashboard/checklist) — the owner edits wording/sections himself
 // instead of needing a code change. This file just keeps the shared type and
@@ -35,4 +37,22 @@ export function groupChecklistItems<T extends ChecklistItem>(items: T[]): [strin
     return acc;
   }, {});
   return Object.entries(groups);
+}
+
+/**
+ * Freezes exactly what a submission's checklist looked like, independent of
+ * whatever checklist_items contains later — the whole point being that
+ * editing, retiring, or deleting an item afterward can never change what an
+ * already-submitted entry displays. Same idea as entry_group_snapshots'
+ * qty_at_time/price_at_time for machine groups.
+ */
+export function buildChecklistSnapshot(
+  items: ChecklistItem[],
+  checkedKeys: string[]
+): ChecklistItemSnapshot[] {
+  return items.map((item) => ({
+    section: item.section,
+    text: item.text,
+    checked: checkedKeys.includes(item.key),
+  }));
 }

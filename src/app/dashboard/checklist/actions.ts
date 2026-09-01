@@ -50,10 +50,6 @@ export async function reactivateChecklistItem(formData: FormData) {
 
 export interface DeleteChecklistItemState {
   error: string | null;
-  // True only when the block is specifically "this is used on a real
-  // entry" — the one case the owner might deliberately want to override.
-  // Any other error (missing item, DB failure) is not force-able.
-  blockedByUsage?: boolean;
 }
 
 export async function deleteChecklistItem(
@@ -63,37 +59,16 @@ export async function deleteChecklistItem(
   const supabase = await createClient();
 
   const id = String(formData.get("id"));
-  const key = String(formData.get("key"));
-  const force = formData.get("force") === "true";
-  if (!id || !key) return { error: "Missing item." };
+  if (!id) return { error: "Missing item." };
 
-  // By default, only allow a delete for an item that's never actually been
-  // checked on a real submitted entry, since deleting one that has silently
-  // erases that checkmark from historical records. Clint can explicitly
-  // choose to override this (force=true) after seeing exactly what that
-  // means — see DeleteChecklistItemButton's second confirmation.
+  // Every checklist_completions row carries its own frozen items_snapshot
+  // (captured at submit/edit time), so deleting a checklist_items row here
+  // can never change what any past entry displays — safe to always allow.
   //
   // Returns a result object instead of throwing — Next.js redacts a thrown
   // Server Action error's message in production ("An error occurred in the
-  // Server Components render...") for security, which was swallowing this
-  // function's actual explanation and just showing a generic error instead.
-  if (!force) {
-    const { count, error: lookupError } = await supabase
-      .from("checklist_completions")
-      .select("entry_id", { count: "exact", head: true })
-      .contains("checked_items", [key]);
-
-    if (lookupError) {
-      return { error: "Could not verify whether this item is used on any entry." };
-    }
-    if (count && count > 0) {
-      return {
-        error: `This item is checked on ${count} submitted entr${count === 1 ? "y" : "ies"}. Deleting it will permanently remove that checkmark from history — there's no way to get it back.`,
-        blockedByUsage: true,
-      };
-    }
-  }
-
+  // Server Components render...") for security, which would swallow this
+  // function's actual explanation and just show a generic error instead.
   const { error: deleteError } = await supabase.from("checklist_items").delete().eq("id", id);
   if (deleteError) {
     return { error: "Could not delete this item. Try again." };

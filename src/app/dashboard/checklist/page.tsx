@@ -99,7 +99,7 @@ export default async function ChecklistPage() {
                   </form>
                   {!item.active && (
                     <div className="mt-2 flex justify-end border-t border-neutral-200 pt-2">
-                      <DeleteChecklistItemButton id={item.id} itemKey={item.key} />
+                      <DeleteChecklistItemButton id={item.id} />
                     </div>
                   )}
                 </div>

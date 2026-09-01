@@ -5,6 +5,15 @@
 
 export type Role = "owner" | "employee";
 export type MachineType = "washer" | "dryer";
+// Frozen at submit time — a complete, self-contained record of exactly what
+// the checklist looked like and what was checked, independent of whatever
+// checklist_items looks like now or in the future (items can be edited,
+// retired, or deleted with zero effect on any entry already submitted).
+export interface ChecklistItemSnapshot {
+  section: string;
+  text: string;
+  checked: boolean;
+}
 export type PhotoKind =
   | "deposit_slip"
   | "coin_collection_sheet"
@@ -229,17 +238,20 @@ export interface Database {
         Row: {
           entry_id: string;
           checked_items: string[];
+          items_snapshot: ChecklistItemSnapshot[] | null;
           signed_by: string;
           signed_date: string;
         };
         Insert: {
           entry_id: string;
           checked_items: string[];
+          items_snapshot?: ChecklistItemSnapshot[] | null;
           signed_by: string;
           signed_date: string;
         };
         Update: Partial<{
           checked_items: string[];
+          items_snapshot: ChecklistItemSnapshot[] | null;
           signed_by: string;
           signed_date: string;
         }>;

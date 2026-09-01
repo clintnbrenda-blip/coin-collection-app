@@ -7,7 +7,7 @@ import { AppHeader } from "@/components/AppHeader";
 import { resolveDateRange, type Period } from "@/lib/dateRanges";
 import { formatMoney } from "@/lib/formatMoney";
 import { ExportCsvButton } from "./ExportCsvButton";
-import { PrintButton } from "./PrintButton";
+import { PrintButton } from "@/components/PrintButton";
 import { GroupFilterSelect } from "./GroupFilterSelect";
 import { TrendChart, type TrendPoint } from "./TrendChart";
 
