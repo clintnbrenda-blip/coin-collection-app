@@ -84,6 +84,13 @@ export function HeaderMenu({ role }: { role?: "owner" | "employee" }) {
               >
                 Manage employees
               </Link>
+              <Link
+                href="/dashboard/export"
+                onClick={() => setOpen(false)}
+                className="block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50"
+              >
+                Export data
+              </Link>
               <div className="my-1 border-t border-neutral-100" />
             </>
           )}
