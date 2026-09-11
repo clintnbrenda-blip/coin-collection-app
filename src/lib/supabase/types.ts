@@ -84,6 +84,61 @@ export interface Database {
         }>;
         Relationships: [];
       };
+      machine_group_price_history: {
+        Row: {
+          id: string;
+          machine_group_id: string;
+          price: number;
+          effective_date: string;
+          changed_by: string | null;
+          changed_by_name: string;
+          created_at: string;
+        };
+        Insert: {
+          machine_group_id: string;
+          price: number;
+          effective_date: string;
+          changed_by?: string | null;
+          changed_by_name: string;
+        };
+        Update: Partial<{
+          price: number;
+          effective_date: string;
+        }>;
+        Relationships: [
+          {
+            foreignKeyName: "machine_group_price_history_machine_group_id_fkey";
+            columns: ["machine_group_id"];
+            isOneToOne: false;
+            referencedRelation: "machine_groups";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+      machine_group_audit_log: {
+        Row: {
+          id: string;
+          machine_group_id: string | null;
+          machine_group_name: string;
+          action: "added" | "retired" | "reactivated" | "price_changed";
+          details: Record<string, unknown>;
+          changed_by: string | null;
+          changed_by_name: string;
+          created_at: string;
+        };
+        Insert: {
+          machine_group_id?: string | null;
+          machine_group_name: string;
+          action: "added" | "retired" | "reactivated" | "price_changed";
+          details?: Record<string, unknown>;
+          changed_by?: string | null;
+          changed_by_name: string;
+        };
+        Update: Partial<{
+          details: Record<string, unknown>;
+        }>;
+        Relationships: [];
+      };
       checklist_items: {
         Row: {
           id: string;
@@ -283,6 +338,16 @@ export interface Database {
       entries_pending_deposit: {
         Args: Record<string, never>;
         Returns: { id: string; date: string }[];
+      };
+      correct_machine_group_price: {
+        Args: {
+          p_machine_group_id: string;
+          p_new_price: number;
+          p_effective_date: string;
+          p_changed_by: string | null;
+          p_changed_by_name: string;
+        };
+        Returns: { entries_corrected: number };
       };
     };
     Enums: Record<string, never>;

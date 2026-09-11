@@ -4,14 +4,12 @@ import { getCurrentProfile } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { AppHeader } from "@/components/AppHeader";
 import {
-  updateMachineGroup,
-  retireMachineGroup,
-  reactivateMachineGroup,
   addMachineGroup,
   addVendingMachine,
   retireVendingMachine,
   reactivateVendingMachine,
 } from "./actions";
+import { MachineGroupRow } from "./MachineGroupRow";
 
 export default async function MachineGroupsPage() {
   const profile = await getCurrentProfile();
@@ -40,75 +38,33 @@ export default async function MachineGroupsPage() {
         </Link>
 
         <section className="rounded-xl border border-neutral-200 bg-white p-4">
-          <h2 className="mb-1 font-semibold text-neutral-900">Washers &amp; Dryers</h2>
+          <div className="mb-1 flex items-center justify-between">
+            <h2 className="font-semibold text-neutral-900">Washers &amp; Dryers</h2>
+            <Link
+              href="/dashboard/machine-groups/log"
+              className="text-xs text-blue-600 hover:underline"
+            >
+              View change log →
+            </Link>
+          </div>
           <p className="mb-3 text-xs text-neutral-500">
-            Changing qty/price only affects entries from now on — past entries keep the values
-            that were active when they were submitted.
+            Qty and store # only ever affect entries from now on. A price change asks for an
+            <span className="font-medium"> effective date</span> — if that&apos;s earlier than today
+            (the real-world price changed before you got a chance to update it here), any
+            already-submitted entry in that window gets corrected automatically.
           </p>
           <div className="space-y-3">
             {(machineGroups ?? []).map((mg) => (
-              <form
+              <MachineGroupRow
                 key={mg.id}
-                action={updateMachineGroup}
-                className={`flex flex-wrap items-center gap-2 rounded-lg border p-3 ${
-                  mg.active ? "border-neutral-200" : "border-neutral-100 bg-neutral-50 opacity-60"
-                }`}
-              >
-                <input type="hidden" name="id" value={mg.id} />
-                <div className="min-w-[140px] flex-1">
-                  <p className="text-sm font-medium text-neutral-800">{mg.name}</p>
-                  <p className="text-xs text-neutral-400">{mg.type}</p>
-                </div>
-                <div>
-                  <label className="mb-0.5 block text-xs text-neutral-500">Store #</label>
-                  <input
-                    type="text"
-                    name="store_numbers"
-                    placeholder="e.g. 2-5"
-                    defaultValue={mg.store_numbers ?? ""}
-                    disabled={!mg.active}
-                    className="w-28 rounded-md border border-neutral-300 px-2 py-1 text-sm"
-                  />
-                </div>
-                <div>
-                  <label className="mb-0.5 block text-xs text-neutral-500">Qty</label>
-                  <input
-                    type="number"
-                    name="qty"
-                    min="1"
-                    defaultValue={mg.qty}
-                    disabled={!mg.active}
-                    className="w-16 rounded-md border border-neutral-300 px-2 py-1 text-sm"
-                  />
-                </div>
-                <div>
-                  <label className="mb-0.5 block text-xs text-neutral-500">Price</label>
-                  <input
-                    type="number"
-                    name="price"
-                    step="0.01"
-                    min="0.01"
-                    defaultValue={mg.price}
-                    disabled={!mg.active}
-                    className="w-20 rounded-md border border-neutral-300 px-2 py-1 text-sm"
-                  />
-                </div>
-                {mg.active ? (
-                  <button
-                    type="submit"
-                    className="rounded-md bg-blue-600 px-2.5 py-1.5 text-xs font-medium text-white hover:bg-blue-700"
-                  >
-                    Save
-                  </button>
-                ) : null}
-                <button
-                  type="submit"
-                  formAction={mg.active ? retireMachineGroup : reactivateMachineGroup}
-                  className="rounded-md border border-neutral-300 px-2.5 py-1.5 text-xs font-medium text-neutral-600 hover:bg-neutral-100"
-                >
-                  {mg.active ? "Retire" : "Reactivate"}
-                </button>
-              </form>
+                id={mg.id}
+                name={mg.name}
+                type={mg.type}
+                qty={mg.qty}
+                price={mg.price}
+                storeNumbers={mg.store_numbers}
+                active={mg.active}
+              />
             ))}
           </div>
 
