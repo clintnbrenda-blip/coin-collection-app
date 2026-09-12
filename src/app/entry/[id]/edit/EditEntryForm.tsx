@@ -22,7 +22,7 @@ interface VendingMachineField {
   vendingMachineId: string;
   name: string;
   cashCollected: number;
-  coinsCollected: number;
+  quartersCollected: number;
 }
 
 const initialState: EditEntryState = { error: null };
@@ -181,15 +181,15 @@ export function EditEntryForm({
                   </div>
                   <div>
                     <label className="mb-1 block text-xs text-neutral-500">
-                      Coins collected
+                      Quarters collected
                     </label>
                     <input
                       type="number"
-                      step="0.01"
+                      step="1"
                       min="0"
-                      name={`vending_coins_${vm.vendingMachineId}`}
+                      name={`vending_quarters_${vm.vendingMachineId}`}
                       placeholder="0"
-                      defaultValue={vm.coinsCollected || undefined}
+                      defaultValue={vm.quartersCollected || undefined}
                       className="w-full rounded-lg border border-neutral-300 px-3 py-2.5 text-base"
                     />
                   </div>

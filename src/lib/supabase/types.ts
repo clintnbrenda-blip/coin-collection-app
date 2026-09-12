@@ -253,15 +253,16 @@ export interface Database {
           entry_id: string;
           vending_machine_id: string;
           cash_collected: number;
+          quarters_collected: number;
           coins_collected: number;
         };
         Insert: {
           entry_id: string;
           vending_machine_id: string;
           cash_collected?: number;
-          coins_collected?: number;
+          quarters_collected?: number;
         };
-        Update: Partial<{ cash_collected: number; coins_collected: number }>;
+        Update: Partial<{ cash_collected: number; quarters_collected: number }>;
         Relationships: [
           {
             foreignKeyName: "vending_totals_vending_machine_id_fkey";

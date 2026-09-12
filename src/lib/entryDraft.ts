@@ -17,7 +17,7 @@ export interface EntryDraft {
   manualDays: string;
   quarters: Record<string, string>;
   vendingCash: Record<string, string>;
-  vendingCoins: Record<string, string>;
+  vendingQuarters: Record<string, string>;
   checkedItems: Record<string, boolean>;
   signedBy: string;
   signedDate: string;

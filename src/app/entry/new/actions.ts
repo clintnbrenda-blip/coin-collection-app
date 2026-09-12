@@ -94,7 +94,9 @@ export async function submitEntry(
       entry_id: entryId,
       vending_machine_id: vm.id,
       cash_collected: Number(formData.get(`vending_cash_${vm.id}`) ?? 0) || 0,
-      coins_collected: Number(formData.get(`vending_coins_${vm.id}`) ?? 0) || 0,
+      // Quarters collected, not dollars — coins_collected is computed by a
+      // DB trigger from this (quarters * 0.25), never set directly.
+      quarters_collected: Number(formData.get(`vending_quarters_${vm.id}`) ?? 0) || 0,
     }));
 
     if (vendingRows.length > 0) {

@@ -49,7 +49,7 @@ export default async function EditEntryPage({
       .order("display_order"),
     supabase
       .from("vending_totals")
-      .select("vending_machine_id, cash_collected, coins_collected")
+      .select("vending_machine_id, cash_collected, quarters_collected")
       .eq("entry_id", id),
     supabase.from("deposits").select("*").eq("entry_id", id).maybeSingle(),
     supabase.from("checklist_completions").select("*").eq("entry_id", id).maybeSingle(),
@@ -101,7 +101,7 @@ export default async function EditEntryPage({
       vendingMachineId: vm.id,
       name: vm.name,
       cashCollected: existing?.cash_collected ?? 0,
-      coinsCollected: existing?.coins_collected ?? 0,
+      quartersCollected: existing?.quarters_collected ?? 0,
     };
   });
 

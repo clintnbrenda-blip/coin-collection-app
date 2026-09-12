@@ -69,14 +69,16 @@ export async function updateEntry(
 
   for (const vm of activeVendingMachines ?? []) {
     const cash = formData.get(`vending_cash_${vm.id}`);
-    const coins = formData.get(`vending_coins_${vm.id}`);
-    if (cash === null && coins === null) continue;
+    const quarters = formData.get(`vending_quarters_${vm.id}`);
+    if (cash === null && quarters === null) continue;
     await supabase.from("vending_totals").upsert(
       {
         entry_id: entryId,
         vending_machine_id: vm.id,
         cash_collected: Number(cash ?? 0) || 0,
-        coins_collected: Number(coins ?? 0) || 0,
+        // Quarters, not dollars — coins_collected is computed by a DB
+        // trigger from this (quarters * 0.25), never set directly.
+        quarters_collected: Number(quarters ?? 0) || 0,
       },
       { onConflict: "entry_id,vending_machine_id" }
     );

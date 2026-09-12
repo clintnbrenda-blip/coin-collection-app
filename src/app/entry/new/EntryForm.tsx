@@ -34,7 +34,7 @@ function defaultDraft(employeeName: string): EntryDraft {
     manualDays: "",
     quarters: {},
     vendingCash: {},
-    vendingCoins: {},
+    vendingQuarters: {},
     checkedItems: {},
     signedBy: employeeName,
     signedDate: today,
@@ -87,7 +87,7 @@ export function EntryForm({
   }
 
   function updateMap(
-    field: "quarters" | "vendingCash" | "vendingCoins",
+    field: "quarters" | "vendingCash" | "vendingQuarters",
     id: string,
     value: string
   ) {
@@ -244,16 +244,16 @@ export function EntryForm({
                   </div>
                   <div>
                     <label className="mb-1 block text-xs text-neutral-500">
-                      Coins collected
+                      Quarters collected
                     </label>
                     <input
                       type="number"
-                      step="0.01"
+                      step="1"
                       min="0"
-                      name={`vending_coins_${vm.id}`}
+                      name={`vending_quarters_${vm.id}`}
                       placeholder="0"
-                      value={draft.vendingCoins[vm.id] ?? ""}
-                      onChange={(e) => updateMap("vendingCoins", vm.id, e.target.value)}
+                      value={draft.vendingQuarters[vm.id] ?? ""}
+                      onChange={(e) => updateMap("vendingQuarters", vm.id, e.target.value)}
                       className="w-full rounded-lg border border-neutral-300 px-3 py-2.5 text-base"
                     />
                   </div>
