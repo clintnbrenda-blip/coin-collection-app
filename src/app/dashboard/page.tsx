@@ -263,7 +263,7 @@ export default async function DashboardPage({
         {/* Filters */}
         <form className="flex flex-wrap items-end gap-3 rounded-xl border border-neutral-200 bg-white p-4 print:hidden">
           <div className="flex flex-wrap gap-1.5">
-            {(["lastMonth", "month", "quarter", "year", "custom"] as Period[]).map((p) => (
+            {(["month", "quarter", "year", "custom"] as Period[]).map((p) => (
               <Link
                 key={p}
                 href={`/dashboard?period=${p}${groupQS}`}
