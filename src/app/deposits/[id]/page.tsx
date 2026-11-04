@@ -14,13 +14,14 @@ export default async function DepositEntryPage({
   if (!profile) redirect("/login");
 
   const supabase = await createClient();
-  const { data: entry } = await supabase
-    .from("collection_entries")
-    .select("id, date")
-    .eq("id", id)
-    .maybeSingle();
+  // DB function: the deposit is often submitted by a different employee than
+  // the collector, and RLS hides other employees' entries from a plain query.
+  const { data: entryDate } = await supabase.rpc("entry_date_for_deposit", {
+    p_entry_id: id,
+  });
 
-  if (!entry) notFound();
+  if (!entryDate) notFound();
+  const entry = { id, date: entryDate };
 
   const { data: existingDeposit } = await supabase
     .from("deposits")

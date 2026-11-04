@@ -340,6 +340,14 @@ export interface Database {
         Args: Record<string, never>;
         Returns: { id: string; date: string }[];
       };
+      last_entry_date: {
+        Args: { p_location_id: string; p_before?: string | null };
+        Returns: string | null;
+      };
+      entry_date_for_deposit: {
+        Args: { p_entry_id: string };
+        Returns: string | null;
+      };
       correct_machine_group_price: {
         Args: {
           p_machine_group_id: string;

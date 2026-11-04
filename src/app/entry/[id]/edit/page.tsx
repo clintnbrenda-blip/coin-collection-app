@@ -33,7 +33,7 @@ export default async function EditEntryPage({
     { data: vendingRows },
     { data: deposit },
     { data: checklist },
-    { data: previousEntry },
+    { data: previousEntryDate },
     { data: allChecklistItems },
   ] = await Promise.all([
     supabase
@@ -55,14 +55,11 @@ export default async function EditEntryPage({
     supabase.from("checklist_completions").select("*").eq("entry_id", id).maybeSingle(),
     // The visit immediately before this one — used to auto-calculate days_since_last
     // if the date gets edited, the same way the new-entry form does.
-    supabase
-      .from("collection_entries")
-      .select("date")
-      .eq("location_id", entry.location_id)
-      .lt("date", entry.date)
-      .order("date", { ascending: false })
-      .limit(1)
-      .maybeSingle(),
+    // (DB function: RLS hides other employees' entries from a plain query.)
+    supabase.rpc("last_entry_date", {
+      p_location_id: entry.location_id,
+      p_before: entry.date,
+    }),
     // Fetch every item, not just active ones — if an item gets retired
     // while it's already checked on an entry still inside its edit window,
     // hiding it here would silently drop that checked state on next save.
@@ -112,7 +109,7 @@ export default async function EditEntryPage({
       role={profile.role}
       date={entry.date}
       daysSinceLast={String(entry.days_since_last)}
-      previousEntryDate={previousEntry?.date ?? null}
+      previousEntryDate={previousEntryDate ?? null}
       machineGroups={machineGroups}
       vendingMachines={vendingMachines}
       depositAmount={String(deposit?.deposit_amount ?? 0)}

@@ -37,13 +37,11 @@ export default async function NewEntryPage() {
     .eq("active", true)
     .order("display_order", { ascending: true });
 
-  const { data: lastEntry } = await supabase
-    .from("collection_entries")
-    .select("date")
-    .eq("location_id", location.id)
-    .order("date", { ascending: false })
-    .limit(1)
-    .maybeSingle();
+  // Most recent visit by ANYONE (a DB function, since RLS only lets an
+  // employee read their own entries). Days-since-last depends on this.
+  const { data: lastEntryDate } = await supabase.rpc("last_entry_date", {
+    p_location_id: location.id,
+  });
 
   // Newest entry this user can see, by when it was submitted (not by its
   // date) — lets the form tell whether a saved draft predates a submission.
@@ -70,7 +68,7 @@ export default async function NewEntryPage() {
       machineGroups={machineGroups ?? []}
       vendingMachines={vendingMachines ?? []}
       checklistItems={checklistItems ?? []}
-      lastEntryDate={lastEntry?.date ?? null}
+      lastEntryDate={lastEntryDate ?? null}
       latestEntryId={latestEntry?.id ?? null}
     />
   );
