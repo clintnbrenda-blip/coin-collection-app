@@ -319,7 +319,7 @@ export default async function DashboardPage({
             <Link
               href={`/dashboard?period=${period}&target=${prevTarget}${groupQS}`}
               aria-label={`Previous ${period}`}
-              className="flex h-8 w-8 items-center justify-center rounded-md bg-neutral-100 text-lg font-medium text-neutral-700 hover:bg-neutral-200 print:hidden"
+              className="flex h-8 w-8 items-center justify-center rounded-md bg-blue-600 text-lg font-medium text-white hover:bg-blue-700 print:hidden"
             >
               ‹
             </Link>
@@ -329,7 +329,7 @@ export default async function DashboardPage({
             (nextDisabled ? (
               <span
                 aria-hidden="true"
-                className="flex h-8 w-8 items-center justify-center rounded-md bg-neutral-50 text-lg font-medium text-neutral-300 print:hidden"
+                className="flex h-8 w-8 items-center justify-center rounded-md bg-blue-200 text-lg font-medium text-white print:hidden"
               >
                 ›
               </span>
@@ -337,7 +337,7 @@ export default async function DashboardPage({
               <Link
                 href={`/dashboard?period=${period}&target=${nextTarget}${groupQS}`}
                 aria-label={`Next ${period}`}
-                className="flex h-8 w-8 items-center justify-center rounded-md bg-neutral-100 text-lg font-medium text-neutral-700 hover:bg-neutral-200 print:hidden"
+                className="flex h-8 w-8 items-center justify-center rounded-md bg-blue-600 text-lg font-medium text-white hover:bg-blue-700 print:hidden"
               >
                 ›
               </Link>
