@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { format, parseISO, startOfMonth, endOfMonth, subMonths } from "date-fns";
+import { format, parseISO, startOfMonth, endOfMonth, subMonths, addMonths } from "date-fns";
 import { getCurrentProfile } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { AppHeader } from "@/components/AppHeader";
@@ -40,6 +40,15 @@ export default async function DashboardPage({
   const groupFilter = sp.group || "";
   // Carries the group filter (and nothing else) onto links that change period/target.
   const groupQS = groupFilter ? `&group=${groupFilter}` : "";
+
+  // Prev/next arrows for month and quarter: step the anchor date (`target`)
+  // back/forward by one month or one quarter. No stepping into the future.
+  const stepMonths = period === "month" ? 1 : period === "quarter" ? 3 : 0;
+  const periodStart = parseISO(range.from);
+  const prevTarget = format(subMonths(periodStart, stepMonths), "yyyy-MM-dd");
+  const nextStart = addMonths(periodStart, stepMonths);
+  const nextTarget = format(nextStart, "yyyy-MM-dd");
+  const nextDisabled = nextStart > new Date();
 
   const supabase = await createClient();
 
@@ -305,7 +314,35 @@ export default async function DashboardPage({
           </div>
         </form>
 
-        <p className="text-sm text-neutral-500">{range.label} · {range.from} to {range.to}</p>
+        <div className="flex items-center gap-2">
+          {stepMonths && (
+            <Link
+              href={`/dashboard?period=${period}&target=${prevTarget}${groupQS}`}
+              aria-label={`Previous ${period}`}
+              className="flex h-8 w-8 items-center justify-center rounded-md bg-neutral-100 text-lg font-medium text-neutral-700 hover:bg-neutral-200 print:hidden"
+            >
+              ‹
+            </Link>
+          )}
+          <p className="text-sm text-neutral-500">{range.label} · {range.from} to {range.to}</p>
+          {stepMonths &&
+            (nextDisabled ? (
+              <span
+                aria-hidden="true"
+                className="flex h-8 w-8 items-center justify-center rounded-md bg-neutral-50 text-lg font-medium text-neutral-300 print:hidden"
+              >
+                ›
+              </span>
+            ) : (
+              <Link
+                href={`/dashboard?period=${period}&target=${nextTarget}${groupQS}`}
+                aria-label={`Next ${period}`}
+                className="flex h-8 w-8 items-center justify-center rounded-md bg-neutral-100 text-lg font-medium text-neutral-700 hover:bg-neutral-200 print:hidden"
+              >
+                ›
+              </Link>
+            ))}
+        </div>
 
         {/* Hero stats — income and turns get equal top billing */}
         <section className="grid grid-cols-2 gap-3">
