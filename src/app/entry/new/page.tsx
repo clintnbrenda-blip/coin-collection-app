@@ -45,6 +45,16 @@ export default async function NewEntryPage() {
     .limit(1)
     .maybeSingle();
 
+  // Newest entry this user can see, by when it was submitted (not by its
+  // date) — lets the form tell whether a saved draft predates a submission.
+  const { data: latestEntry } = await supabase
+    .from("collection_entries")
+    .select("id")
+    .eq("location_id", location.id)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
   const { data: checklistItems } = await supabase
     .from("checklist_items")
     .select("key, section, text")
@@ -61,6 +71,7 @@ export default async function NewEntryPage() {
       vendingMachines={vendingMachines ?? []}
       checklistItems={checklistItems ?? []}
       lastEntryDate={lastEntry?.date ?? null}
+      latestEntryId={latestEntry?.id ?? null}
     />
   );
 }

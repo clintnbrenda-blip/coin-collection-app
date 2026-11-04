@@ -5,7 +5,13 @@ import { AppHeader } from "@/components/AppHeader";
 import { groupChecklistItems, type ChecklistItem } from "@/lib/checklist";
 import { focusNextFieldOnEnter } from "@/lib/formKeyNav";
 import { todayLocalISO, daysBetween } from "@/lib/dateMath";
-import { loadDraft, saveDraft, markPendingSubmit, type EntryDraft } from "@/lib/entryDraft";
+import {
+  loadDraft,
+  saveDraft,
+  clearDraft,
+  markPendingSubmit,
+  type EntryDraft,
+} from "@/lib/entryDraft";
 import { formatMoney } from "@/lib/formatMoney";
 import { submitEntry, type SubmitEntryState } from "./actions";
 
@@ -27,9 +33,10 @@ interface VendingMachine {
 
 const initialState: SubmitEntryState = { error: null };
 
-function defaultDraft(employeeName: string): EntryDraft {
+function defaultDraft(employeeName: string, baseEntryId: string): EntryDraft {
   const today = todayLocalISO();
   return {
+    baseEntryId,
     date: today,
     manualDays: "",
     quarters: {},
@@ -49,6 +56,7 @@ export function EntryForm({
   vendingMachines,
   checklistItems,
   lastEntryDate,
+  latestEntryId,
 }: {
   locationId: string;
   employeeName: string;
@@ -57,13 +65,17 @@ export function EntryForm({
   vendingMachines: VendingMachine[];
   checklistItems: ChecklistItem[];
   lastEntryDate: string | null;
+  latestEntryId: string | null;
 }) {
   const [state, formAction, pending] = useActionState(submitEntry, initialState);
 
   // Start with SSR-safe defaults, then pull in anything saved on this device
   // right after mount (avoids a hydration mismatch from reading storage
   // during the initial render).
-  const [draft, setDraft] = useState<EntryDraft>(() => defaultDraft(employeeName));
+  const baseEntryId = latestEntryId ?? "none";
+  const [draft, setDraft] = useState<EntryDraft>(() =>
+    defaultDraft(employeeName, baseEntryId)
+  );
   const [restored, setRestored] = useState(false);
 
   useEffect(() => {
@@ -71,12 +83,25 @@ export function EntryForm({
     // there's no way to derive this during render since it's unavailable
     // server-side, so an effect is the correct tool here.
     const saved = loadDraft();
-    if (saved) {
+    if (!saved) return;
+
+    if (saved.baseEntryId === baseEntryId) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setDraft((prev) => ({ ...prev, ...saved }));
       setRestored(true);
+    } else {
+      // An entry has been submitted since this draft was started (or it
+      // predates this check) — it's stale, not something to bring back.
+      clearDraft();
     }
-  }, []);
+  }, [baseEntryId]);
+
+  function startOver() {
+    if (!confirm("Clear everything on this form and start over?")) return;
+    clearDraft();
+    setDraft(defaultDraft(employeeName, baseEntryId));
+    setRestored(false);
+  }
 
   function update(partial: Partial<EntryDraft>) {
     setDraft((prev) => {
@@ -132,9 +157,16 @@ export function EntryForm({
         <input type="hidden" name="location_id" value={locationId} />
 
         {restored && (
-          <p className="rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-800">
-            Restored what you&apos;d already entered before this page closed.
-          </p>
+          <div className="flex items-center justify-between gap-3 rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-800">
+            <span>Restored what you&apos;d already entered before this page closed.</span>
+            <button
+              type="button"
+              onClick={startOver}
+              className="shrink-0 rounded-md border border-amber-300 bg-white px-2.5 py-1 text-xs font-medium text-amber-900"
+            >
+              Start over
+            </button>
+          </div>
         )}
 
         {/* Date & days since last */}

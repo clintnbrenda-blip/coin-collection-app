@@ -1,6 +1,6 @@
 "use server";
 
-import { redirect } from "next/navigation";
+import { redirect, RedirectType } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentProfile } from "@/lib/auth";
 import { getCheckedChecklistKeys, buildChecklistSnapshot } from "@/lib/checklist";
@@ -145,5 +145,7 @@ export async function submitEntry(
     };
   }
 
-  redirect(`/entry/${entryId}`);
+  // replace, not push: otherwise Back from the confirmation page lands on
+  // this form again with everything still filled in.
+  redirect(`/entry/${entryId}`, RedirectType.replace);
 }

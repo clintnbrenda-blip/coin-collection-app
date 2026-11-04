@@ -13,6 +13,13 @@ const DRAFT_KEY = "coin-app:entry-draft:v1";
 const PENDING_CLEAR_KEY = "coin-app:entry-draft:pending-clear";
 
 export interface EntryDraft {
+  // The newest entry this user could see when the draft was started. If a
+  // different one is newest by the time the form loads again, an entry has
+  // been submitted since — so this draft is stale (already sent, or moot) and
+  // gets discarded instead of restored. Makes the draft self-correcting even
+  // if the "clear after submit" step never got to run (slow signal, app
+  // closed before the confirmation page loaded).
+  baseEntryId: string;
   date: string;
   manualDays: string;
   quarters: Record<string, string>;
@@ -29,6 +36,14 @@ export function loadDraft(): Partial<EntryDraft> | null {
     return raw ? (JSON.parse(raw) as Partial<EntryDraft>) : null;
   } catch {
     return null;
+  }
+}
+
+export function clearDraft() {
+  try {
+    localStorage.removeItem(DRAFT_KEY);
+  } catch {
+    // ignore
   }
 }
 
