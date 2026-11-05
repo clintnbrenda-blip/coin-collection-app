@@ -2,6 +2,7 @@
 
 import { useActionState, useEffect, useMemo, useState } from "react";
 import { AppHeader } from "@/components/AppHeader";
+import { MultiPhotoPicker } from "@/components/MultiPhotoPicker";
 import { groupChecklistItems, type ChecklistItem } from "@/lib/checklist";
 import { focusNextFieldOnEnter } from "@/lib/formKeyNav";
 import { todayLocalISO, daysBetween } from "@/lib/dateMath";
@@ -293,6 +294,16 @@ export function EntryForm({
               </div>
             ))}
           </div>
+        </section>
+
+        {/* Photos */}
+        <section className="rounded-xl border border-neutral-200 bg-white p-4">
+          <h2 className="mb-1 font-semibold text-neutral-900">Photos</h2>
+          <p className="mb-3 text-xs text-neutral-400">
+            Optional. Photos can&apos;t be saved as a draft, so attach them right before
+            submitting.
+          </p>
+          <MultiPhotoPicker name="collection_photo" max={4} />
         </section>
 
         {/* Checklist */}

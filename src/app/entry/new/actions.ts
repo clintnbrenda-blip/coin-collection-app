@@ -5,6 +5,8 @@ import { createClient } from "@/lib/supabase/server";
 import { getCurrentProfile } from "@/lib/auth";
 import { getCheckedChecklistKeys, buildChecklistSnapshot } from "@/lib/checklist";
 
+const MAX_PHOTOS = 4;
+
 export interface SubmitEntryState {
   error: string | null;
 }
@@ -67,6 +69,10 @@ export async function submitEntry(
 
   const entryId = entry.id;
 
+  // Storage objects aren't removed by the entry delete's cascade, so track
+  // what we've uploaded and clean it up if we roll back.
+  const uploadedPaths: string[] = [];
+
   // Everything past this point rolls back the entry (and cascades) on failure.
   try {
     // 2. Per-machine-group quarters -> snapshot rows.
@@ -109,6 +115,30 @@ export async function submitEntry(
     // Bank deposit is submitted separately (by whoever ends up taking it to
     // the bank — often a different employee) via /deposits, not here.
 
+    // 3b. Optional photos (up to a few), uploaded to the same private bucket
+    // as deposit slips. Path convention {entry_id}/... is what storage RLS
+    // keys off. Any failure rolls back the whole entry, like everything else.
+    const photoFiles = [...formData.entries()]
+      .filter(([key, value]) => key.startsWith("collection_photo_") && value instanceof File)
+      .map(([, value]) => value as File)
+      .filter((f) => f.size > 0 && f.type.startsWith("image/"))
+      .slice(0, MAX_PHOTOS);
+
+    for (const [i, photo] of photoFiles.entries()) {
+      const ext = (photo.name.split(".").pop() || "jpg").replace(/[^a-z0-9]/gi, "").slice(0, 5) || "jpg";
+      const path = `${entryId}/collection-${Date.now()}-${i}.${ext}`;
+      const { error: uploadError } = await supabase.storage
+        .from("entry-photos")
+        .upload(path, photo, { contentType: photo.type });
+      if (uploadError) throw new Error("Could not upload a photo. Try again.");
+      uploadedPaths.push(path);
+
+      const { error: photoRowError } = await supabase
+        .from("photos")
+        .insert({ entry_id: entryId, storage_path: path, kind: "other" });
+      if (photoRowError) throw new Error("Could not save a photo. Try again.");
+    }
+
     // 4. Checklist completion — snapshot the *current* checklist items at
     // submit time (same reasoning as machine groups' qty/price snapshot
     // above), so editing/retiring/deleting an item later never changes what
@@ -140,6 +170,9 @@ export async function submitEntry(
   } catch (err) {
     // Roll back — deleting the entry cascades every child row.
     await supabase.from("collection_entries").delete().eq("id", entryId);
+    if (uploadedPaths.length > 0) {
+      await supabase.storage.from("entry-photos").remove(uploadedPaths);
+    }
     return {
       error: err instanceof Error ? err.message : "Something went wrong saving the entry.",
     };

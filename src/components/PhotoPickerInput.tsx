@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { compressImage } from "@/lib/imageCompress";
 
 /**
  * "Choose photo" opens the standard file/gallery picker. "Take photo" opens
@@ -70,11 +71,38 @@ export function PhotoPickerInput({
     }
   }, [cameraOpen]);
 
-  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
+  // React resets a <form action={...}> after the action finishes — even when
+  // it returned an error — which empties this file input. Clear the preview
+  // too, otherwise a thumbnail would suggest a photo is attached when it isn't.
+  useEffect(() => {
+    const form = inputRef.current?.form;
+    if (!form) return;
+    const onReset = () => setPreviewUrl(null);
+    form.addEventListener("reset", onReset);
+    return () => form.removeEventListener("reset", onReset);
+  }, []);
+
+  async function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const input = e.target;
+    const picked = input.files?.[0];
+    if (!picked) {
+      setPreviewUrl((prev) => {
+        if (prev) URL.revokeObjectURL(prev);
+        return null;
+      });
+      return;
+    }
+
+    // Shrink before upload — full-size phone photos exceed the form's size cap.
+    const file = await compressImage(picked);
+    if (file !== picked) {
+      const dataTransfer = new DataTransfer();
+      dataTransfer.items.add(file);
+      input.files = dataTransfer.files;
+    }
     setPreviewUrl((prev) => {
       if (prev) URL.revokeObjectURL(prev);
-      return file ? URL.createObjectURL(file) : null;
+      return URL.createObjectURL(file);
     });
   }
 
@@ -107,9 +135,10 @@ export function PhotoPickerInput({
     canvas.getContext("2d")?.drawImage(video, 0, 0);
 
     canvas.toBlob(
-      (blob) => {
+      async (blob) => {
         if (!blob) return;
-        const file = new File([blob], `photo-${Date.now()}.jpg`, { type: "image/jpeg" });
+        const raw = new File([blob], `photo-${Date.now()}.jpg`, { type: "image/jpeg" });
+        const file = await compressImage(raw);
 
         if (inputRef.current) {
           const dataTransfer = new DataTransfer();
