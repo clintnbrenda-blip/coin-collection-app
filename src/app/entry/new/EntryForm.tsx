@@ -303,7 +303,7 @@ export function EntryForm({
 
         {/* Photos */}
         <section className="rounded-xl border border-neutral-200 bg-white p-4">
-          <h2 className="mb-1 font-semibold text-neutral-900">Photos</h2>
+          <h2 className="mb-1 font-semibold text-neutral-900">Inside of Changer Photo</h2>
           <p className="mb-3 text-xs text-neutral-400">
             Optional, up to 4. Saved on this phone until you submit, same as the numbers.
           </p>

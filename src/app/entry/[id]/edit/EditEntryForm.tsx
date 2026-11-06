@@ -204,7 +204,7 @@ export function EditEntryForm({
         </section>
 
         <section className="rounded-xl border border-neutral-200 bg-white p-4">
-          <h2 className="mb-1 font-semibold text-neutral-900">Photos</h2>
+          <h2 className="mb-1 font-semibold text-neutral-900">Inside of Changer Photo</h2>
           {existingPhotos.length > 0 && (
             <div className="mb-4 grid grid-cols-2 gap-3">
               {existingPhotos.map((photo, i) => (

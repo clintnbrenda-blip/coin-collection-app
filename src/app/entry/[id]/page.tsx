@@ -74,7 +74,7 @@ export default async function EntryDetailPage({
   const photosSection =
     collectionPhotos.length > 0 ? (
       <section className="rounded-xl border border-neutral-200 bg-white p-4">
-        <h2 className="mb-2 font-semibold text-neutral-900">Photos</h2>
+        <h2 className="mb-2 font-semibold text-neutral-900">Inside of Changer Photo</h2>
         <div className="grid grid-cols-2 gap-2">
           {collectionPhotos.map((photo, i) =>
             photo.url ? (
