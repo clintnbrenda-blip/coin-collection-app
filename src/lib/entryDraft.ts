@@ -4,10 +4,10 @@
 // doesn't lose data. Nothing here ever touches the server or the dashboard —
 // only a real Submit does that. Cleared once a submission actually succeeds.
 //
-// Known limitation: selected photo files cannot be restored (browsers don't
-// allow reading back a <input type="file">'s selection from storage for
-// security reasons) — if the page truly reloads, photos need re-attaching,
-// but every other field survives.
+// Photos are saved separately, in IndexedDB (see photoDraft.ts), and every
+// "clear the draft" below clears them too.
+
+import { clearPhotoDrafts } from "@/lib/photoDraft";
 
 const DRAFT_KEY = "coin-app:entry-draft:v1";
 const PENDING_CLEAR_KEY = "coin-app:entry-draft:pending-clear";
@@ -39,12 +39,18 @@ export function loadDraft(): Partial<EntryDraft> | null {
   }
 }
 
-export function clearDraft() {
+/**
+ * Clears the saved text draft and, by default, the saved photos. Pass
+ * includePhotos=false when only the text draft is known to be stale: saved
+ * photos carry their own staleness check (see photoDraft.ts).
+ */
+export function clearDraft(includePhotos = true) {
   try {
     localStorage.removeItem(DRAFT_KEY);
   } catch {
     // ignore
   }
+  if (includePhotos) void clearPhotoDrafts();
 }
 
 export function saveDraft(draft: EntryDraft) {
@@ -75,6 +81,7 @@ export function clearDraftIfJustSubmitted() {
     if (sessionStorage.getItem(PENDING_CLEAR_KEY) === "1") {
       localStorage.removeItem(DRAFT_KEY);
       sessionStorage.removeItem(PENDING_CLEAR_KEY);
+      void clearPhotoDrafts();
     }
   } catch {
     // ignore

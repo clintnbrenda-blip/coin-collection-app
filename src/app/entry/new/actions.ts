@@ -4,8 +4,11 @@ import { redirect, RedirectType } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentProfile } from "@/lib/auth";
 import { getCheckedChecklistKeys, buildChecklistSnapshot } from "@/lib/checklist";
-
-const MAX_PHOTOS = 4;
+import {
+  MAX_ENTRY_PHOTOS,
+  collectPhotoFiles,
+  uploadEntryPhotos,
+} from "@/lib/entryPhotos";
 
 export interface SubmitEntryState {
   error: string | null;
@@ -115,29 +118,15 @@ export async function submitEntry(
     // Bank deposit is submitted separately (by whoever ends up taking it to
     // the bank — often a different employee) via /deposits, not here.
 
-    // 3b. Optional photos (up to a few), uploaded to the same private bucket
-    // as deposit slips. Path convention {entry_id}/... is what storage RLS
-    // keys off. Any failure rolls back the whole entry, like everything else.
-    const photoFiles = [...formData.entries()]
-      .filter(([key, value]) => key.startsWith("collection_photo_") && value instanceof File)
-      .map(([, value]) => value as File)
-      .filter((f) => f.size > 0 && f.type.startsWith("image/"))
-      .slice(0, MAX_PHOTOS);
-
-    for (const [i, photo] of photoFiles.entries()) {
-      const ext = (photo.name.split(".").pop() || "jpg").replace(/[^a-z0-9]/gi, "").slice(0, 5) || "jpg";
-      const path = `${entryId}/collection-${Date.now()}-${i}.${ext}`;
-      const { error: uploadError } = await supabase.storage
-        .from("entry-photos")
-        .upload(path, photo, { contentType: photo.type });
-      if (uploadError) throw new Error("Could not upload a photo. Try again.");
-      uploadedPaths.push(path);
-
-      const { error: photoRowError } = await supabase
-        .from("photos")
-        .insert({ entry_id: entryId, storage_path: path, kind: "other" });
-      if (photoRowError) throw new Error("Could not save a photo. Try again.");
-    }
+    // 3b. Optional photos (up to MAX_ENTRY_PHOTOS), same private bucket as
+    // deposit slips. Any failure rolls back the whole entry, like the rest.
+    const photoResult = await uploadEntryPhotos(
+      supabase,
+      entryId,
+      collectPhotoFiles(formData, MAX_ENTRY_PHOTOS)
+    );
+    uploadedPaths.push(...photoResult.paths);
+    if (photoResult.error) throw new Error(photoResult.error);
 
     // 4. Checklist completion — snapshot the *current* checklist items at
     // submit time (same reasoning as machine groups' qty/price snapshot

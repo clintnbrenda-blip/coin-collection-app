@@ -4,6 +4,12 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentProfile } from "@/lib/auth";
 import { getCheckedChecklistKeys, buildChecklistSnapshot } from "@/lib/checklist";
+import {
+  MAX_ENTRY_PHOTOS,
+  collectPhotoFiles,
+  discardUploadedPhotos,
+  uploadEntryPhotos,
+} from "@/lib/entryPhotos";
 
 export interface EditEntryState {
   error: string | null;
@@ -121,6 +127,45 @@ export async function updateEntry(
       signed_date: String(formData.get("signed_date") ?? date),
     })
     .eq("entry_id", entryId);
+
+  // Photos: add new ones and/or remove ones ticked "Remove". New uploads go
+  // first so a failed upload never costs the photos already on file. Storage
+  // RLS applies the same edit-window rule as the entry itself.
+  const { data: existingPhotoRows } = await supabase
+    .from("photos")
+    .select("id, storage_path")
+    .eq("entry_id", entryId)
+    .eq("kind", "other");
+  const existingPhotos = existingPhotoRows ?? [];
+  const removeIds = new Set(formData.getAll("remove_photo").map(String));
+  const toRemove = existingPhotos.filter((p) => removeIds.has(p.id));
+
+  const newFiles = collectPhotoFiles(
+    formData,
+    MAX_ENTRY_PHOTOS - (existingPhotos.length - toRemove.length)
+  );
+  if (newFiles.length > 0) {
+    const result = await uploadEntryPhotos(supabase, entryId, newFiles);
+    if (result.error) {
+      await discardUploadedPhotos(supabase, result.paths);
+      return {
+        error:
+          "Your other changes were saved, but a photo failed to upload. Add the photo again and save.",
+      };
+    }
+  }
+  if (toRemove.length > 0) {
+    await supabase
+      .from("photos")
+      .delete()
+      .in(
+        "id",
+        toRemove.map((p) => p.id)
+      );
+    await supabase.storage
+      .from("entry-photos")
+      .remove(toRemove.map((p) => p.storage_path));
+  }
 
   redirect(`/entry/${entryId}`);
 }

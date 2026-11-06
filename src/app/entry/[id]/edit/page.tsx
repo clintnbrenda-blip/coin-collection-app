@@ -2,6 +2,7 @@ import { notFound, redirect } from "next/navigation";
 import { getCurrentProfile } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { isWithinEditWindow } from "@/lib/editWindow";
+import { getEntryPhotos } from "@/lib/entryPhotos";
 import { EditEntryForm } from "./EditEntryForm";
 
 export default async function EditEntryPage({
@@ -35,6 +36,7 @@ export default async function EditEntryPage({
     { data: checklist },
     { data: previousEntryDate },
     { data: allChecklistItems },
+    existingPhotos,
   ] = await Promise.all([
     supabase
       .from("entry_group_snapshots")
@@ -68,6 +70,7 @@ export default async function EditEntryPage({
       .select("key, section, text, active")
       .eq("location_id", entry.location_id)
       .order("display_order", { ascending: true }),
+    getEntryPhotos(supabase, id),
   ]);
 
   const checklistItems = (allChecklistItems ?? []).filter(
@@ -112,6 +115,7 @@ export default async function EditEntryPage({
       previousEntryDate={previousEntryDate ?? null}
       machineGroups={machineGroups}
       vendingMachines={vendingMachines}
+      existingPhotos={existingPhotos}
       depositAmount={String(deposit?.deposit_amount ?? 0)}
       checklistItems={checklistItems}
       checkedItems={checklist?.checked_items ?? []}

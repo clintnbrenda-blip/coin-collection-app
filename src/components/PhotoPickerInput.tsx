@@ -17,11 +17,18 @@ import { compressImage } from "@/lib/imageCompress";
 export function PhotoPickerInput({
   name,
   label,
+  initialFile,
+  onFileChange,
 }: {
   name: string;
   label?: string;
+  /** Pre-fill with a photo (e.g. one restored from a saved draft). Read once on mount. */
+  initialFile?: File | null;
+  /** Called whenever the photo is picked, replaced, or removed. */
+  onFileChange?: (file: File | null) => void;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
+  const currentFileRef = useRef<File | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
 
@@ -71,39 +78,65 @@ export function PhotoPickerInput({
     }
   }, [cameraOpen]);
 
-  // React resets a <form action={...}> after the action finishes — even when
-  // it returned an error — which empties this file input. Clear the preview
-  // too, otherwise a thumbnail would suggest a photo is attached when it isn't.
+  function setInputFile(file: File | null) {
+    const input = inputRef.current;
+    if (!input) return;
+    const dataTransfer = new DataTransfer();
+    if (file) dataTransfer.items.add(file);
+    input.files = dataTransfer.files;
+  }
+
+  // Single place that records "this is the photo now": remembers it, shows
+  // the preview, and tells the parent (e.g. to save it as a draft).
+  function applyFile(file: File | null) {
+    currentFileRef.current = file;
+    setPreviewUrl((prev) => {
+      if (prev) URL.revokeObjectURL(prev);
+      return file ? URL.createObjectURL(file) : null;
+    });
+    onFileChange?.(file);
+  }
+
+  // Pre-fill from a restored draft, once, on mount.
+  useEffect(() => {
+    if (!initialFile) return;
+    setInputFile(initialFile);
+    currentFileRef.current = initialFile;
+    // Syncing in a restored file from outside React on mount.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setPreviewUrl(URL.createObjectURL(initialFile));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // React resets a <form action={...}> after the action finishes, even when it
+  // returned an error, which empties every file input. Put the photo back
+  // right after the reset so a failed submit doesn't silently drop it while
+  // the thumbnail is still showing.
   useEffect(() => {
     const form = inputRef.current?.form;
     if (!form) return;
-    const onReset = () => setPreviewUrl(null);
+    const onReset = () => {
+      setTimeout(() => setInputFile(currentFileRef.current), 0);
+    };
     form.addEventListener("reset", onReset);
     return () => form.removeEventListener("reset", onReset);
   }, []);
 
   async function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const input = e.target;
-    const picked = input.files?.[0];
+    const picked = e.target.files?.[0];
     if (!picked) {
-      setPreviewUrl((prev) => {
-        if (prev) URL.revokeObjectURL(prev);
-        return null;
-      });
+      applyFile(null);
       return;
     }
-
     // Shrink before upload — full-size phone photos exceed the form's size cap.
     const file = await compressImage(picked);
-    if (file !== picked) {
-      const dataTransfer = new DataTransfer();
-      dataTransfer.items.add(file);
-      input.files = dataTransfer.files;
-    }
-    setPreviewUrl((prev) => {
-      if (prev) URL.revokeObjectURL(prev);
-      return URL.createObjectURL(file);
-    });
+    if (file !== picked) setInputFile(file);
+    applyFile(file);
+  }
+
+  function removePhoto() {
+    setInputFile(null);
+    applyFile(null);
   }
 
   async function openCamera() {
@@ -139,17 +172,8 @@ export function PhotoPickerInput({
         if (!blob) return;
         const raw = new File([blob], `photo-${Date.now()}.jpg`, { type: "image/jpeg" });
         const file = await compressImage(raw);
-
-        if (inputRef.current) {
-          const dataTransfer = new DataTransfer();
-          dataTransfer.items.add(file);
-          inputRef.current.files = dataTransfer.files;
-        }
-
-        setPreviewUrl((prev) => {
-          if (prev) URL.revokeObjectURL(prev);
-          return URL.createObjectURL(file);
-        });
+        setInputFile(file);
+        applyFile(file);
         closeCamera();
       },
       "image/jpeg",
@@ -196,6 +220,15 @@ export function PhotoPickerInput({
           alt="Selected photo preview"
           className="mt-2 h-32 w-full rounded-lg border border-neutral-200 object-cover"
         />
+      )}
+      {previewUrl && (
+        <button
+          type="button"
+          onClick={removePhoto}
+          className="mt-1 text-xs text-neutral-500 underline"
+        >
+          Remove photo
+        </button>
       )}
 
       {cameraOpen && (

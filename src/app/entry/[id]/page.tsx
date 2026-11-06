@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getCurrentProfile } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { AppHeader } from "@/components/AppHeader";
+import { getEntryPhotos } from "@/lib/entryPhotos";
 import { isWithinEditWindow } from "@/lib/editWindow";
 import { formatMoney } from "@/lib/formatMoney";
 import { PrintButton } from "@/components/PrintButton";
@@ -69,24 +70,34 @@ export default async function EntryDetailPage({
   }
 
   // Photos attached to the collection itself (deposit slips are handled above).
-  const { data: collectionPhotos } = await supabase
-    .from("photos")
-    .select("id, storage_path")
-    .eq("entry_id", id)
-    .eq("kind", "other")
-    .order("uploaded_at", { ascending: true });
-  const photoUrls: string[] = [];
-  if (collectionPhotos && collectionPhotos.length > 0) {
-    const { data: signed } = await supabase.storage
-      .from("entry-photos")
-      .createSignedUrls(
-        collectionPhotos.map((p) => p.storage_path),
-        3600
-      );
-    for (const item of signed ?? []) {
-      if (item.signedUrl) photoUrls.push(item.signedUrl);
-    }
-  }
+  const collectionPhotos = await getEntryPhotos(supabase, id);
+  const photosSection =
+    collectionPhotos.length > 0 ? (
+      <section className="rounded-xl border border-neutral-200 bg-white p-4">
+        <h2 className="mb-2 font-semibold text-neutral-900">Photos</h2>
+        <div className="grid grid-cols-2 gap-2">
+          {collectionPhotos.map((photo, i) =>
+            photo.url ? (
+              <a key={photo.id} href={photo.url} target="_blank" rel="noopener noreferrer">
+                {/* eslint-disable-next-line @next/next/no-img-element -- short-lived signed URL, not worth Next's Image pipeline */}
+                <img
+                  src={photo.url}
+                  alt={`Collection photo ${i + 1}`}
+                  className="h-32 w-full rounded-lg border border-neutral-200 object-cover"
+                />
+              </a>
+            ) : (
+              <div
+                key={photo.id}
+                className="flex h-32 items-center justify-center rounded-lg border border-neutral-200 text-xs text-neutral-400"
+              >
+                Couldn&apos;t load
+              </div>
+            )
+          )}
+        </div>
+      </section>
+    ) : null;
 
   const sortedSnapshots = [...(snapshots ?? [])].sort((a, b) => {
     const mgA = Array.isArray(a.machine_groups) ? a.machine_groups[0] : a.machine_groups;
@@ -129,6 +140,10 @@ export default async function EntryDetailPage({
             <p className="mt-1 text-sm text-green-700">Collection entry saved for {entry.date}.</p>
           </section>
         )}
+
+        {/* Owner sees photos inline in the breakdown below; an employee only
+            gets the confirmation, so show theirs here. */}
+        {!isOwner && photosSection}
 
         {/* Employees just need the confirmation above — the full breakdown
             below is owner-only reporting detail. */}
@@ -200,29 +215,7 @@ export default async function EntryDetailPage({
               </p>
             </section>
 
-            {(collectionPhotos?.length ?? 0) > 0 && (
-              <section className="rounded-xl border border-neutral-200 bg-white p-4">
-                <h2 className="mb-2 font-semibold text-neutral-900">Photos</h2>
-                {photoUrls.length > 0 ? (
-                  <div className="grid grid-cols-2 gap-2">
-                    {photoUrls.map((url, i) => (
-                      <a key={url} href={url} target="_blank" rel="noopener noreferrer">
-                        {/* eslint-disable-next-line @next/next/no-img-element -- short-lived signed URL, not worth Next's Image pipeline */}
-                        <img
-                          src={url}
-                          alt={`Collection photo ${i + 1}`}
-                          className="h-32 w-full rounded-lg border border-neutral-200 object-cover"
-                        />
-                      </a>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-xs text-red-600">
-                    Photos are on file but couldn&apos;t be loaded right now.
-                  </p>
-                )}
-              </section>
-            )}
+            {photosSection}
 
             <section className="rounded-xl border border-neutral-200 bg-white p-4">
               <h2 className="mb-2 font-semibold text-neutral-900">Bank deposit</h2>

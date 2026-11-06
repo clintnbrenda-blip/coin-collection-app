@@ -3,7 +3,9 @@
 import { useActionState, useMemo, useState } from "react";
 import Link from "next/link";
 import { AppHeader } from "@/components/AppHeader";
+import { MultiPhotoPicker } from "@/components/MultiPhotoPicker";
 import { groupChecklistItems, type ChecklistItem } from "@/lib/checklist";
+import { MAX_ENTRY_PHOTOS } from "@/lib/entryPhotos";
 import { focusNextFieldOnEnter } from "@/lib/formKeyNav";
 import { daysBetween } from "@/lib/dateMath";
 import { formatMoney } from "@/lib/formatMoney";
@@ -36,6 +38,7 @@ export function EditEntryForm({
   previousEntryDate,
   machineGroups,
   vendingMachines,
+  existingPhotos,
   depositAmount,
   checklistItems,
   checkedItems,
@@ -50,6 +53,7 @@ export function EditEntryForm({
   previousEntryDate: string | null;
   machineGroups: MachineGroupField[];
   vendingMachines: VendingMachineField[];
+  existingPhotos: { id: string; url: string | null }[];
   depositAmount: string;
   checklistItems: ChecklistItem[];
   checkedItems: string[];
@@ -197,6 +201,49 @@ export function EditEntryForm({
               </div>
             ))}
           </div>
+        </section>
+
+        <section className="rounded-xl border border-neutral-200 bg-white p-4">
+          <h2 className="mb-1 font-semibold text-neutral-900">Photos</h2>
+          {existingPhotos.length > 0 && (
+            <div className="mb-4 grid grid-cols-2 gap-3">
+              {existingPhotos.map((photo, i) => (
+                <div key={photo.id}>
+                  {photo.url ? (
+                    // eslint-disable-next-line @next/next/no-img-element -- short-lived signed URL, not worth Next's Image pipeline
+                    <img
+                      src={photo.url}
+                      alt={`Collection photo ${i + 1}`}
+                      className="h-32 w-full rounded-lg border border-neutral-200 object-cover"
+                    />
+                  ) : (
+                    <div className="flex h-32 items-center justify-center rounded-lg border border-neutral-200 text-xs text-neutral-400">
+                      Couldn&apos;t load
+                    </div>
+                  )}
+                  <label className="mt-1 flex items-center gap-2 text-xs text-neutral-600">
+                    <input
+                      type="checkbox"
+                      name="remove_photo"
+                      value={photo.id}
+                      className="h-4 w-4 rounded border-neutral-300"
+                    />
+                    Remove this photo
+                  </label>
+                </div>
+              ))}
+            </div>
+          )}
+          {existingPhotos.length < MAX_ENTRY_PHOTOS ? (
+            <MultiPhotoPicker
+              name="collection_photo"
+              max={MAX_ENTRY_PHOTOS - existingPhotos.length}
+            />
+          ) : (
+            <p className="text-xs text-neutral-500">
+              This entry has the maximum of {MAX_ENTRY_PHOTOS} photos. Remove one to add another.
+            </p>
+          )}
         </section>
 
         <section className="rounded-xl border border-neutral-200 bg-white p-4">

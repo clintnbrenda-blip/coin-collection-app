@@ -3,6 +3,7 @@
 import { useActionState, useEffect, useMemo, useState } from "react";
 import { AppHeader } from "@/components/AppHeader";
 import { MultiPhotoPicker } from "@/components/MultiPhotoPicker";
+import { clearPhotoDrafts } from "@/lib/photoDraft";
 import { groupChecklistItems, type ChecklistItem } from "@/lib/checklist";
 import { focusNextFieldOnEnter } from "@/lib/formKeyNav";
 import { todayLocalISO, daysBetween } from "@/lib/dateMath";
@@ -78,6 +79,7 @@ export function EntryForm({
     defaultDraft(employeeName, baseEntryId)
   );
   const [restored, setRestored] = useState(false);
+  const [photoResetKey, setPhotoResetKey] = useState(0);
 
   useEffect(() => {
     // Syncing in from an external system (this device's storage) on mount —
@@ -93,7 +95,7 @@ export function EntryForm({
     } else {
       // An entry has been submitted since this draft was started (or it
       // predates this check) — it's stale, not something to bring back.
-      clearDraft();
+      clearDraft(false); // saved photos do their own staleness check
     }
   }, [baseEntryId]);
 
@@ -102,6 +104,9 @@ export function EntryForm({
     clearDraft();
     setDraft(defaultDraft(employeeName, baseEntryId));
     setRestored(false);
+    // Remount the photo picker once the saved photos are really gone, so it
+    // doesn't re-read them.
+    void clearPhotoDrafts().then(() => setPhotoResetKey((k) => k + 1));
   }
 
   function update(partial: Partial<EntryDraft>) {
@@ -300,10 +305,14 @@ export function EntryForm({
         <section className="rounded-xl border border-neutral-200 bg-white p-4">
           <h2 className="mb-1 font-semibold text-neutral-900">Photos</h2>
           <p className="mb-3 text-xs text-neutral-400">
-            Optional. Photos can&apos;t be saved as a draft, so attach them right before
-            submitting.
+            Optional, up to 4. Saved on this phone until you submit, same as the numbers.
           </p>
-          <MultiPhotoPicker name="collection_photo" max={4} />
+          <MultiPhotoPicker
+            key={photoResetKey}
+            name="collection_photo"
+            max={4}
+            persistScope={baseEntryId}
+          />
         </section>
 
         {/* Checklist */}
