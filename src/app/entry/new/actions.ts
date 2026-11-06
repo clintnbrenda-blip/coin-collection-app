@@ -157,11 +157,13 @@ export async function submitEntry(
       });
     if (checklistError) throw new Error("Could not save the checklist.");
   } catch (err) {
-    // Roll back — deleting the entry cascades every child row.
-    await supabase.from("collection_entries").delete().eq("id", entryId);
+    // Roll back — deleting the entry cascades every child row. Photo files go
+    // FIRST: storage's delete rule looks up the parent entry, so once the
+    // entry is gone the files could no longer be removed.
     if (uploadedPaths.length > 0) {
       await supabase.storage.from("entry-photos").remove(uploadedPaths);
     }
+    await supabase.from("collection_entries").delete().eq("id", entryId);
     return {
       error: err instanceof Error ? err.message : "Something went wrong saving the entry.",
     };
